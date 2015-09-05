@@ -1,4 +1,4 @@
-Delivery Time API server
+### Delivery Time API server
 
 ===========================
 
@@ -16,14 +16,15 @@ REDIRECT_URI
 
 =============================
 
-Install App API:
+#### Install App API:
 
 GET /shopify/{shop}
 
 	shop - myshop.shopify.com
 
 
-Shopify Callback API:
+
+#### Shopify Callback API:
 
 GET /shopify/oauth/callback?{query_params}
 
