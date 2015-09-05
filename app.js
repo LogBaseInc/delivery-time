@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 
-var port = process.env.STICK_API_PORT || 9000;
+var port = process.env.API_PORT || 9000;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
