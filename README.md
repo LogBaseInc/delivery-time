@@ -16,7 +16,7 @@ REDIRECT_URI
 
 =============================
 
-#### Install App API:
+###### Install App API:
 
 GET /shopify/{shop}
 
@@ -24,7 +24,7 @@ GET /shopify/{shop}
 
 
 
-#### Shopify Callback API:
+###### Shopify Callback API:
 
 GET /shopify/oauth/callback?{query_params}
 
