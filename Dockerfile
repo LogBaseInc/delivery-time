@@ -1,4 +1,4 @@
-FROM    node:latest
+FROM    node:0.12
 
 # Bundle app source
 ADD . /src

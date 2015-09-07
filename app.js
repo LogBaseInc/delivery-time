@@ -20,4 +20,4 @@ var shopify = require('./routes/shopify');
 app.use('/shopify/', shopify);
 
 app.listen(port);
-console.log('Stick Read API is listening on port: ' + port);
+console.log('Delivery Time API is listening on port: ' + port);
