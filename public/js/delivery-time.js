@@ -37,4 +37,6 @@ if ($('#lbdt').length > 0) {
 	console.log('This is not the cart page');
 }
 
-console.log('Cart: ' + cart.items);
+$.get("/cart.js", function(data, status){
+    console.log('Data: ' + data + '\nStatus: ' + status);
+});
