@@ -11,6 +11,8 @@
   "dependencies": {
     "body-parser": "^1.13.3",
     "express": "^4.13.3",
+    "fs": "0.0.2",
+    "https": "^1.0.0",
     "shopify-node-api": "^1.4.10"
   }
 }
