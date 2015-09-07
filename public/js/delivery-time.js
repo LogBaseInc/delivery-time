@@ -9,7 +9,8 @@ if ($('#lbdt').length > 0) {
 	//Specific to CakeBee theme
 	myDateSelect.removeClass('hidden-field');
 	myTimeSelect.removeClass('hidden-field');
-	$('.custom.dropdown').addClass('hidden-field');
+	$('.custom.dropdown').css({'visibility':'hidden', 'position':'absolute'});
+	//ends
 
 	$.getJSON( 'cart.js', function( json ) {
 	  	console.log( 'JSON Data: ' + json );
