@@ -1,9 +1,9 @@
 FROM    node:0.12
 
 # Bundle app source
-ADD . /src
+ADD . /
 # Install app dependencies
-RUN cd /src; npm install
+RUN npm install
 
 EXPOSE  9000
-CMD ["node", "/src/app.js"]
+CMD ["node", "app.js"]

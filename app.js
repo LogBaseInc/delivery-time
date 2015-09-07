@@ -13,7 +13,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json()); // for parsing application/json
 
 //Serve static content
-app.use(express.static('src/public'));
+app.use(express.static('public'));
 
 //Routes
 var shopify = require('./routes/shopify');
