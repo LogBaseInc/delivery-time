@@ -3,6 +3,11 @@ console.log('Delivery Time JS loaded');
 if ($('#lbdt').length > 0) {
 	console.log('This is the cart page');
 
+	//Ajax call to get the cart
+	$.get("/cart.js", function(data, status){
+	    alert('Data: ' + data + '\nStatus: ' + status);
+	});
+
 	var dateOptions = {
 	    val1 : 'Sep 8, 2015',
 	    val2 : 'Sep 9, 2015',
@@ -37,6 +42,3 @@ if ($('#lbdt').length > 0) {
 	console.log('This is not the cart page');
 }
 
-$.get("/cart.js", function(data, status){
-    console.log('Data: ' + data + '\nStatus: ' + status);
-});
