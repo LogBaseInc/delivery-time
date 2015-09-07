@@ -9,6 +9,8 @@ if ($('#lbdt').length > 0) {
 	//Specific to CakeBee theme
 	myDateSelect.removeClass('hidden-field');
 	myTimeSelect.removeClass('hidden-field');
+	myDateSelect.css('outline', 'none');
+	myTimeSelect.css('outline', 'none');
 	$('.custom.dropdown').css({'visibility':'hidden', 'position':'absolute'});
 	//ends
 
