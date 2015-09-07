@@ -37,12 +37,17 @@ GET /shopify/oauth/callback?{query_params}
 
 ###### Html to paste:
 
+<!--Abishek: LogBase Delivery Time Starts-->
 <div align="right" id="lbdt">
-  Choose Delivery Time
-  <br/><br/>
+<br/>
+Pick a Delivery Time
+<br/><br/>
+<div style="width: 200px">
   <select id = "lbdt-day">
   </select>
   <select id= "lbdt-time">
   </select>
-  <br/><br/>
 </div>
+<br/>
+</div>
+<!--Abishek: LogBase Delivery Time Ends-->

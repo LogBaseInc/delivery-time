@@ -3,14 +3,16 @@ console.log('Delivery Time JS loaded');
 if ($('#lbdt').length > 0) {
 	console.log('This is the cart page');
 
-	//Ajax call to get the cart
-	/*
-	$.get("/cart.js", function(data, status){
-	    alert('Data: ' + data + '\nStatus: ' + status);
-	});
-	*/
-	$.getJSON( "cart.js", function( json ) {
-	  	console.log( "JSON Data: " + json );
+	var myDateSelect = $('#lbdt-day');
+	var myTimeSelect = $('#lbdt-time');
+
+	//Specific to CakeBee theme
+	myDateSelect.removeClass('hidden-field');
+	myTimeSelect.removeClass('hidden-field');
+	$('.custom.dropdown').addClass('hidden-field');
+
+	$.getJSON( 'cart.js', function( json ) {
+	  	console.log( 'JSON Data: ' + json );
 	  	var dateOptions = {
 		    val1 : 'Sep 8, 2015',
 		    val2 : 'Sep 9, 2015',
@@ -18,7 +20,6 @@ if ($('#lbdt').length > 0) {
 		    val4 : 'Sep 11, 2015',
 		    val5 : 'Sep 12, 2015'
 		};
-		var myDateSelect = $('#lbdt-day');
 		$.each(dateOptions, function(val, text) {
 		    myDateSelect.append(
 		        $('<option></option>').val(val).html(text)
@@ -33,7 +34,7 @@ if ($('#lbdt').length > 0) {
 		    val4 : '8 pm - 9pm',
 		    val5 : 'Midnight 12 am'
 		};
-		var myTimeSelect = $('#lbdt-time');
+		
 		$.each(timeOptions, function(val, text) {
 		    myTimeSelect.append(
 		        $('<option></option>').val(val).html(text)
