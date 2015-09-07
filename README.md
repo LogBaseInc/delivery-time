@@ -29,3 +29,20 @@ GET /shopify/{shop}
 GET /shopify/oauth/callback?{query_params}
 
 	query_params - will be populated by Shopify
+
+
+
+
+=============================
+
+###### Html to paste:
+
+<div align="right" id="lbdt">
+  Choose Delivery Time
+  <br/><br/>
+  <select id = "lbdt-day">
+  </select>
+  <select id= "lbdt-time">
+  </select>
+  <br/><br/>
+</div>
