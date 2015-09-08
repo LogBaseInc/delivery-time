@@ -46,6 +46,17 @@ if ($('#lbdt').length > 0) {
 		console.log('Time updated');
 	});
 
+	//Validation
+	$('.button').click(function(event) {
+	  	console.log('Checkout button clicked');
+	  	if(myDateSelect.val() == 'NA') {
+	  		event.preventDefault();
+	  		console.log('Prevented default');
+		} else {
+			console.log('Usual flow');
+		}
+	});
+
 } else {
 	console.log('This is not the cart page');
 }
