@@ -1,3 +1,4 @@
+/*
 var fs = require('fs');
 var https = require('https');
 
@@ -7,7 +8,7 @@ var https_options = {
     key: key,
     cert: cert
 };
-
+*/
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -29,6 +30,6 @@ app.use(express.static('public'));
 var shopify = require('./routes/shopify');
 app.use('/shopify/', shopify);
 
-//app.listen(port);
-server = https.createServer(https_options, app).listen(port);
+app.listen(port);
+//server = https.createServer(https_options, app).listen(port);
 console.log('Delivery Time API is listening on port: ' + port);
