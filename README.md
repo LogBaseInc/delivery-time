@@ -5,7 +5,7 @@
 Before starting set below environment variables:
 
 
-API_PORT (default 9000)
+PORT (default 1337)
 
 SHOPIFY_API_KEY
 
