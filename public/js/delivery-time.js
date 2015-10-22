@@ -1,8 +1,14 @@
 console.log('Delivery Time JS loaded');
 //console.log($('body')[0]);
-var configs = null;
+var response = null;
+
 
 if ($('#lbdt').length > 0) {
+
+    $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
+        response = data;
+        console.log(response);
+    });
 
     console.log('This is the cart page');
 
