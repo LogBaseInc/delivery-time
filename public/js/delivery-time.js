@@ -52,9 +52,7 @@ if ($('#lbdt').length > 0) {
         console.log("Selected city");
         dateOptions = delivaryDates;
 
-        myDateSelect.options.each(function() {
-            $(this).remove();
-        })
+        myDateSelect.find("option").remove();
 
         $.each(dateOptions, function(val, text) {
             myDateSelect.append(
