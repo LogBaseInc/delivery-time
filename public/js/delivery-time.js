@@ -1,7 +1,27 @@
 console.log('Delivery Time JS loaded');
 //console.log($('body')[0]);
+
+function getDeliveryDates() {
+    var my_firebase_ref = new firebase("https://lb-date-picker.firebaseio.com/config");
+    var configs = null;
+    my_firebase_ref.once("value", function(snapshot) {
+        configs = snapshot.exportVal();
+        var dates = {};
+        maxDays = configs.maxDaysLimitForOrders
+        console.log(maxDays);
+        while (maxDays) {
+            var d = Date.today().addDays(maxDays - 1);
+            dates[maxDays] = d.toString("MMM dd,yyyy");
+            maxDays--;
+        }
+        console.log(dates);
+        return dates;
+    });
+}
+
 if ($('#lbdt').length > 0) {
-	console.log('This is the cart page');
+
+    console.log('This is the cart page');
 
 	var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
@@ -23,6 +43,7 @@ if ($('#lbdt').length > 0) {
 		    val4 : 'Sep 11, 2015',
 		    val5 : 'Sep 12, 2015'
 		};
+        dateOptions = getDeliveryDates();
 		$.each(dateOptions, function(val, text) {
 		    myDateSelect.append(
 		        $('<option></option>').val(val).html(text)
