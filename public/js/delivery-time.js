@@ -3,15 +3,15 @@ console.log('Delivery Time JS loaded');
 if ($('#lbdt').length > 0) {
 	console.log('This is the cart page');
 
-	var myDateSelect = $('#lbdt-day');
-	var myTimeSelect = $('#lbdt-time');
+	var myDateSelect = $('#lbdt-date');
+	var myTimeSelect = $('#lbdt-slots');
 
 	//Specific to CakeBee theme
-	myDateSelect.removeClass('hidden-field');
-	myTimeSelect.removeClass('hidden-field');
-	myDateSelect.css('outline', 'none');
-	myTimeSelect.css('outline', 'none');
-	$('.custom.dropdown').css({'visibility':'hidden', 'position':'absolute'});
+	//myDateSelect.removeClass('hidden-field');
+	//myTimeSelect.removeClass('hidden-field');
+	//myDateSelect.css('outline', 'none');
+	//myTimeSelect.css('outline', 'none');
+	//$('.custom.dropdown').css({'visibility':'hidden', 'position':'absolute'});
 	//ends
 
 	$.getJSON( 'cart.js', function( json ) {
