@@ -29,39 +29,33 @@ if ($('#lbdt').length > 0) {
 			console.log('Usual flow');
 		}
 	});
+    
 
+    /*
+     * When the city gets selected, show appropriate dates to order
+     */
     $('#lbdt-city').change(function(event) {
 
         console.log("Selected city");
 
-        var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
-        my_firebase_ref.once("value", function(snapshot) {
-            configs = snapshot.exportVal();
-            var dates = {};
-            maxDays = configs.maxDaysLimitForOrders
-            console.log(maxDays);
-            while (maxDays) {
-                var d = Date.today().addDays(maxDays - 1);
-                dates[maxDays] = d.toString("MMM dd,yyyy");
-                maxDays--;
-            }
-            console.log(dates);
-            myDateSelect.find("option").remove();
+        var dates = response.dates;
+        myDateSelect.find("option").remove();
 
-            $.each(dates, function(val, text) {
-                myDateSelect.append(
-                    $('<option></option>').val(val).html(text)
-                );
-            });
+        $.each(dates, function(val, text) {
+            myDateSelect.append(
+                $('<option></option>').val(val).html(text)
+            );
             console.log('Days updated');
-
         });
     });
 
+    /*
+     * When the date gets selected, show appropriate time slots
+     */
     $('#lbdt-date').change(function(event) {
 
         myTimeSelect.find("option").remove();
-        var timeOptions = configs.slots;
+        var timeOptions = data.config.slots;
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
                 $('<option></option>').val(val).html(text)
