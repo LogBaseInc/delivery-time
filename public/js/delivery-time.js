@@ -1,6 +1,5 @@
 console.log('Delivery Time JS loaded');
 //console.log($('body')[0]);
-var response = null;
 
 
 if ($('#lbdt').length > 0) {
@@ -55,7 +54,7 @@ if ($('#lbdt').length > 0) {
     $('#lbdt-date').change(function(event) {
 
         myTimeSelect.find("option").remove();
-        var timeOptions = response.config.slots;
+        var timeOptions = response.data.config.slots;
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
                 $('<option></option>').val(val).html(text)
