@@ -7,16 +7,41 @@ if ($('#lbdt').length > 0) {
     $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
         response = data;
         console.log(response);
+        myCitySelect.prop("disabled", false);
+        myCitySelect.find("options").remove();
+        city = {
+            coimbatore: "Coimbatore",
+            trichy: "Trichy"
+        }
+        $.each(city, function(val, text) {
+            myCitySelect.append(
+                $('<option></option>').val(val).html(text)
+            );
+            console.log('City updated');
+        });
+
     });
 
     console.log('This is the cart page');
 
     var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
+    var myCitySelect = $('#lbdt-city');
 
 	$.getJSON( 'cart.js', function( json ) {
 	  	console.log( 'JSON Data: ' + json );
 	});
+
+    /*
+     * Disable all select elements wile data is getting loaded
+     */
+    myDateSelect.find("option").remove();
+    myCitySelect.find("options").remove();
+    myTimeSelect.find('options').remove();
+    myCitySelect.append(
+        $('<option></option>').val("loading").html("Loading")
+    );
+    myCitySelect.prop("disabled", true);
 
 	//Validation
 	$('.button').click(function(event) {
@@ -33,7 +58,7 @@ if ($('#lbdt').length > 0) {
     /*
      * When the city gets selected, show appropriate dates to order
      */
-    $('#lbdt-city').change(function(event) {
+    myCitySelect.change(function(event) {
 
         console.log("Selected city");
 
@@ -51,7 +76,7 @@ if ($('#lbdt').length > 0) {
     /*
      * When the date gets selected, show appropriate time slots
      */
-    $('#lbdt-date').change(function(event) {
+    myDateSelect.change(function(event) {
 
         myTimeSelect.find("option").remove();
         var timeOptions = response.data.config.slots;
