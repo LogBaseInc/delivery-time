@@ -1,5 +1,7 @@
 console.log('Delivery Time JS loaded');
 //console.log($('body')[0]);
+var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
+var configs = null;
 
 if ($('#lbdt').length > 0) {
 
@@ -35,8 +37,6 @@ if ($('#lbdt').length > 0) {
 
         console.log("Selected city");
 
-        var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
-        var configs = null;
         my_firebase_ref.once("value", function(snapshot) {
             configs = snapshot.exportVal();
             var dates = {};
@@ -58,15 +58,11 @@ if ($('#lbdt').length > 0) {
             console.log('Days updated');
 
         });
+    });
 
-        var timeOptions = {
-            val1 : '11 am - 12 pm',
-            val2 : '2 pm - 3 pm',
-            val3 : '5 pm - 6 pm',
-            val4 : '8 pm - 9pm',
-            val5 : 'Midnight 12 am'
-        };
+    $('#lbdt-date').change(function(event) {
 
+        var timeOptions = configs.slots;
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
                 $('<option></option>').val(val).html(text)
