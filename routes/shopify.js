@@ -1,11 +1,37 @@
 var express = require('express');
 var router = express.Router();
 var shopifyAPI = require('shopify-node-api');
+var Firebase = require('firebase');
+require("datejs");
 
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
 var redirect_uri = process.env.REDIRECT_URI;
 var shopify_scope = 'read_products,read_orders,write_orders,read_script_tags,write_script_tags,read_fulfillments,write_fulfillments';
+
+router.get("/dates", function(req, res) {
+    var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/");
+    my_firebase_ref.once("value", function(snapshot) {
+        data = snapshot.exportVal();
+
+        var dates = {};
+
+        var maxDays = data.config.maxDaysLimitForOrders;
+        console.log(maxDays);
+        while (maxDays) {
+            var d = Date.today().addDays(maxDays - 1);
+            dates[maxDays] = d.toString("MMM dd,yyyy");
+            maxDays--;
+        }
+
+        var response = {
+            data: data,
+            dates: dates
+        }
+        res.send(response);
+    });
+});
+
 
 // define the home page route
 router.get('/:shop', function(req, res) {
