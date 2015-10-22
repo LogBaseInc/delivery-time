@@ -5,23 +5,6 @@ if ($('#lbdt').length > 0) {
 
     console.log('This is the cart page');
 
-    var delivaryDates = null;
-    var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
-    var configs = null;
-    my_firebase_ref.once("value", function(snapshot) {
-        configs = snapshot.exportVal();
-        var dates = {};
-        maxDays = configs.maxDaysLimitForOrders
-        console.log(maxDays);
-        while (maxDays) {
-            var d = Date.today().addDays(maxDays - 1);
-            dates[maxDays] = d.toString("MMM dd,yyyy");
-            maxDays--;
-        }
-        console.log(dates);
-        delivaryDates = dates;
-    });
-
     var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
 
@@ -49,17 +32,32 @@ if ($('#lbdt').length > 0) {
 	});
 
     $('#lbdt-city').change(function(event) {
+
         console.log("Selected city");
-        dateOptions = delivaryDates;
 
-        myDateSelect.find("option").remove();
+        var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
+        var configs = null;
+        my_firebase_ref.once("value", function(snapshot) {
+            configs = snapshot.exportVal();
+            var dates = {};
+            maxDays = configs.maxDaysLimitForOrders
+            console.log(maxDays);
+            while (maxDays) {
+                var d = Date.today().addDays(maxDays - 1);
+                dates[maxDays] = d.toString("MMM dd,yyyy");
+                maxDays--;
+            }
+            console.log(dates);
+            myDateSelect.find("option").remove();
 
-        $.each(dateOptions, function(val, text) {
-            myDateSelect.append(
-                $('<option></option>').val(val).html(text)
-            );
+            $.each(dates, function(val, text) {
+                myDateSelect.append(
+                    $('<option></option>').val(val).html(text)
+                );
+            });
+            console.log('Days updated');
+
         });
-        console.log('Days updated');
 
         var timeOptions = {
             val1 : '11 am - 12 pm',
