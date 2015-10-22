@@ -2,7 +2,7 @@ console.log('Delivery Time JS loaded');
 //console.log($('body')[0]);
 
 function getDeliveryDates() {
-    var my_firebase_ref = new firebase("https://lb-date-picker.firebaseio.com/config");
+    var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
     var configs = null;
     my_firebase_ref.once("value", function(snapshot) {
         configs = snapshot.exportVal();
