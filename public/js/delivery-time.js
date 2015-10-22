@@ -9,14 +9,6 @@ if ($('#lbdt').length > 0) {
     var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
 
-	//Specific to CakeBee theme
-	//myDateSelect.removeClass('hidden-field');
-	//myTimeSelect.removeClass('hidden-field');
-	//myDateSelect.css('outline', 'none');
-	//myTimeSelect.css('outline', 'none');
-	//$('.custom.dropdown').css({'visibility':'hidden', 'position':'absolute'});
-	//ends
-
 	$.getJSON( 'cart.js', function( json ) {
 	  	console.log( 'JSON Data: ' + json );
 	});
@@ -62,6 +54,7 @@ if ($('#lbdt').length > 0) {
 
     $('#lbdt-date').change(function(event) {
 
+        myTimeSelect.find("option").remove();
         var timeOptions = configs.slots;
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
