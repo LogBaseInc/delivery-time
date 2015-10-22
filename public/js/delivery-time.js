@@ -1,6 +1,5 @@
 console.log('Delivery Time JS loaded');
 //console.log($('body')[0]);
-var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
 var configs = null;
 
 if ($('#lbdt').length > 0) {
@@ -37,6 +36,7 @@ if ($('#lbdt').length > 0) {
 
         console.log("Selected city");
 
+        var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config");
         my_firebase_ref.once("value", function(snapshot) {
             configs = snapshot.exportVal();
             var dates = {};
