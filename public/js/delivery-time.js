@@ -1,5 +1,4 @@
 console.log('Delivery Time JS loaded');
-//console.log($('body')[0]);
 
 
 if ($('#lbdt').length > 0) {
@@ -8,7 +7,7 @@ if ($('#lbdt').length > 0) {
         response = data;
         console.log(response);
         myCitySelect.prop("disabled", false);
-        myCitySelect.find("options").remove();
+        myCitySelect.find("option").remove();
         city = {
             coimbatore: "Coimbatore",
             trichy: "Trichy"
@@ -36,8 +35,8 @@ if ($('#lbdt').length > 0) {
      * Disable all select elements wile data is getting loaded
      */
     myDateSelect.find("option").remove();
-    myCitySelect.find("options").remove();
-    myTimeSelect.find('options').remove();
+    myCitySelect.find("option").remove();
+    myTimeSelect.find('option').remove();
     myCitySelect.append(
         $('<option></option>').val("loading").html("Loading")
     );
