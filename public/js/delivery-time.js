@@ -29,7 +29,7 @@ if ($('#lbdt').length > 0) {
 			console.log('Usual flow');
 		}
 	});
-    
+
 
     /*
      * When the city gets selected, show appropriate dates to order
@@ -55,7 +55,7 @@ if ($('#lbdt').length > 0) {
     $('#lbdt-date').change(function(event) {
 
         myTimeSelect.find("option").remove();
-        var timeOptions = data.config.slots;
+        var timeOptions = response.config.slots;
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
                 $('<option></option>').val(val).html(text)
