@@ -50,14 +50,12 @@ if ($('#lbdt').length > 0) {
 
     $('#lbdt-city').change(function(event) {
         console.log("Selected city");
-        var dateOptions = {
-            val1 : 'Sep 8, 2015',
-            val2 : 'Sep 9, 2015',
-            val3 : 'Sep 10, 2015',
-            val4 : 'Sep 11, 2015',
-            val5 : 'Sep 12, 2015'
-        };
         dateOptions = delivaryDates;
+
+        myDateSelect.each(function() {
+            $(this).remove();
+        })
+
         $.each(dateOptions, function(val, text) {
             myDateSelect.append(
                 $('<option></option>').val(val).html(text)
