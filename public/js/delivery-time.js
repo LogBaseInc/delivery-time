@@ -52,9 +52,11 @@ if ($('#lbdt').length > 0) {
     myCitySelect.prop("disabled", true);
 
 	//Validation
-	$('.button').click(function(event) {
+	$('#checkout').click(function(event) {
 	  	console.log('Checkout button clicked');
-	  	if(myDateSelect.val() == 'NA') {
+	  	if(myDateSelect.val() == 0 ||
+            myCitySelect.val() == 'select' ||
+            myTimeSelect.val() == 'select') {
 	  		event.preventDefault();
 	  		console.log('Prevented default');
 		} else {
@@ -86,6 +88,7 @@ if ($('#lbdt').length > 0) {
             });
         } else {
             myDateSelect.find("option").remove();
+            myTimeSelect.find("option").remove();
         }
     });
 
