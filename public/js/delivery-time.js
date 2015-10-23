@@ -66,18 +66,21 @@ if ($('#lbdt').length > 0) {
      * When the city gets selected, show appropriate dates to order
      */
     myCitySelect.change(function(event) {
+        if(!myCitySelect.val().contains("select")) {
+            console.log("Selected city");
+            var dates = response.dates;
 
-        console.log("Selected city");
+            myDateSelect.find("option").remove();
 
-        var dates = response.dates;
-        myDateSelect.find("option").remove();
-
-        $.each(dates, function(val, text) {
-            myDateSelect.append(
-                $('<option></option>').val(val).html(text)
-            );
-            console.log('Days updated');
-        });
+            $.each(dates, function(val, text) {
+                myDateSelect.append(
+                    $('<option></option>').val(val).html(text)
+                );
+                console.log('Days updated');
+            });
+        } else {
+            myDateSelect.find("option").remove();
+        }
     });
 
     /*
