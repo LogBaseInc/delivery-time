@@ -86,6 +86,7 @@ function getSlots(selectedItem) {
                 if (parseInt(text) >= delivery['hour']) {
                     slots[val] = text;
                 }
+                return slots;
             });
         } else {
             return response.data.config.slots;
