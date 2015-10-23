@@ -37,13 +37,12 @@ function getDates() {
     istDate = getIST();
     curDate = istDate.getDate();
     curhour = istDate.getHours();
-    sortedTimeSlots = getSortedOrderTimeSlots();
-    lastOrderTime = sortedTimeSlots[sortedTimeSlots.length - 2];
-    firstOrderTime = sortedTimeSlots[0];
+    workStartTime = response.data.config.workStartTime;
+    workingHoursPerDay = response.data.config.workingHoursPerDay;
+    workStopTime = workStartTime + workingHoursPerDay;
     prepTime = response.data.config.cakeTypes[type].prepTime[variant];
 
-    workingHoursPerDay = response.data.config.workingHoursPerDay;
-    workingHoursLeftForDay = lastOrderTime - curhour;
+    workingHoursLeftForDay = workStopTime - curhour;
 
     console.log(workingHoursLeftForDay);
     while (prepTime > workingHoursLeftForDay) {
@@ -57,7 +56,7 @@ function getDates() {
 
     delivery['date'] = curDate + dayCount;
 
-    if (curhour > firstOrderTime && dayCount == 0) {
+    if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
         delivery['hour'] = firstOrderTime + prepTime + 1;
