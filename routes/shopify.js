@@ -20,7 +20,7 @@ router.get("/dates", function(req, res) {
         console.log(maxDays);
         while (maxDays) {
             var d = Date.today().addDays(maxDays - 1);
-            dates[maxDays] = d.toString("MMM dd,yyyy");
+            dates[maxDays] = d.toString("dddd  MMM  dd, yyyy");
             maxDays--;
         }
 
