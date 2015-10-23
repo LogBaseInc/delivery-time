@@ -45,6 +45,7 @@ function getDates() {
     workingHoursPerDay = response.data.config.workingHoursPerDay;
     workingHoursLeftForDay = lastOrderTime - curhour;
 
+    console.log(workingHoursLeftForDay);
     while (prepTime > workingHoursLeftForDay) {
         prepTime = prepTime - workingHoursLeftForDay;
         dayCount++;
@@ -53,6 +54,7 @@ function getDates() {
          */
         workingHoursLeftForDay = workingHoursPerDay;
     }
+
     delivery['date'] = curDate + dayCount;
 
     if (curhour > firstOrderTime) {
