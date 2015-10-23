@@ -38,7 +38,7 @@ function getDates() {
     curDate = istDate.getDate();
     curhour = istDate.getHours();
     sortedTimeSlots = getSortedOrderTimeSlots();
-    lastOrderTime = sortedTimeSlots[sortedTimeSlots.length - 1];
+    lastOrderTime = sortedTimeSlots[sortedTimeSlots.length - 2];
     firstOrderTime = sortedTimeSlots[0];
     prepTime = response.data.config.cakeTypes[type].prepTime[variant];
 
