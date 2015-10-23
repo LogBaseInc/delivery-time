@@ -1,13 +1,10 @@
 console.log('Delivery Time JS loaded');
 
-function loadCityValues(init) {
+function loadCityValues() {
     city = {
-        select: "Select",
+        select: "Select city",
         coimbatore: "Coimbatore",
         trichy: "Trichy"
-    }
-    if (!init) {
-        delete city.select;
     }
     myCitySelect.find("option").remove();
 
@@ -17,6 +14,7 @@ function loadCityValues(init) {
         );
         console.log('City updated');
     });
+    myCitySelect.val('select').prop("disabled", true);
 }
 
 if ($('#lbdt').length > 0) {
@@ -28,7 +26,7 @@ if ($('#lbdt').length > 0) {
         response = data;
         console.log(response);
         myCitySelect.prop("disabled", false);
-        loadCityValues(true);
+        loadCityValues();
     });
 
     console.log('This is the cart page');
@@ -63,10 +61,6 @@ if ($('#lbdt').length > 0) {
 			console.log('Usual flow');
 		}
 	});
-
-    myCitySelect.click(function(event) {
-        loadCityValues(false);
-    });
 
     /*
      * When the city gets selected, show appropriate dates to order
