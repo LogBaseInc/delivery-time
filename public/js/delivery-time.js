@@ -37,7 +37,9 @@ function getDates() {
     istDate = getIST();
     curDate = istDate.getDate();
     curhour = istDate.getHours();
-    lastOrderTime = getlastOrderTimeSlot();
+    sortedTimeSlots = getSortedOrderTimeSlots();
+    lastOrderTime = sortedTimeSlots[sortedTimeSlots.length - 1];
+    firstOrderTime = sortedTimeSlots[0];
     prepTime = response.data.config.cakeTypes[type].prepTime[variant];
 
     workingHoursPerDay = response.data.config.workingHoursPerDay;
@@ -51,13 +53,11 @@ function getDates() {
          */
         workingHoursLeftForDay = workingHoursPerDay;
     }
+    delivery['date'] = curDate + dayCount;
+    delivery['hour'] = firstOrderTime + prepTime;
 
-    if (prepTime + curhour >= lastOrderTime) {
-        delivery['date'] = curDate + 1;
-    } else {
-        delivery['date'] = curDate;
-    }
-    console.log(dayCount);
+    console.log(delivery['date'], delivery['hour']);
+
 
     if (response.data.config.defaultDateTimeChecks) {
         return response.dates;
@@ -70,7 +70,7 @@ function getSlots() {
     }
 }
 
-function getlastOrderTimeSlot() {
+function getSortedOrderTimeSlots() {
     slots = [];
     $.each(response.data.config.slots, function(val, text) {
         slots.push(parseInt(val))
@@ -79,7 +79,7 @@ function getlastOrderTimeSlot() {
     /*
      * The last order will always be midnight order. skip it
      */
-    return slots.sort()[slots.length - 2];
+    return slots.sort();
 }
 
 if ($('#lbdt').length > 0) {
