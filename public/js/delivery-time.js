@@ -33,17 +33,31 @@ function getIST() {
 
 function getDates() {
 
+    dayCount = 0
     istDate = getIST();
     curDate = istDate.getDate();
     curhour = istDate.getHours();
     lastOrderTime = getlastOrderTimeSlot();
     prepTime = response.data.config.cakeTypes[type].prepTime[variant];
+
+    workingHoursPerDay = response.data.config.workingHoursPerDay;
+    workingHoursLeftForDay = lastOrderTime - curhour;
+
+    while (prepTime > workingHoursLeftForDay) {
+        prepTime = prepTime - workingHoursLeftForDay;
+        dayCount++;
+        /*
+         * reset working hours from next day
+         */
+        workingHoursLeftForDay = workingHoursPerDay;
+    }
+
     if (prepTime + curhour >= lastOrderTime) {
         delivery['date'] = curDate + 1;
     } else {
         delivery['date'] = curDate;
     }
-    console.log(delivery['date'], curDate, curhour, prepTime, lastOrderTime);
+    console.log(dayCount);
 
     if (response.data.config.defaultDateTimeChecks) {
         return response.dates;
