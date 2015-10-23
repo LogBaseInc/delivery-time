@@ -43,7 +43,7 @@ function getSlots() {
 function getSortedTimeSlots() {
     slots = [];
     $.each(response.data.config.slots, function(val, text) {
-        slots.append(parseInt(val))
+        slots.push(parseInt(val))
     });
     console.log(slots);
     return slots.sort();
