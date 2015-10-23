@@ -59,7 +59,7 @@ function getDates() {
     if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
-        delivery['hour'] = firstOrderTime + prepTime + 1;
+        delivery['hour'] = workStartTime + prepTime + 1;
     }
 
     console.log(delivery['date'], delivery['hour']);
