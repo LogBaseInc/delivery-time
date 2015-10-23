@@ -66,7 +66,8 @@ if ($('#lbdt').length > 0) {
      * When the city gets selected, show appropriate dates to order
      */
     myCitySelect.change(function(event) {
-        if(myCitySelect.val().toString().indexOf("select") >= 0) {
+
+        if(myCitySelect.val().toString().indexOf("select") < 0) {
             console.log("Selected city");
             var dates = response.dates;
 
