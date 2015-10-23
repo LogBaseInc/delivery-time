@@ -83,7 +83,7 @@ function getSlots(selectedItem) {
             configSlots = response.data.config.slots;
             $.each(configSlots, function(val, text) {
                 console.log(val, text);
-                if (parseInt(text) >= delivery['hour']) {
+                if (parseInt(val) >= delivery['hour']) {
                     slots[val] = text;
                 }
             });
@@ -201,11 +201,12 @@ if ($('#lbdt').length > 0) {
 
         myTimeSelect.find("option").remove();
 
-        if($("#lbdt-date option:selected").text().indexOf("Select") < 0) {
+        selectedValue = $("#lbdt-date option:selected").text()
+        if(selectedValue.indexOf("Select") < 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
-            $.each(getSlots(myDateSelect.val()), function(val, text){
+            $.each(getSlots(selectedValue), function(val, text){
                 timeOptions[val] = text;
             });
 
