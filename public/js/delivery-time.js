@@ -205,7 +205,7 @@ if ($('#lbdt').length > 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
-            $.each(getSlots($('#lbdt-date option:selected').text()), function(val, text){
+            $.each(getSlots(myDateSelect.val()), function(val, text){
                 timeOptions[val] = text;
             });
 
