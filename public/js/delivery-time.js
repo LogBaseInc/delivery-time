@@ -70,6 +70,7 @@ if ($('#lbdt').length > 0) {
         if(myCitySelect.val().toString().indexOf("select") < 0) {
             console.log("Selected city");
             var dates = response.dates;
+            dates['select'] = "Select date";
 
             myDateSelect.find("option").remove();
 
@@ -91,6 +92,7 @@ if ($('#lbdt').length > 0) {
 
         myTimeSelect.find("option").remove();
         var timeOptions = response.data.config.slots;
+        timeOptions['select'] = "Select time slot"
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
                 $('<option></option>').val(val).html(text)
