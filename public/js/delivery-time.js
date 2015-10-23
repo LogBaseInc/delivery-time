@@ -35,7 +35,9 @@ if ($('#lbdt').length > 0) {
 	var myTimeSelect = $('#lbdt-slots');
     var myCitySelect = $('#lbdt-city');
 
+    var jsonData = null;
 	$.getJSON( 'cart.js', function( json ) {
+        jsonData = json;
 	  	console.log( 'JSON Data: ' + json );
 	});
 
@@ -66,6 +68,9 @@ if ($('#lbdt').length > 0) {
 	  		event.preventDefault();
 	  		console.log('Prevented default');
 		} else {
+            var notes = myCitySelect.val() + " | " + myDateSelect.val() + " | " + myTimeSelect.val();
+            jsonData['note'] = notes;
+            $.post('cart.js', jsonData);
 			console.log('Usual flow');
 		}
 	});
