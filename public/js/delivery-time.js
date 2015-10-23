@@ -14,7 +14,7 @@ function loadCityValues() {
         );
         console.log('City updated');
     });
-    myCitySelect.val('select').prop("disabled", true);
+    //myCitySelect.val('select').prop("disabled", true);
 }
 
 if ($('#lbdt').length > 0) {
