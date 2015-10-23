@@ -1,4 +1,5 @@
 console.log('Delivery Time JS loaded');
+var response = null;
 
 function loadCityValues() {
     city = {
@@ -15,6 +16,37 @@ function loadCityValues() {
         console.log('City updated');
     });
     //myCitySelect.val('select').prop("disabled", true);
+}
+
+function getIST() {
+    var currentTime = new Date();
+    var currentOffset = currentTime.getTimezoneOffset();
+    var ISTOffset = 330;   // IST offset UTC +5:30
+    var ISTTime = new Date(currentTime.getTime() + (ISTOffset + currentOffset)*60000);
+    return ISTTime;
+}
+
+function getDates() {
+    date = getIST();
+    if (response.data.config.defaultDateTimeChecks) {
+        return response.dates;
+    }
+}
+
+function getSlots() {
+    console.log(getSortedTimeSlots());
+    if (response.data.config.defaultDateTimeChecks) {
+        return response.data.config.slots;
+    }
+}
+
+function getSortedTimeSlots() {
+    slots = [];
+    $.each(response.data.config.slots, function(val, text) {
+        slots.append(parseInt(val))
+    });
+    console.log(slots);
+    return slots.sort();
 }
 
 if ($('#lbdt').length > 0) {
@@ -88,7 +120,7 @@ if ($('#lbdt').length > 0) {
             var dates = {};
             dates[0] = "Select date";
 
-            $.each(response.dates, function(val, text){
+            $.each(getDates(), function(val, text){
                 dates[val] = text;
             });
 
@@ -115,7 +147,7 @@ if ($('#lbdt').length > 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
-            $.each(response.data.config.slots, function(val, text){
+            $.each(getSlots(), function(val, text){
                 timeOptions[val] = text;
             });
 
