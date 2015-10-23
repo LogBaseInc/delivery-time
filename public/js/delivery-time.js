@@ -80,6 +80,7 @@ if ($('#lbdt').length > 0) {
                 );
                 console.log('Days updated');
             });
+            myDateSelect.val('select');
         } else {
             myDateSelect.find("option").remove();
         }
@@ -98,6 +99,7 @@ if ($('#lbdt').length > 0) {
                 $('<option></option>').val(val).html(text)
             );
         });
+        myTimeSelect.val('select');
         console.log('Time updated');
     });
 
