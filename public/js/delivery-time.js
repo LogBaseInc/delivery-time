@@ -51,6 +51,12 @@ if ($('#lbdt').length > 0) {
     );
     myCitySelect.prop("disabled", true);
 
+
+    /*
+     * Enabled the button which is by default disabled on page load
+     */
+    $('#checkout').prop('disabled', false);
+
 	//Validation
 	$('#checkout').click(function(event) {
 	  	console.log('Checkout button clicked');
