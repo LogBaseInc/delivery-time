@@ -57,7 +57,7 @@ function getDates() {
 
     delivery['date'] = curDate + dayCount;
 
-    if (curhour > firstOrderTime && dayCount > 0) {
+    if (curhour > firstOrderTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
         delivery['hour'] = firstOrderTime + prepTime + 1;
