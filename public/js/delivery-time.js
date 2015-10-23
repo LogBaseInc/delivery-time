@@ -70,8 +70,6 @@ if ($('#lbdt').length > 0) {
         if(myCitySelect.val().toString().indexOf("select") < 0) {
             console.log("Selected city");
             var dates = response.dates;
-            dates['select'] = "Select date";
-
             myDateSelect.find("option").remove();
 
             $.each(dates, function(val, text) {
@@ -80,7 +78,6 @@ if ($('#lbdt').length > 0) {
                 );
                 console.log('Days updated');
             });
-            myDateSelect.val('select');
         } else {
             myDateSelect.find("option").remove();
         }
@@ -92,14 +89,18 @@ if ($('#lbdt').length > 0) {
     myDateSelect.change(function(event) {
 
         myTimeSelect.find("option").remove();
-        var timeOptions = response.data.config.slots;
+        var timeOptions = null;
         timeOptions['select'] = "Select time slot"
+
+        $.each(response.data.config.slots, function(val, text){
+            timeOptions[val] = text;
+        });
+
         $.each(timeOptions, function(val, text) {
             myTimeSelect.append(
                 $('<option></option>').val(val).html(text)
             );
         });
-        myTimeSelect.val('select');
         console.log('Time updated');
     });
 
