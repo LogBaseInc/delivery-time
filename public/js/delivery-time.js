@@ -101,7 +101,7 @@ if ($('#lbdt').length > 0) {
 
         myTimeSelect.find("option").remove();
 
-        if(myDateSelect.val().toString().indexOf("select") < 0) {
+        if(myDateSelect.text().toString().indexOf("Select") < 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
