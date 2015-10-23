@@ -68,7 +68,8 @@ if ($('#lbdt').length > 0) {
 	  		event.preventDefault();
 	  		console.log('Prevented default');
 		} else {
-            var notes = myCitySelect.val() + " | " + myDateSelect.val() + " | " + myTimeSelect.val();
+            var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
+                + " | " + $('#lbdt-slots option:selected').text();
             jsonData['note'] = notes;
             $.post('cart.js', jsonData);
 			console.log('Usual flow');
