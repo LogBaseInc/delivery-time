@@ -84,11 +84,6 @@ if ($('#lbdt').length > 0) {
                 );
                 console.log('Days updated');
             });
-
-            /*
-             * Set select to the be the first option
-             */
-            $("#lbdt-date > option:first").attr("select", 0);
         } else {
             myDateSelect.find("option").remove();
         }
@@ -101,7 +96,7 @@ if ($('#lbdt').length > 0) {
 
         myTimeSelect.find("option").remove();
 
-        if(myDateSelect.text().toString().indexOf("Select") < 0) {
+        if($("#lbdt-date option:selected").text().indexOf("Select") < 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
