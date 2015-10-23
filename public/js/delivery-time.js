@@ -54,7 +54,12 @@ function getDates() {
         workingHoursLeftForDay = workingHoursPerDay;
     }
     delivery['date'] = curDate + dayCount;
-    delivery['hour'] = firstOrderTime + prepTime;
+
+    if (curhour > firstOrderTime) {
+        delivery['hour'] = curhour + prepTime;
+    } else {
+        delivery['hour'] = firstOrderTime + prepTime;
+    }
 
     console.log(delivery['date'], delivery['hour']);
 
