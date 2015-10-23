@@ -31,8 +31,7 @@ function getIST() {
     return ISTTime;
 }
 
-function getDates() {
-
+function updateFirstPossibleDeliveryDate() {
     dayCount = 0
     istDate = getIST();
     curDate = istDate.getDate();
@@ -44,7 +43,6 @@ function getDates() {
 
     workingHoursLeftForDay = workStopTime - curhour;
 
-    console.log(workingHoursLeftForDay);
     while (prepTime > workingHoursLeftForDay) {
         prepTime = prepTime - workingHoursLeftForDay;
         dayCount++;
@@ -55,17 +53,22 @@ function getDates() {
     }
 
     delivery['date'] = curDate + dayCount;
-
     if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
         delivery['hour'] = workStartTime + prepTime + 1;
     }
+}
 
-    console.log(delivery['date'], delivery['hour']);
-
+function getDates() {
     if (response.data.config.defaultDateTimeChecks) {
-        return response.dates;
+        dates = {};
+        $.each(response.dates, function(val, text) {
+            if(parseInt(text.match(/\d+/)[0]) >= delivery['date']) {
+                dates[val] = text;
+            }
+        });
+        return dates;
     }
 }
 
@@ -97,6 +100,7 @@ if ($('#lbdt').length > 0) {
         console.log(response);
         myCitySelect.prop("disabled", false);
         loadCityValues();
+        updateFirstPossibleDeliveryDate();
     });
 
     console.log('This is the cart page');
