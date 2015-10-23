@@ -81,9 +81,10 @@ function getSlots(selectedItem) {
         if (selDate == delivery['date']) {
             slots = {};
             $.each(response.data.config.slots, function(val, text) {
-               if (parseInt(text) >= delivery['hour']) {
-                   slots[val] = text;
-               }
+                console.log(val, text);
+                if (parseInt(text) >= delivery['hour']) {
+                    slots[val] = text;
+                }
             });
         } else {
             return response.data.config.slots;
