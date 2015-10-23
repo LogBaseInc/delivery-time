@@ -42,6 +42,9 @@ function updateFirstPossibleDeliveryDate() {
     prepTime = response.data.config.cakeTypes[type].prepTime[variant];
 
     workingHoursLeftForDay = workStopTime - curhour;
+    if (workingHoursLeftForDay < 0) {
+        workingHoursLeftForDay = 0;
+    }
 
     while (prepTime > workingHoursLeftForDay) {
         prepTime = prepTime - workingHoursLeftForDay;
@@ -72,9 +75,19 @@ function getDates() {
     }
 }
 
-function getSlots() {
+function getSlots(selectedItem) {
+    selDate = parseInt(selectedItem.match(/\d+/)[0]);
     if (response.data.config.defaultDateTimeChecks) {
-        return response.data.config.slots;
+        if (selDate == delivery['date']) {
+            slots = {};
+            $.each(response.data.config.slots, function(val, text) {
+               if (parseInt(text) >= delivery['hour']) {
+                   slots[val] = text;
+               }
+            });
+        } else {
+            return response.data.config.slots;
+        }
     }
 }
 
@@ -189,7 +202,7 @@ if ($('#lbdt').length > 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
-            $.each(getSlots(), function(val, text){
+            $.each(getSlots($('#lbdt-date option:selected').text()), function(val, text){
                 timeOptions[val] = text;
             });
 
