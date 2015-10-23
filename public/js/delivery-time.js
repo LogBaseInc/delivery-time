@@ -72,7 +72,7 @@ if ($('#lbdt').length > 0) {
 
             myDateSelect.find("option").remove();
             var dates = {};
-            dates['select'] = "Select date";
+            dates[0] = "Select date";
 
             $.each(response.dates, function(val, text){
                 dates[val] = text;
