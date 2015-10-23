@@ -57,14 +57,13 @@ function getDates() {
 
     delivery['date'] = curDate + dayCount;
 
-    if (curhour > firstOrderTime) {
+    if (curhour > firstOrderTime && dayCount > 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
         delivery['hour'] = firstOrderTime + prepTime + 1;
     }
 
     console.log(delivery['date'], delivery['hour']);
-
 
     if (response.data.config.defaultDateTimeChecks) {
         return response.dates;
