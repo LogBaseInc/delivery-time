@@ -84,6 +84,11 @@ if ($('#lbdt').length > 0) {
                 );
                 console.log('Days updated');
             });
+
+            /*
+             * Set select to the be the first option
+             */
+            $("#lbdt-date > option:first").attr("select", 0);
         } else {
             myDateSelect.find("option").remove();
         }
