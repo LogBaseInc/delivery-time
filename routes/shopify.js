@@ -18,7 +18,6 @@ router.get("/dates", function(req, res) {
 
         var maxDays = data.config.maxDaysLimitForOrders;
         console.log(maxDays);
-        dates['select'] = "Select date";
         while (maxDays) {
             var d = Date.today().addDays(maxDays - 1);
             dates[maxDays] = d.toString("MMM dd,yyyy");
