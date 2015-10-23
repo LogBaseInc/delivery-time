@@ -1,5 +1,11 @@
 console.log('Delivery Time JS loaded');
 var response = null;
+var delivery = {
+    date: 0,
+    hour: 0
+}
+variant = 'egg';
+type = 'xpress';
 
 function loadCityValues() {
     city = {
@@ -15,7 +21,6 @@ function loadCityValues() {
         );
         console.log('City updated');
     });
-    //myCitySelect.val('select').prop("disabled", true);
 }
 
 function getIST() {
@@ -27,26 +32,40 @@ function getIST() {
 }
 
 function getDates() {
-    date = getIST();
+
+    istDate = getIST();
+    curDate = istDate.getDate();
+    curhour = istDate.getHours();
+    lastOrderTime = getlastOrderTimeSlot();
+    prepTime = response.data.config.cakeTypes[type].prepTime[variant];
+    if (prepTime + curhour >= lastOrderTime) {
+        delivery['date'] = curDate + 1;
+    } else {
+        delivery['date'] = curDate;
+    }
+    console.log(delivery['date'], curDate, curhour, prepTime, lastOrderTime);
+
     if (response.data.config.defaultDateTimeChecks) {
         return response.dates;
     }
 }
 
 function getSlots() {
-    console.log(getSortedTimeSlots());
     if (response.data.config.defaultDateTimeChecks) {
         return response.data.config.slots;
     }
 }
 
-function getSortedTimeSlots() {
+function getlastOrderTimeSlot() {
     slots = [];
     $.each(response.data.config.slots, function(val, text) {
         slots.push(parseInt(val))
     });
-    console.log(slots);
-    return slots.sort();
+
+    /*
+     * The last order will always be midnight order. skip it
+     */
+    return slots.sort()[slots.length - 2];
 }
 
 if ($('#lbdt').length > 0) {
