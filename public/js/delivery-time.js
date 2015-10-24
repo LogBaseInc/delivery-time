@@ -4,8 +4,12 @@ var delivery = {
     date: 0,
     hour: 0
 }
-variant = 'egg';
-type = 'xpress';
+
+var ds = {
+    cartJson: null,
+    cakeVariant: null,
+    cakeType: null
+}
 
 function loadCityValues() {
     city = {
@@ -39,7 +43,7 @@ function updateFirstPossibleDeliveryDate() {
     workStartTime = response.data.config.workStartTime;
     workingHoursPerDay = response.data.config.workingHoursPerDay;
     workStopTime = workStartTime + workingHoursPerDay;
-    prepTime = response.data.config.cakeTypes[type].prepTime[variant];
+    prepTime = response.data.config.cakeTypes[ds['cakeType']].prepTime[ds['cakeVariant']];
 
     workingHoursLeftForDay = workStopTime - curhour;
     if (workingHoursLeftForDay < 0) {
@@ -62,6 +66,7 @@ function updateFirstPossibleDeliveryDate() {
         delivery['hour'] = workStartTime + prepTime + 1;
     }
 }
+
 
 function getDates() {
     if (response.data.config.defaultDateTimeChecks) {
@@ -94,16 +99,35 @@ function getSlots(selectedItem) {
     }
 }
 
-function getSortedOrderTimeSlots() {
-    slots = [];
-    $.each(response.data.config.slots, function(val, text) {
-        slots.push(parseInt(val))
+function updateCakeDs() {
+    $.getJSON( 'cart.js', function( json ) {
+        ds['cartJson'] = json;
     });
 
+    types = [];
+    variants = [];
+
     /*
-     * The last order will always be midnight order. skip it
+     * Get type and variant
      */
-    return slots.sort();
+    $.each(ds['cartJson']['items'], function(index, item) {
+       types.push(item['product_type'].toLowerCase());
+        variants.push(item['properties']['Egg/Eggless'].toLowerCase());
+    });
+
+    if (variants.toString().indexOf("eggless") >= 0) {
+        ds['cakeVariant'] = 'eggless';
+    } else {
+        ds['cakeVariant'] = 'egg';
+    }
+
+    if (types.toString().indexOf("handcrafted") >= 0) {
+        ds['cakeType'] = 'handcrafted';
+    } else if(types.toString().indexOf("signature") >= 0) {
+        ds['cakeType'] = 'signature';
+    } else {
+        ds['cakeType'] = 'xpress';
+    }
 }
 
 if ($('#lbdt').length > 0) {
@@ -116,6 +140,7 @@ if ($('#lbdt').length > 0) {
         console.log(response);
         myCitySelect.prop("disabled", false);
         loadCityValues();
+        updateCakeDs();
         updateFirstPossibleDeliveryDate();
     });
 
@@ -124,13 +149,6 @@ if ($('#lbdt').length > 0) {
     var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
     var myCitySelect = $('#lbdt-city');
-
-    var jsonData = null;
-	$.getJSON( 'cart.js', function( json ) {
-        jsonData = json;
-	  	console.log( 'JSON Data: ' + json );
-	});
-
 
     /*
      * Disable all select elements while backed returns the data
@@ -160,8 +178,8 @@ if ($('#lbdt').length > 0) {
 		} else {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
                 + " | " + $('#lbdt-slots option:selected').text();
-            jsonData['note'] = notes;
-            $.post('cart.js', jsonData);
+            ds['cartJson']['note'] = notes;
+            $.post('cart.js', ds['cartJson']);
 			console.log('Usual flow');
 		}
 	});
