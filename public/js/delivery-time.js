@@ -102,33 +102,32 @@ function getSlots(selectedItem) {
 function updateCakeDs() {
     $.getJSON( 'cart.js', function( json ) {
         ds['cartJson'] = json;
+        types = [];
+        variants = [];
+
+        console.log(ds['cartJson']['items']);
+        /*
+         * Get type and variant
+         */
+        $.each(ds['cartJson']['items'], function(index, item) {
+            types.push(item['product_type'].toLowerCase());
+            variants.push(item['properties']['Egg/Eggless'].toLowerCase());
+        });
+
+        if (variants.toString().indexOf("eggless") >= 0) {
+            ds['cakeVariant'] = 'eggless';
+        } else {
+            ds['cakeVariant'] = 'egg';
+        }
+
+        if (types.toString().indexOf("handcrafted") >= 0) {
+            ds['cakeType'] = 'handcrafted';
+        } else if(types.toString().indexOf("signature") >= 0) {
+            ds['cakeType'] = 'signature';
+        } else {
+            ds['cakeType'] = 'xpress';
+        }
     });
-
-    types = [];
-    variants = [];
-
-    console.log(ds['cartJson']['items']);
-    /*
-     * Get type and variant
-     */
-    $.each(ds['cartJson']['items'], function(index, item) {
-       types.push(item['product_type'].toLowerCase());
-        variants.push(item['properties']['Egg/Eggless'].toLowerCase());
-    });
-
-    if (variants.toString().indexOf("eggless") >= 0) {
-        ds['cakeVariant'] = 'eggless';
-    } else {
-        ds['cakeVariant'] = 'egg';
-    }
-
-    if (types.toString().indexOf("handcrafted") >= 0) {
-        ds['cakeType'] = 'handcrafted';
-    } else if(types.toString().indexOf("signature") >= 0) {
-        ds['cakeType'] = 'signature';
-    } else {
-        ds['cakeType'] = 'xpress';
-    }
 }
 
 if ($('#lbdt').length > 0) {
