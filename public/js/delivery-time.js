@@ -107,6 +107,7 @@ function updateCakeDs() {
     types = [];
     variants = [];
 
+    console.log(ds['cartJson']['items']);
     /*
      * Get type and variant
      */
