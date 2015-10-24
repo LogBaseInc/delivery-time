@@ -110,8 +110,14 @@ function updateCakeDs() {
          * Get type and variant
          */
         $.each(ds['cartJson']['items'], function(index, item) {
-            types.push(item['product_type'].toLowerCase());
-            variants.push(item['properties']['Egg/Eggless'].toLowerCase());
+            type = item['product_type'];
+            if (type != undefined && type != null) {
+                types.push(type.toLowerCase());
+            }
+            variant = item['properties']['Egg/Eggless'];
+            if (variant != undefined && variant != null) {
+                variants.push(variant.toLowerCase());
+            }
         });
 
         if (variants.toString().indexOf("eggless") >= 0) {
@@ -127,6 +133,8 @@ function updateCakeDs() {
         } else {
             ds['cakeType'] = 'xpress';
         }
+
+        updateFirstPossibleDeliveryDate();
     });
 }
 
@@ -141,7 +149,6 @@ if ($('#lbdt').length > 0) {
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
-        updateFirstPossibleDeliveryDate();
     });
 
     console.log('This is the cart page');
