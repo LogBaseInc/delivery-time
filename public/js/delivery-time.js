@@ -114,9 +114,12 @@ function updateCakeDs() {
             if (type != undefined && type != null) {
                 types.push(type.toLowerCase());
             }
-            variant = item['properties']['Egg/Eggless'];
-            if (variant != undefined && variant != null) {
-                variants.push(variant.toLowerCase());
+            prop = item['properties'];
+            if (prop != null) {
+                variant = item['properties']['Egg/Eggless'];
+                if (variant != undefined && variant != null) {
+                    variants.push(variant.toLowerCase());
+                }
             }
         });
 
