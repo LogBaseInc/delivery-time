@@ -18,10 +18,11 @@ router.get("/dates", function(req, res) {
 
         var maxDays = data.config.maxDaysLimitForOrders;
         console.log(maxDays);
-        while (maxDays) {
-            var d = Date.today().addDays(maxDays - 1);
-            dates[maxDays] = d.toString("dddd  MMM  dd, yyyy");
-            maxDays--;
+        var dayCount = 0
+        while (dayCount < maxDays) {
+            var d = Date.today().addDays(dayCount);
+            dates[String(d.getMonth()) + " " + String(dayCount + 1)] = d.toString("dddd  MMM  dd, yyyy");
+            dayCount++;
         }
 
         var response = {
