@@ -72,7 +72,8 @@ function getDates() {
     if (response.data.config.defaultDateTimeChecks) {
         dates = {};
         $.each(response.dates, function(val, text) {
-            if(parseInt(text.match(/\d+/)[0]) >= delivery['date']) {
+            if(parseInt(text.match(/\d+/)[0]) >= delivery['date'] ||
+                parseInt(val) > getIST().getMonth()) {
                 dates[val] = text;
             }
         });
