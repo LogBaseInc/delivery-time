@@ -33,6 +33,40 @@ router.get("/dates", function(req, res) {
     });
 });
 
+router.get("/order/:city/:date/:slot", function(req, res) {
+    var date = req.params.date;
+    var city = req.params.city;
+    var slot = req.params.slot;
+    var firebase_url = "https://lb-date-picker.firebaseio.com/";
+    var my_firebase_ref = new Firebase(firebase_url + city + "/" + date);
+
+    my_firebase_ref.once("value", function(snapshot) {
+        slots = snapshot.exportVal();
+
+        if (slots == null) {
+            slots = {};
+            slotVal = 1;
+        } else {
+            slotVal = slots[slot];
+            if (slotVal == null) {
+                slotVal = 1;
+            } else {
+                slotVal++;
+            }
+        }
+
+        slots[slot] = slotVal;
+
+        my_firebase_ref.update(slots , function() {
+            console.log("Count updated");
+        });
+        res.status(200).end();
+    }, function (err) {
+        console.log(err);
+        res.send(200).end;
+    })
+
+});
 
 // define the home page route
 router.get('/:shop', function(req, res) {
