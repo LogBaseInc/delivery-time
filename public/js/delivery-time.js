@@ -1,14 +1,15 @@
 console.log('Delivery Time JS loaded');
-var response = null;
+var lbDatePicker = null;
 var delivery = {
     date: 0,
     hour: 0
 }
 
-var ds = {
+var shopifyDs = {
     cartJson: null,
     cakeVariant: null,
-    cakeType: null
+    cakeType: null,
+    city: null
 }
 
 function loadCityValues() {
@@ -40,10 +41,10 @@ function updateFirstPossibleDeliveryDate() {
     istDate = getIST();
     curDate = istDate.getDate();
     curhour = istDate.getHours();
-    workStartTime = response.data.config.workStartTime;
-    workingHoursPerDay = response.data.config.workingHoursPerDay;
+    workStartTime = lbDatePicker.data.config.workStartTime;
+    workingHoursPerDay = lbDatePicker.data.config.workingHoursPerDay;
     workStopTime = workStartTime + workingHoursPerDay;
-    prepTime = response.data.config.cakeTypes[ds['cakeType']].prepTime[ds['cakeVariant']];
+    prepTime = lbDatePicker.data.config.cakeTypes[shopifyDs['cakeType']].prepTime[shopifyDs['cakeVariant']];
 
     workingHoursLeftForDay = workStopTime - curhour;
     if (workingHoursLeftForDay < 0) {
@@ -69,9 +70,9 @@ function updateFirstPossibleDeliveryDate() {
 
 
 function getDates() {
-    if (response.data.config.defaultDateTimeChecks) {
+    if (lbDatePicker.data.config.defaultDateTimeChecks) {
         dates = {};
-        $.each(response.dates, function(val, text) {
+        $.each(lbDatePicker.dates, function(val, text) {
             if(parseInt(text.match(/\d+/)[0]) >= delivery['date'] ||
                 parseInt(val) > getIST().getMonth()) {
                 dates[val] = text;
@@ -83,34 +84,43 @@ function getDates() {
 
 function getSlots(selectedItem) {
     selDate = parseInt(selectedItem.match(/\d+/)[0]);
-    if (response.data.config.defaultDateTimeChecks) {
+
+    if (lbDatePicker.data.config.enableSlotChecks) {
+        slots = {};
+        date = getIST();
+        slotDateFormat = date.getYear().toString() + date.getMonth().toString() + date.getDate().toString();
+        console.log(slotDateFormat);
+        slots = lbDatePicker.data.config.slots
+    } else {
+        slots = lbDatePicker.data.config.slots
+    }
+    if (lbDatePicker.data.config.defaultDateTimeChecks) {
         if (selDate == delivery['date']) {
-            slots = {};
-            configSlots = response.data.config.slots;
-            $.each(configSlots, function(val, text) {
+            selectedSlots = {};
+            $.each(slots, function(val, text) {
                 console.log(val, text);
                 if (parseInt(val) >= delivery['hour']) {
-                    slots[val] = text;
+                    selectedSlots[val] = text;
                 }
             });
-            return slots;
+            return selectedSlots;
         } else {
-            return response.data.config.slots;
+            return slots;
         }
     }
 }
 
 function updateCakeDs() {
     $.getJSON( 'cart.js', function( json ) {
-        ds['cartJson'] = json;
+        shopifyDs['cartJson'] = json;
         types = [];
         variants = [];
 
-        console.log(ds['cartJson']['items']);
+        console.log(shopifyDs['cartJson']['items']);
         /*
          * Get type and variant
          */
-        $.each(ds['cartJson']['items'], function(index, item) {
+        $.each(shopifyDs['cartJson']['items'], function(index, item) {
             type = item['product_type'];
             if (type != undefined && type != null) {
                 types.push(type.toLowerCase());
@@ -129,17 +139,17 @@ function updateCakeDs() {
         });
 
         if (variants.toString().indexOf("eggless") >= 0) {
-            ds['cakeVariant'] = 'eggless';
+            shopifyDs['cakeVariant'] = 'eggless';
         } else {
-            ds['cakeVariant'] = 'egg';
+            shopifyDs['cakeVariant'] = 'egg';
         }
 
         if (types.toString().indexOf("handcrafted") >= 0) {
-            ds['cakeType'] = 'handcrafted';
+            shopifyDs['cakeType'] = 'handcrafted';
         } else if(types.toString().indexOf("signature") >= 0) {
-            ds['cakeType'] = 'signature';
+            shopifyDs['cakeType'] = 'signature';
         } else {
-            ds['cakeType'] = 'xpress';
+            shopifyDs['cakeType'] = 'xpress';
         }
 
         updateFirstPossibleDeliveryDate();
@@ -152,8 +162,8 @@ if ($('#lbdt').length > 0) {
      * Fetch available dates from backend
      */
     $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
-        response = data;
-        console.log(response);
+        lbDatePicker = data;
+        console.log(lbDatePicker);
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
@@ -193,8 +203,8 @@ if ($('#lbdt').length > 0) {
 		} else {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
                 + " | " + $('#lbdt-slots option:selected').text();
-            ds['cartJson']['note'] = notes;
-            $.post('cart.js', ds['cartJson']);
+            shopifyDs['cartJson']['note'] = notes;
+            $.post('cart.js', shopifyDs['cartJson']);
 			console.log('Usual flow');
 		}
 	});
@@ -205,7 +215,9 @@ if ($('#lbdt').length > 0) {
     myCitySelect.change(function(event) {
 
         if(myCitySelect.val().toString().indexOf("select") < 0) {
-            console.log("Selected city");
+
+            shopifyDs['city'] = myCitySelect.val();
+            console.log("Selected city - " + shopifyDs['city']);
 
             myDateSelect.find("option").remove();
             var dates = {};

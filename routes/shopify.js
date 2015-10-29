@@ -85,6 +85,7 @@ router.get('/:shop', function(req, res) {
 	res.redirect(auth_url);
 });
 
+
 router.get('/oauth/callback/', function(req, res) {
 	var code = req.query.code;
 	var shop = req.query.shop;
