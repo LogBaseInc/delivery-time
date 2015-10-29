@@ -33,6 +33,27 @@ router.get("/dates", function(req, res) {
     });
 });
 
+function removeOldOrders(fburl, city) {
+    // remove old values
+    var my_firebase_ref = new Firebase(fburl + city);
+    my_firebase_ref.once("value", function(snapshot) {
+        var dates = snapshot.exportVal();
+
+        if (dates != null) {
+            var d = Date.today().addDays(-1);
+            var curDate = parseInt(d.toString("yyyyMMdd"));
+            for (var key in dates) {
+                if (parseInt(key) < curDate) {
+                    dates[key] = null;
+                }
+            }
+            my_firebase_ref.update(dates , function() {
+                console.log("Date updated");
+            });
+        }
+    });
+
+}
 router.get("/order", function(req, res) {
     var date = req.query.date;
     var city = req.query.city;
@@ -46,7 +67,7 @@ router.get("/order", function(req, res) {
 
         if (slots == null) {
             slots = {};
-            slotVal = 1;
+            var slotVal = 1;
         } else {
             slotVal = slots[slot];
             if (slotVal == null) {
@@ -58,14 +79,17 @@ router.get("/order", function(req, res) {
 
         slots[slot] = slotVal;
 
+        console.log(slots);
         my_firebase_ref.update(slots , function() {
             console.log("Count updated");
         });
+        removeOldOrders(firebase_url, city);
         res.status(200).end();
     }, function (err) {
         console.log(err);
         res.send(200).end;
     })
+
 
 });
 
