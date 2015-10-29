@@ -33,7 +33,7 @@ router.get("/dates", function(req, res) {
     });
 });
 
-router.get("/order", function(req, res) {
+router.post("/order", function(req, res) {
     console.log(req.path);
     var tokens = req.path.split("-");
     var date = "20151101";//tokens[2]

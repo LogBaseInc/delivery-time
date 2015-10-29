@@ -202,7 +202,7 @@ if ($('#lbdt').length > 0) {
         updateCakeDs();
     });
     var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order";
-    $.get( url, function( data ) {});
+    $.post(url);
 
 
     var myDateSelect = $('#lbdt-date');
