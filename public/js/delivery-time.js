@@ -116,7 +116,6 @@ function getSlots(selectedDate) {
     var selDate = parseInt(date);
 
     if (lbDatePicker.data.config.enableSlotChecks) {
-        date = getIST();
         slots = getFreeSlotsForTheDay(date, month, year);
     } else {
         slots = lbDatePicker.data.config.slots
