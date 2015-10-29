@@ -227,7 +227,8 @@ if ($('#lbdt').length > 0) {
 	$('#checkout').click(function(event) {
 	  	if(myDateSelect.val() == 0 ||
             myCitySelect.val() == 'select' ||
-            myTimeSelect.val() == 'select') {
+            myTimeSelect.val() == 'select' ||
+            myCitySelect.val() == 'loading') {
 	  		event.preventDefault();
 		} else {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
