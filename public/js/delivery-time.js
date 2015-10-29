@@ -88,13 +88,14 @@ function getDates() {
             }
         });
         // TODO - need to handle case where we don't have a free slot at all
+        console.log(dates);
         return dates;
     }
 }
 
 function getFreeSlotsForTheDay(date, month, year) {
     var slots = {};
-    var slotDateFormat = year.toString() + month.toString + date.toString();
+    var slotDateFormat = year.toString() + month.toString() + date.toString();
     console.log(slotDateFormat);
     $.each(lbDatePicker.data.config.slots, function(val, text) {
         existingOrders = lbDatePicker.data[shopifyDs['city']][val];
@@ -108,7 +109,7 @@ function getFreeSlotsForTheDay(date, month, year) {
 
 function getSlots(selectedDate) {
     // date format - "yyyy mm dd"
-    var tokens = val.split(" ");
+    var tokens = selectedDate.split(" ");
     var year = tokens[0];
     var month = tokens[1];
     var date = tokens[2];
@@ -129,8 +130,10 @@ function getSlots(selectedDate) {
                     selectedSlots[val] = text;
                 }
             });
+            console.log(selectedSlots)
             return selectedSlots;
         } else {
+            console.log(slots);
             return slots;
         }
     }
