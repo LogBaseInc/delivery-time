@@ -98,9 +98,15 @@ function getFreeSlotsForTheDay(date, month, year) {
     var slotDateFormat = year.toString() + month.toString() + date.toString();
     console.log(slotDateFormat);
     $.each(lbDatePicker.data.config.slots, function(val, text) {
-        existingOrders = lbDatePicker.data[shopifyDs['city']][val];
-        if (existingOrders == null || existingOrders < 3) {
+        var slotsForTheDay = lbDatePicker.data[shopifyDs['city']][slotDateFormat];
+
+        if (slotsForTheDay == null || slotsForTheDay == undefined) {
             slots[val] = text
+        } else {
+            var existingOrders = slotsForTheDay[val];
+            if (existingOrders == null || existingOrders < 3) {
+                slots[val] = text
+            }
         }
     });
     return slots;
