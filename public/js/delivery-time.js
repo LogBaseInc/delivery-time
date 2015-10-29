@@ -88,7 +88,10 @@ function getSlots(selectedItem) {
     if (lbDatePicker.data.config.enableSlotChecks) {
         slots = {};
         date = getIST();
-        slotDateFormat = date.getYear().toString() + date.getMonth().toString() + date.getDate().toString();
+        month = "0" + date.getMonth().toString();
+        day = "0" + date.getDate().toString();
+        slotDateFormat = date.getFullYear().toString() + month.substring(month.length-2, month.length) +
+            day.substring(day.length-2, day.length);
         console.log(slotDateFormat);
         slots = lbDatePicker.data.config.slots
     } else {
