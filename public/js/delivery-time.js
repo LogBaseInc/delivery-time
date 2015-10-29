@@ -238,7 +238,8 @@ if ($('#lbdt').length > 0) {
             var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order/" +
                 shopifyDs['city'] + "/" + myDateSelect.val().split(" ").join("") + "/" + myTimeSelect.val();
             $.get( url, function( data ) {});
-		}
+            event.preventDefault();
+        }
 	});
 
     /*
