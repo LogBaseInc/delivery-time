@@ -201,6 +201,10 @@ if ($('#lbdt').length > 0) {
         loadCityValues();
         updateCakeDs();
     });
+    var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order/" +
+        "coimbatore" + "/" + "20151031" + "/" + "12:00";
+    $.get( url, function( data ) {});
+
 
     var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
@@ -234,7 +238,7 @@ if ($('#lbdt').length > 0) {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
-            //$.post('cart.js', shopifyDs['cartJson']);
+            $.post('cart.js', shopifyDs['cartJson']);
             var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order/" +
                 shopifyDs['city'] + "/" + myDateSelect.val().split(" ").join("") + "/" + myTimeSelect.val();
             $.get( url, function( data ) {});
