@@ -135,6 +135,9 @@ function updateCakeDs() {
                     variant = item['variant_options'].toString();
                     variants.push(variant.toLowerCase());
                 }
+            } else {
+                variant = item['variant_options'].toString();
+                variants.push(variant.toLowerCase());
             }
         });
 
