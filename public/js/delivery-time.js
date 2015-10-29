@@ -242,8 +242,14 @@ if ($('#lbdt').length > 0) {
                 date: myDateSelect.val().split(" ").join(""),
                 slot: myTimeSelect.val()
             };
-            console.log(postData);
-            $.post( url, postData);
+            $.ajax({
+                url:url,
+                type:"POST",
+                data:postData,
+                contentType:"application/json; charset=utf-8",
+                dataType:"json",
+                success: function(){}
+            })
             event.preventDefault();
         }
 	});
