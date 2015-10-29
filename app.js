@@ -22,6 +22,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.text());
 
 //Serve static content
 app.use(express.static('public'));
