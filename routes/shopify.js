@@ -34,6 +34,7 @@ router.get("/dates", function(req, res) {
 });
 
 router.post("/order", function(req, res) {
+    console.log(req.body);
     var date = req.body.date;
     var city = req.body.city;
     var slot = req.body.slot;

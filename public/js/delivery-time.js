@@ -242,6 +242,7 @@ if ($('#lbdt').length > 0) {
                 date: myDateSelect.val().split(" ").join(""),
                 slot: myTimeSelect.val()
             };
+            console.log(postData);
             $.post( url, postData);
             event.preventDefault();
         }
