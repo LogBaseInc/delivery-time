@@ -236,13 +236,11 @@ if ($('#lbdt').length > 0) {
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
             $.post('cart.js', shopifyDs['cartJson']);
-            var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order";
-            var postData = {
-                city: shopifyDs['city'],
-                date: myDateSelect.val().split(" ").join(""),
-                slot: myTimeSelect.val()
-            };
-            $.post(url, postData);
+            var query = "?city=" + shopifyDs['city'] +
+                "&date=" + myDateSelect.val().split(" ").join("") +
+                "&slot=" + myTimeSelect.val();
+            var url = "/apps/order" + query;
+            $.get(url, function(data){});
             event.preventDefault();
         }
 	});

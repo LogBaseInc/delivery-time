@@ -33,12 +33,10 @@ router.get("/dates", function(req, res) {
     });
 });
 
-router.post("/order", function(req, res) {
-    console.log(req.body);
-    var body = JSON.parse(req.body);
-    var date = body.date;
-    var city = body.city;
-    var slot = body.slot;
+router.get("/order", function(req, res) {
+    var date = req.query.date;
+    var city = req.query.city;
+    var slot = req.query.slot;
     console.log(date, city, slot);
     var firebase_url = "https://lb-date-picker.firebaseio.com/";
     var my_firebase_ref = new Firebase(firebase_url + city + "/" + date);
