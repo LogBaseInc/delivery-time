@@ -201,8 +201,6 @@ if ($('#lbdt').length > 0) {
         loadCityValues();
         updateCakeDs();
     });
-    var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order";
-    $.post(url);
 
 
     var myDateSelect = $('#lbdt-date');
@@ -238,9 +236,13 @@ if ($('#lbdt').length > 0) {
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
             $.post('cart.js', shopifyDs['cartJson']);
-            var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order-" +
-                shopifyDs['city'] + "-" + myDateSelect.val().split(" ").join("") + "-" + myTimeSelect.val();
-            $.get( url, function( data ) {});
+            var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order";
+            var postData = {
+                city: shopifyDs['city'],
+                date: myDateSelect.val().split(" ").join(""),
+                slot: myTimeSelect.val()
+            };
+            $.post( url, postData);
             event.preventDefault();
         }
 	});

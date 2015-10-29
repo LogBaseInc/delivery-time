@@ -34,11 +34,9 @@ router.get("/dates", function(req, res) {
 });
 
 router.post("/order", function(req, res) {
-    console.log(req.path);
-    var tokens = req.path.split("-");
-    var date = "20151101";//tokens[2]
-    var city = "coimbatore";//tokens[1];
-    var slot = "12:00";//tokens[3];
+    var date = req.body.date;
+    var city = req.body.city;
+    var slot = req.body.slot;
     var firebase_url = "https://lb-date-picker.firebaseio.com/";
     var my_firebase_ref = new Firebase(firebase_url + city + "/" + date);
 
