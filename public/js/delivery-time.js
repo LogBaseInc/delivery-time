@@ -92,7 +92,6 @@ function getDates() {
 function getFreeSlotsForTheDay(date, month, year) {
     var slots = {};
     var slotDateFormat = year.toString() + month.toString() + date.toString();
-    console.log(slotDateFormat);
     $.each(lbDatePicker.data.config.slots, function(val, text) {
         // Check if we have data available for the city
         var slotsForTheDay = lbDatePicker.data[shopifyDs['city']];
@@ -148,7 +147,6 @@ function updateCakeDs() {
         var types = [];
         var variants = [];
 
-        console.log(shopifyDs['cartJson']['items']);
         /*
          * Get type and variant
          */
@@ -236,6 +234,9 @@ if ($('#lbdt').length > 0) {
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
             $.post('cart.js', shopifyDs['cartJson']);
+            var url = "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/order/" +
+                shopifyDs['city'] + "/" + myDateSelect.val().split(" ").join("") + "/" + myTimeSelect.val();
+            $.get( url, function( data ) {});
 		}
 	});
 
