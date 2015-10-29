@@ -1,5 +1,3 @@
-console.log('Delivery Time JS loaded');
-
 var lbDatePicker = null;
 var delivery = {
     date: 0,
@@ -25,7 +23,6 @@ function loadCityValues() {
         myCitySelect.append(
             $('<option></option>').val(val).html(text)
         );
-        console.log('City updated');
     });
 }
 
@@ -88,7 +85,6 @@ function getDates() {
             }
         });
         // TODO - need to handle case where we don't have a free slot at all
-        console.log(dates);
         return dates;
     }
 }
@@ -139,10 +135,8 @@ function getSlots(selectedDate) {
                     selectedSlots[val] = text;
                 }
             });
-            console.log(selectedSlots)
             return selectedSlots;
         } else {
-            console.log(slots);
             return slots;
         }
     }
@@ -210,8 +204,6 @@ if ($('#lbdt').length > 0) {
         updateCakeDs();
     });
 
-    console.log('This is the cart page');
-
     var myDateSelect = $('#lbdt-date');
 	var myTimeSelect = $('#lbdt-slots');
     var myCitySelect = $('#lbdt-city');
@@ -235,18 +227,15 @@ if ($('#lbdt').length > 0) {
 
 	//Validation
 	$('#checkout').click(function(event) {
-	  	console.log('Checkout button clicked');
 	  	if(myDateSelect.val() == 0 ||
             myCitySelect.val() == 'select' ||
             myTimeSelect.val() == 'select') {
 	  		event.preventDefault();
-	  		console.log('Prevented default');
 		} else {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
             $.post('cart.js', shopifyDs['cartJson']);
-			console.log('Usual flow');
 		}
 	});
 
@@ -258,7 +247,6 @@ if ($('#lbdt').length > 0) {
         if(myCitySelect.val().toString().indexOf("select") < 0) {
 
             shopifyDs['city'] = myCitySelect.val();
-            console.log("Selected city - " + shopifyDs['city']);
 
             myDateSelect.find("option").remove();
             var dates = {};
@@ -272,7 +260,6 @@ if ($('#lbdt').length > 0) {
                 myDateSelect.append(
                     $('<option></option>').val(val).html(text)
                 );
-                console.log('Days updated');
             });
         } else {
             myDateSelect.find("option").remove();
@@ -301,11 +288,7 @@ if ($('#lbdt').length > 0) {
                     $('<option></option>').val(val).html(text)
                 );
             });
-            console.log('Time updated');
         }
     });
-
-} else {
-	console.log('This is not the cart page');
 }
 
