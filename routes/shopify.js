@@ -21,7 +21,7 @@ router.get("/dates", function(req, res) {
         var dayCount = 0
         while (dayCount < maxDays) {
             var d = Date.today().addDays(dayCount);
-            dates[String(d.getMonth()) + " " + String(dayCount + 1)] = d.toString("dddd  MMM  dd, yyyy");
+            dates[d.toString("yyyy mm dd")] = d.toString("dddd  MMM  dd, yyyy");
             dayCount++;
         }
 

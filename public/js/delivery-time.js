@@ -1,4 +1,5 @@
 console.log('Delivery Time JS loaded');
+
 var lbDatePicker = null;
 var delivery = {
     date: 0,
@@ -13,7 +14,7 @@ var shopifyDs = {
 }
 
 function loadCityValues() {
-    city = {
+    var city = {
         select: "Select city",
         coimbatore: "Coimbatore",
         trichy: "Trichy"
@@ -37,16 +38,16 @@ function getIST() {
 }
 
 function updateFirstPossibleDeliveryDate() {
-    dayCount = 0
-    istDate = getIST();
-    curDate = istDate.getDate();
-    curhour = istDate.getHours();
-    workStartTime = lbDatePicker.data.config.workStartTime;
-    workingHoursPerDay = lbDatePicker.data.config.workingHoursPerDay;
-    workStopTime = workStartTime + workingHoursPerDay;
-    prepTime = lbDatePicker.data.config.cakeTypes[shopifyDs['cakeType']].prepTime[shopifyDs['cakeVariant']];
+    var dayCount = 0
+    var istDate = getIST();
+    var curDate = istDate.getDate();
+    var curhour = istDate.getHours();
+    var workStartTime = lbDatePicker.data.config.workStartTime;
+    var workingHoursPerDay = lbDatePicker.data.config.workingHoursPerDay;
+    var workStopTime = workStartTime + workingHoursPerDay;
+    var prepTime = lbDatePicker.data.config.cakeTypes[shopifyDs['cakeType']].prepTime[shopifyDs['cakeVariant']];
 
-    workingHoursLeftForDay = workStopTime - curhour;
+    var workingHoursLeftForDay = workStopTime - curhour;
     if (workingHoursLeftForDay < 0) {
         workingHoursLeftForDay = 0;
     }
@@ -71,29 +72,51 @@ function updateFirstPossibleDeliveryDate() {
 
 function getDates() {
     if (lbDatePicker.data.config.defaultDateTimeChecks) {
-        dates = {};
+        var dates = {};
         $.each(lbDatePicker.dates, function(val, text) {
-            if(parseInt(text.match(/\d+/)[0]) >= delivery['date'] ||
-                parseInt(val) > getIST().getMonth()) {
-                dates[val] = text;
+            // key format - "yyyy mm dd"
+            var tokens = val.split(" ");
+            var year = tokens[0];
+            var month = tokens[1];
+            var date = tokens[2];
+
+            if(parseInt(date) >= delivery['date'] || parseInt(month) > getIST().getMonth()) {
+                var freeSlots = getFreeSlotsForTheDay(date, month, year);
+                if (freeSlots != {}) {
+                    dates[val] = text;
+                }
             }
         });
+        // TODO - need to handle case where we don't have a free slot at all
         return dates;
     }
 }
 
-function getSlots(selectedItem) {
-    selDate = parseInt(selectedItem.match(/\d+/)[0]);
+function getFreeSlotsForTheDay(date, month, year) {
+    var slots = {};
+    var slotDateFormat = year.toString() + month.toString + date.toString();
+    console.log(slotDateFormat);
+    $.each(lbDatePicker.data.config.slots, function(val, text) {
+        existingOrders = lbDatePicker.data[shopifyDs['city']][val];
+        if (existingOrders == null || existingOrders < 3) {
+            slots[val] = text
+        }
+    });
+    return slots;
+}
+
+
+function getSlots(selectedDate) {
+    // date format - "yyyy mm dd"
+    var tokens = val.split(" ");
+    var year = tokens[0];
+    var month = tokens[1];
+    var date = tokens[2];
+    var selDate = parseInt(date);
 
     if (lbDatePicker.data.config.enableSlotChecks) {
-        slots = {};
         date = getIST();
-        month = "0" + (date.getMonth() + 1).toString();
-        day = "0" + date.getDate().toString();
-        slotDateFormat = date.getFullYear().toString() + month.substring(month.length-2, month.length) +
-            day.substring(day.length-2, day.length);
-        console.log(slotDateFormat);
-        slots = lbDatePicker.data.config.slots
+        slots = getFreeSlotsForTheDay(date, month, year);
     } else {
         slots = lbDatePicker.data.config.slots
     }
@@ -116,8 +139,8 @@ function getSlots(selectedItem) {
 function updateCakeDs() {
     $.getJSON( 'cart.js', function( json ) {
         shopifyDs['cartJson'] = json;
-        types = [];
-        variants = [];
+        var types = [];
+        var variants = [];
 
         console.log(shopifyDs['cartJson']['items']);
         /*
@@ -257,7 +280,7 @@ if ($('#lbdt').length > 0) {
             var timeOptions = {};
             timeOptions['select'] = "Select time slot";
 
-            $.each(getSlots(selectedValue), function(val, text){
+            $.each(getSlots(myDateSelect.val()), function(val, text){
                 timeOptions[val] = text;
             });
 
