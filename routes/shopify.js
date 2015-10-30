@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 var shopifyAPI = require('shopify-node-api');
 var Firebase = require('firebase');
+var request = require('request');
 require("datejs");
-//var request = require('request');
 
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
