@@ -1,7 +1,8 @@
 var lbDatePicker = null;
 var delivery = {
     date: 0,
-    hour: 0
+    hour: 0,
+    month: 0
 }
 
 var shopifyDs = {
@@ -58,7 +59,8 @@ function updateFirstPossibleDeliveryDate() {
         workingHoursLeftForDay = workingHoursPerDay;
     }
 
-    delivery['date'] = curDate + dayCount;
+    delivery['date'] = istDate.addDays(dayCount).getDate();
+    delivery['month'] = istDate.addDays(dayCount).getMonth() + 1;
     if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
@@ -78,7 +80,8 @@ function getDates() {
             var date = tokens[2];
 
             console.log(date, delivery['date']);
-            if(parseInt(date) >= delivery['date'] || parseInt(month) > getIST().getMonth()) {
+            if ((parseInt(date) >= delivery['date'] && parseInt(month) >= delivery['month']) ||
+                parseInt(month) > delivery['month']) {
                 var freeSlots = getFreeSlotsForTheDay(date, month, year);
                 if (freeSlots != {}) {
                     dates[val] = text;
@@ -86,6 +89,7 @@ function getDates() {
             }
         });
         // TODO - need to handle case where we don't have a free slot at all
+        console.log(dates);
         return dates;
     }
 }
