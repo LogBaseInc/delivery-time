@@ -77,7 +77,7 @@ function getDates() {
             var month = tokens[1];
             var date = tokens[2];
 
-            console.log(date, delvier['date']);
+            console.log(date, delivery['date']);
             if(parseInt(date) >= delivery['date'] || parseInt(month) > getIST().getMonth()) {
                 var freeSlots = getFreeSlotsForTheDay(date, month, year);
                 if (freeSlots != {}) {
