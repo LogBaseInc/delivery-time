@@ -235,6 +235,8 @@ if ($('#lbdt').length > 0) {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
+            shopifyDs['cartJson']['delivery_date'] = myDateSelect.val();
+            shopifyDs['cartJson']['delivery_time'] = $('#lbdt-slots option:selected').text();
             $.post('cart.js', shopifyDs['cartJson']);
             var query = "?city=" + shopifyDs['city'] +
                 "&date=" + myDateSelect.val().split(" ").join("") +
