@@ -59,8 +59,8 @@ function updateFirstPossibleDeliveryDate() {
         workingHoursLeftForDay = workingHoursPerDay;
     }
 
-    delivery['date'] = istDate.addDays(dayCount).getDate();
-    delivery['month'] = istDate.addDays(dayCount).getMonth() + 1;
+    delivery['date'] = curDate + dayCount;
+    delivery['month'] = istDate.getMonth() + 1;
     if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
