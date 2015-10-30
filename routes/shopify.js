@@ -37,6 +37,7 @@ router.get("/dates", function(req, res) {
 
 
 router.get("/orders", function(req, res) {
+    console.log("Got request for orders");
      var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json',
         headers: {
@@ -52,6 +53,8 @@ router.get("/orders", function(req, res) {
         res.send(info);
       }
     }
+
+    console.log("sending request to shopify");
     request(options, callback);
     //res.sendFile(__dirname+'/ordersummary/orders.html');
 });
