@@ -35,6 +35,7 @@ router.get("/dates", function(req, res) {
     });
 });
 
+/*
 router.get("/orders", function(req, res) {
      var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json',
@@ -58,6 +59,7 @@ router.get("/orders", function(req, res) {
 router.get("/summary", function(req, res) {
     res.sendFile(__dirname+'/ordersummary/orders.html');
 });
+*/
 
 function removeOldOrders(fburl, city) {
     // remove old values
