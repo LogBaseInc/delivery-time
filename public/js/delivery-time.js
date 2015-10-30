@@ -80,7 +80,6 @@ function getDates() {
             var month = tokens[1];
             var date = tokens[2];
 
-            console.log(date, delivery['date']);
             if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
                 parseInt(month) > delivery['month']) {
                 var freeSlots = getFreeSlotsForTheDay(date, month, year);
@@ -90,7 +89,6 @@ function getDates() {
             }
         });
         // TODO - need to handle case where we don't have a free slot at all
-        console.log(dates);
         return dates;
     }
 }
@@ -135,7 +133,6 @@ function getSlots(selectedDate) {
         if (selDate == delivery['date']) {
             selectedSlots = {};
             $.each(slots, function(val, text) {
-                console.log(val, text);
                 if (parseInt(val) >= delivery['hour']) {
                     selectedSlots[val] = text;
                 }
@@ -202,7 +199,6 @@ if ($('#lbdt').length > 0) {
      */
     $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
         lbDatePicker = data;
-        console.log(lbDatePicker);
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
