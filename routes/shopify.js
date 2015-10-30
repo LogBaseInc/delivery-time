@@ -3,10 +3,12 @@ var router = express.Router();
 var shopifyAPI = require('shopify-node-api');
 var Firebase = require('firebase');
 require("datejs");
+var request = require('request');
 
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
 var redirect_uri = process.env.REDIRECT_URI;
+var access_token = process.env.ACCESS_TOKEN;
 var shopify_scope = 'read_products,read_orders,write_orders,read_script_tags,write_script_tags,read_fulfillments,write_fulfillments';
 
 router.get("/dates", function(req, res) {
@@ -33,7 +35,27 @@ router.get("/dates", function(req, res) {
     });
 });
 
-router.get("/ordersummary", function(req, res) {
+router.get("/orders", function(req, res) {
+     var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json',
+        headers: {
+            'X-Shopify-Access-Token': access_token
+          }
+    };
+
+    function callback(error, response, body) {
+        console.log(response.statusCode);
+
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        res.send(info);
+      }
+    }
+    request(options, callback);
+    //res.sendFile(__dirname+'/ordersummary/orders.html');
+});
+
+router.get("/summary", function(req, res) {
     res.sendFile(__dirname+'/ordersummary/orders.html');
 });
 
