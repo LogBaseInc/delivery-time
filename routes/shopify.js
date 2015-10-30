@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 var shopifyAPI = require('shopify-node-api');
 var Firebase = require('firebase');
-require("datejs");
 var request = require('request');
+require("datejs");
 
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
@@ -35,7 +35,9 @@ router.get("/dates", function(req, res) {
     });
 });
 
+
 router.get("/orders", function(req, res) {
+    console.log("Got request for orders");
      var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json',
         headers: {
@@ -43,19 +45,21 @@ router.get("/orders", function(req, res) {
           }
     };
 
-    function callback(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        var info = JSON.parse(body);
-        res.send(info);
-      }
-    }
-    request(options, callback);
-    //res.sendFile(__dirname+'/ordersummary/orders.html');
+    console.log("sending request to shopify");
+    request(options, function(err, response, body){
+        if (!err && response.statusCode == 200) {
+            var info = JSON.parse(body);
+            res.send(info);
+        } else {
+            res.status(200).end();
+        }
+    });
 });
 
 router.get("/summary", function(req, res) {
     res.sendFile(__dirname+'/ordersummary/orders.html');
 });
+
 
 function removeOldOrders(fburl, city) {
     // remove old values
