@@ -33,6 +33,10 @@ router.get("/dates", function(req, res) {
     });
 });
 
+router.get("/ordersummary", function(req, res) {
+    res.sendFile(__dirname+'/ordersummary/orders.html');
+});
+
 function removeOldOrders(fburl, city) {
     // remove old values
     var my_firebase_ref = new Firebase(fburl + city);
