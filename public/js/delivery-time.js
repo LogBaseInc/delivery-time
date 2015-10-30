@@ -240,7 +240,7 @@ if ($('#lbdt').length > 0) {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
                 + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
-            shopifyDs['cartJson']['attributes'] = myDateSelect.val().split(" ").join("");
+            shopifyDs['cartJson']['tags'] = myDateSelect.val().split(" ").join("");
             $.post('cart.js', shopifyDs['cartJson']);
             var query = "?city=" + shopifyDs['city'] +
                 "&date=" + myDateSelect.val().split(" ").join("") +
