@@ -59,7 +59,8 @@ function updateFirstPossibleDeliveryDate() {
         workingHoursLeftForDay = workingHoursPerDay;
     }
 
-    delivery['date'] = curDate + dayCount;
+    istDate.setDate(curDate + dayCount);
+    delivery['date'] = istDate.getDate();
     delivery['month'] = istDate.getMonth() + 1;
     if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
@@ -80,7 +81,7 @@ function getDates() {
             var date = tokens[2];
 
             console.log(date, delivery['date']);
-            if ((parseInt(date) >= delivery['date'] && parseInt(month) >= delivery['month']) ||
+            if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
                 parseInt(month) > delivery['month']) {
                 var freeSlots = getFreeSlotsForTheDay(date, month, year);
                 if (freeSlots != {}) {
