@@ -77,6 +77,7 @@ function getDates() {
             var month = tokens[1];
             var date = tokens[2];
 
+            console.log(date, delvier['date']);
             if(parseInt(date) >= delivery['date'] || parseInt(month) > getIST().getMonth()) {
                 var freeSlots = getFreeSlotsForTheDay(date, month, year);
                 if (freeSlots != {}) {
@@ -243,7 +244,6 @@ if ($('#lbdt').length > 0) {
                 "&slot=" + myTimeSelect.val();
             var url = "/apps/order" + query;
             $.get(url, function(data){});
-            event.preventDefault();
         }
 	});
 
