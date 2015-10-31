@@ -1,8 +1,10 @@
 var orders = [];
+var filterorders = [];
 
 window.addEventListener("DOMContentLoaded", function() {
 
-    document.getElementById("ordertable").style.display = "none";
+    $("#orderdiv").hide();
+    $("#noorderdiv").hide();
 
     $.get( "/shopify/orders", function( data ) {
         for(var i=0; i< data.orders.length; i++) {
@@ -21,26 +23,80 @@ window.addEventListener("DOMContentLoaded", function() {
             orders.push(order);
         }
 
-        listOrders();
+        initialize();
     });
 }, false);
 
-function listOrders () {
-    var table = document.getElementById('ordertable').getElementsByTagName('tbody')[0];
-
+function initialize () {
+    var filterdates = [];
+    var filterorders = [];
     for(var i=0; i< orders.length; i++) {
-        var rowCount = table.rows.length;
-        var row = table.insertRow(rowCount);
-        row.insertCell(0).innerHTML = '<a href="'+orders[i].link+'">'+orders[i].name+'</a>'
-        row.insertCell(1).innerHTML = orders[i].customername;
-        row.insertCell(2).innerHTML = orders[i].orderdate;
-        row.insertCell(3).innerHTML = orders[i].deliverydate;
-        row.insertCell(4).innerHTML = orders[i].deliverytime;
-        row.insertCell(5).innerHTML = orders[i].address;
-        row.insertCell(6).innerHTML = orders[i].status;
+        if(orders[i].deliverydate != "" && orders[i].deliverydate != null && 
+           orders[i].deliverydate != undefined && filterdates.indexOf(orders[i].deliverydate) < 0) {
+            filterdates.push(orders[i].deliverydate);
+        }
     }
 
-    document.getElementById("loadimg").style.display = "none";
-    document.getElementById("ordertable").style.display = null;
+    var todaydate = moment(new Date()).format("dddd MMM DD, YYYY");
+    if(filterdates.indexOf(todaydate) < 0)
+        filterdates.push(todaydate);
 
+    filterdates.sort(SortByDate);
+
+    var sel = $("#filter");
+    sel.empty();
+    for(var j=0; j<filterdates.length; j++) {
+        sel.append('<option value="' + filterdates[j] + '">' + filterdates[j]+ '</option>');
+    }
+
+    $("#orderdiv").show();
+    $("#loadimg").hide();
+    sel.val(todaydate).change();
+    setSelectedDateOrders(todaydate);
+
+    $("#filter").change(function() {
+        var selecteddate = $('#filter').val();
+        setSelectedDateOrders(selecteddate);
+    });
+}
+
+function setSelectedDateOrders(selecteddate) {
+    filterorders = $.grep(orders, function(v) {
+        return $.trim(v.deliverydate) == $.trim(selecteddate);
+    });
+    listOrders(filterorders);
+}
+
+function listOrders (orderlist) {
+    if(orderlist.length == 0) {
+        $("#ordertable").hide();
+        $("#noorderdiv").show();
+    }
+    else {
+        $("#ordertable").show();
+        $("#noorderdiv").hide();
+
+        var table = document.getElementById('ordertable').getElementsByTagName('tbody')[0];
+        var filterdates = [];
+        $("#ordertable > tbody").html("");
+
+        for(var i=0; i< orderlist.length; i++) {
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+            row.insertCell(0).innerHTML = '<a href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
+            row.insertCell(1).innerHTML = orderlist[i].customername;
+            row.insertCell(2).innerHTML = orderlist[i].orderdate;
+            row.insertCell(3).innerHTML = orderlist[i].deliverydate;
+            row.insertCell(4).innerHTML = orderlist[i].deliverytime;
+            row.insertCell(5).innerHTML = orderlist[i].address;
+            row.insertCell(6).innerHTML = orderlist[i].status;
+        }
+    }
+}
+
+function SortByDate(a, b){
+    var a1 = moment(a);
+    var b1 = moment(b);
+
+    return ((a1 > b1) ? -1 : ((a1 < b1) ? 1 : 0));
 }

@@ -45,15 +45,15 @@ router.get("/orders", function(req, res) {
           }
     };
 
-    console.log("sending request to shopify");
-    request(options, function(err, response, body){
-        if (!err && response.statusCode == 200) {
-            var info = JSON.parse(body);
-            res.send(info);
-        } else {
-            res.status(200).end();
-        }
-    });
+    function callback(error, response, body) {
+      console.log("response.statusCode");
+
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        res.send(info);
+      }
+    }
+    request(options, callback);
 });
 
 router.get("/summary", function(req, res) {
