@@ -15,7 +15,7 @@ window.addEventListener("DOMContentLoaded", function() {
             order.name = data.orders[i].name;
             order.customername = data.orders[i].customer.first_name;
             order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
-            order.deliverydate = notesplit.length >0 ? notesplit[1] : "";
+            order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
             order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
             order.address = data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2;
             order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
@@ -31,9 +31,10 @@ function initialize () {
     var filterdates = [];
     var filterorders = [];
     for(var i=0; i< orders.length; i++) {
-        if(orders[i].deliverydate != "" && orders[i].deliverydate != null && 
-           orders[i].deliverydate != undefined && filterdates.indexOf(orders[i].deliverydate) < 0) {
-            filterdates.push(orders[i].deliverydate);
+        var deliverdate = $.trim(orders[i].deliverydate).replace(/ +(?= )/g,'');
+        if(deliverdate != "" && deliverdate != null && 
+           deliverdate != undefined && filterdates.indexOf(deliverdate) < 0) {
+            filterdates.push(deliverdate);
         }
     }
 
