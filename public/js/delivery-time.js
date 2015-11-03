@@ -192,7 +192,30 @@ function updateCakeDs() {
     });
 }
 
+function enableSuggestion() {
+    if (shopifyDs['cakeType'] == 'xpress') {
+        $('#lbdt-suggestion').hide();
+        $('#lbdt').show();
+        return;
+    }
+
+    var prepTime = null;
+    if (shopifyDs['cakeType'] == 'signature') {
+        prepTime = "6 hours";
+    } else {
+        prepTime = "1 day"
+    }
+    var content = "Our " + shopifyDs['cakeType'] + " cake(s) takes " + prepTime + " to prepare. " +
+        "If you need the cake(s) to be delivered sooner, choose our xpress cake.";
+    $('#lbdt-suggestion-content').val(content);
+}
+
 if ($('#lbdt').length > 0) {
+
+
+    var myDateSelect = $('#lbdt-date');
+    var myTimeSelect = $('#lbdt-slots');
+    var myCitySelect = $('#lbdt-city');
 
     /*
      * Fetch available dates from backend
@@ -202,12 +225,8 @@ if ($('#lbdt').length > 0) {
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
+        enableSuggestion();
     });
-
-
-    var myDateSelect = $('#lbdt-date');
-	var myTimeSelect = $('#lbdt-slots');
-    var myCitySelect = $('#lbdt-city');
 
     /*
      * Disable all select elements while backed returns the data
