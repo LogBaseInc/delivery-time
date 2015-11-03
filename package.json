@@ -4,7 +4,7 @@
   "description": "Delivery Time App for Shopify",
   "main": "app.js",
   "engines": {
-      "node": "0.12.x"
+      "node": "0.12.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
