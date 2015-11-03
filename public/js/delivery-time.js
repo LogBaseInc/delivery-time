@@ -189,7 +189,6 @@ function updateCakeDs() {
         }
 
         updateFirstPossibleDeliveryDate();
-        enableSuggestion();
     });
 }
 
