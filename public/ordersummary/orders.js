@@ -17,6 +17,7 @@ window.addEventListener("DOMContentLoaded", function() {
             order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
             order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
             order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
+            order.timetosort = notesplit.length > 2 ? notesplit[3]: "";
             order.address = data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2;
             order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
 
@@ -65,6 +66,9 @@ function setSelectedDateOrders(selecteddate) {
     filterorders = $.grep(orders, function(v) {
         return $.trim(v.deliverydate) == $.trim(selecteddate);
     });
+
+    filterorders.sort(SortByTime);
+
     listOrders(filterorders);
 }
 
@@ -100,4 +104,8 @@ function SortByDate(a, b){
     var b1 = moment(b);
 
     return ((a1 > b1) ? -1 : ((a1 < b1) ? 1 : 0));
+}
+
+function SortByTime(a, b){
+    return ((a > b) ? -1 : ((a < b) ? 0 : 1));
 }
