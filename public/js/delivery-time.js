@@ -189,6 +189,7 @@ function updateCakeDs() {
         }
 
         updateFirstPossibleDeliveryDate();
+        enableSuggestion();
     });
 }
 
@@ -225,7 +226,6 @@ if ($('#lbdt').length > 0) {
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
-        enableSuggestion();
     });
 
     /*
