@@ -192,10 +192,8 @@ function updateCakeDs() {
     });
 }
 
-function enableSuggestion() {
+function noteToCustomer() {
     if (shopifyDs['cakeType'] == 'xpress') {
-        $('#lbdt-suggestion').hide();
-        $('#lbdt').show();
         return;
     }
 
@@ -207,7 +205,7 @@ function enableSuggestion() {
     }
     var content = "Our " + shopifyDs['cakeType'] + " cake(s) takes " + prepTime + " to prepare. " +
         "If you need the cake(s) to be delivered sooner, choose our xpress cake.";
-    $('#lbdt-suggestion-content').val(content);
+    $('#lbdt-suggestion-content').text(content);
 }
 
 if ($('#lbdt').length > 0) {
