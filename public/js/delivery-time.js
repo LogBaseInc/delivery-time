@@ -205,7 +205,7 @@ function noteToCustomer() {
     }
     var content = "Our " + shopifyDs['cakeType'] + " cake(s) takes " + prepTime + " to prepare. " +
         "If you need the cake(s) to be delivered sooner, choose our xpress cake.";
-    $('#lbdt-suggestion-content').text(content);
+    $('#lbdt-note').text(content);
 }
 
 if ($('#lbdt').length > 0) {
