@@ -132,19 +132,7 @@ function getSlots(selectedDate) {
     } else {
         slots = lbDatePicker.data.config.slots;
     }
-    if (lbDatePicker.data.config.defaultDateTimeChecks) {
-        if (selDate == delivery['date']) {
-            selectedSlots = {};
-            $.each(slots, function(val, text) {
-                if (parseInt(val) >= delivery['hour']) {
-                    selectedSlots[val] = text;
-                }
-            });
-            return selectedSlots;
-        } else {
-            return slots;
-        }
-    } else {
+    if (selDate == delivery['date']) {
         selectedSlots = {};
         $.each(slots, function(val, text) {
             if (parseInt(val) >= delivery['hour']) {
@@ -152,6 +140,8 @@ function getSlots(selectedDate) {
             }
         });
         return selectedSlots;
+    } else {
+        return slots;
     }
 }
 
