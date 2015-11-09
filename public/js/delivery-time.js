@@ -260,6 +260,8 @@ if ($('#lbdt').length > 0) {
         loadCityValues();
         updateCakeDs();
     }).fail(function(){
+            getDefaultDates();
+            getDefaultSlots();
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
