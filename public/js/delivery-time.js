@@ -146,7 +146,14 @@ function getSlots(selectedDate) {
             });
             return selectedSlots;
         } else {
-            return slots;
+            var hour = getIST().getHours() + 2;
+            selectedSlots = {};
+            $.each(slots, function(val, text) {
+                if (parseInt(val) >= hour) {
+                    selectedSlots[val] = text;
+                }
+            });
+            return selectedSlots;
         }
     } else {
         return slots;
