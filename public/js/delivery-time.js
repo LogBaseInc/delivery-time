@@ -38,10 +38,11 @@ function getIST() {
 function updateFirstPossibleDeliveryDate() {
 
     if (lbDatePicker.data.config.defaultDateTimeChecks == false) {
+        updateDefaultDeliveryDates();
         return;
     }
 
-    var dayCount = 0
+    var dayCount = 0;
     var istDate = getIST();
     var curDate = istDate.getDate();
     var curhour = istDate.getHours();
@@ -285,7 +286,6 @@ if ($('#lbdt').length > 0) {
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
-            updateDefaultDeliveryDates();
         });
 
     /*
