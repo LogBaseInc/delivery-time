@@ -36,6 +36,11 @@ function getIST() {
 }
 
 function updateFirstPossibleDeliveryDate() {
+
+    if (lbDatePicker.data.config.defaultDateTimeChecks == false) {
+        return;
+    }
+
     var dayCount = 0
     var istDate = getIST();
     var curDate = istDate.getDate();
