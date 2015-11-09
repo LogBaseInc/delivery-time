@@ -231,7 +231,7 @@ function getDefaultDates() {
             curDate.getDate().toString();
         dates[idx] = curDate.toDateString();
         days++;
-        curDate.setDate(curDate.getDate() + days);
+        curDate.setDate(curDate.getDate() + 1);
     }
     lbDatePicker['dates'] = dates;
 }
