@@ -231,16 +231,16 @@ function updateDefaultDeliveryDates() {
     var date = getIST();
     if (shopifyDs['cakeType'] == 'xpress') {
         delivery['date'] = date.getDate();
-        delivery['hour'] = date.getHours() + 2;
+        delivery['hour'] = date.getHours() + 3;
         delivery['month'] = date.getMonth() + 1;
     } else if (shopifyDs['cakeType'] == 'signature') {
         delivery['date'] = date.getDate();
-        delivery['hour'] = date.getHours() + 6;
+        delivery['hour'] = date.getHours() + 7;
         delivery['month'] = date.getMonth() + 1;
     } else {
         date.setDate(date.getDate() + 1);
         delivery['date'] = date.getDate();
-        delivery['hour'] = date.getHours();
+        delivery['hour'] = date.getHours() + 1;
         delivery['month'] = date.getMonth() + 1;
     }
 }
