@@ -1,4 +1,4 @@
-var lbDatePicker = null;
+var lbDatePicker = {};
 var delivery = {
     date: 0,
     hour: 0,
@@ -127,7 +127,7 @@ function getSlots(selectedDate) {
     if (lbDatePicker.data.config.enableSlotChecks) {
         slots = getFreeSlotsForTheDay(date, month, year);
     } else {
-        slots = lbDatePicker.data.config.slots
+        slots = lbDatePicker.data.config.slots;
     }
     if (lbDatePicker.data.config.defaultDateTimeChecks) {
         if (selDate == delivery['date']) {
@@ -210,6 +210,40 @@ function noteToCustomer() {
     $('#lbdt-note').html(content);
 }
 
+function getDefaultDates() {
+    var days = 0;
+    var dates = {};
+    var curDate = new Date();
+    while(days < 7) {
+        var idx = curDate.getFullYear().toString() + " " +
+            (curDate.getMonth() + 1).toString() + " " +
+            curDate.getDate().toString();
+        dates[idx] = curDate.toDateString();
+        days++;
+        curDate.setDate(curDate.getDate() + days);
+    }
+    lbDatePicker['dates'] = dates;
+}
+
+function getDefaultSlots() {
+    var slots = {};
+    slots["10:00"] = "10 - 11 am";
+    slots["11:00"] = "11 - 12 pm";
+    slots["12:00"] = "12 - 1 pm";
+    slots["13:00"] = "1 - 2 pm";
+    slots["14:00"] = "2 - 3 pm";
+    slots["15:00"] = "3 - 4 pm";
+    slots["16:00"] = "4 - 5 pm";
+    slots["17:00"] = "5 - 6 pm";
+    slots["18:00"] = "6 - 7 pm";
+    slots["19:00"] = "7 - 8 pm";
+    slots["20:00"] = "8 - 9 pm";
+    slots["24:00"] = "Midnight 11:45 - 12:00";
+    lbDatePicker['data']['config']['slots'] = slots;
+    lbDatePicker['data']['config']['enableSlotChecks'] = false;
+    lbDatePicker['data']['config']['defaultDateTimeChecks'] = true;
+}
+
 if ($('#lbdt').length > 0) {
 
 
@@ -220,12 +254,14 @@ if ($('#lbdt').length > 0) {
     /*
      * Fetch available dates from backend
      */
-    $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
+    $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates1", function( data ) {
         lbDatePicker = data;
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
-    });
+    }).fail(function(){
+            console.log("Testing error cases");
+        });
 
     /*
      * Disable all select elements while backed returns the data
