@@ -204,7 +204,7 @@ function noteToCustomer() {
     } else {
         prepTime = "1 day"
     }
-    var content = "Our <b>" + shopifyDs['cakeType'] + " cakes</b> takes " + prepTime + " to prepare. " +
+    var content = "<br>Our <b>" + shopifyDs['cakeType'] + " cakes</b> takes " + prepTime + " to prepare. " +
         "If you need the cakes to be delivered sooner, please choose our <b>xpress cakes</b>.";
     $('#lbdt-note').html(content);
 }
