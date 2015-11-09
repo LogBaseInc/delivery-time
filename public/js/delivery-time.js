@@ -90,6 +90,8 @@ function getDates() {
         });
         // TODO - need to handle case where we don't have a free slot at all
         return dates;
+    } else {
+        return lbDatePicker.dates;
     }
 }
 
@@ -141,6 +143,8 @@ function getSlots(selectedDate) {
         } else {
             return slots;
         }
+    } else {
+        return slots;
     }
 }
 
@@ -243,7 +247,7 @@ function getDefaultSlots() {
     lbDatePicker['data']['config'] = {};
     lbDatePicker['data']['config']['slots'] = slots;
     lbDatePicker['data']['config']['enableSlotChecks'] = false;
-    lbDatePicker['data']['config']['defaultDateTimeChecks'] = true;
+    lbDatePicker['data']['config']['defaultDateTimeChecks'] = false;
 }
 
 if ($('#lbdt').length > 0) {
