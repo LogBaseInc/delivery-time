@@ -76,28 +76,24 @@ function updateFirstPossibleDeliveryDate() {
 
 
 function getDates() {
-    if (lbDatePicker.data.config.defaultDateTimeChecks) {
-        var dates = {};
-        $.each(lbDatePicker.dates, function(val, text) {
-            // key format - "yyyy mm dd"
-            var tokens = val.split(" ");
-            var year = tokens[0];
-            var month = tokens[1];
-            var date = tokens[2];
+    var dates = {};
+    $.each(lbDatePicker.dates, function(val, text) {
+        // key format - "yyyy mm dd"
+        var tokens = val.split(" ");
+        var year = tokens[0];
+        var month = tokens[1];
+        var date = tokens[2];
 
-            if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
-                parseInt(month) > delivery['month']) {
-                var freeSlots = getFreeSlotsForTheDay(date, month, year);
-                if (freeSlots != {}) {
-                    dates[val] = text;
-                }
+        if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
+            parseInt(month) > delivery['month']) {
+            var freeSlots = getFreeSlotsForTheDay(date, month, year);
+            if (freeSlots != {}) {
+                dates[val] = text;
             }
-        });
-        // TODO - need to handle case where we don't have a free slot at all
-        return dates;
-    } else {
-        return lbDatePicker.dates;
-    }
+        }
+    });
+    // TODO - need to handle case where we don't have a free slot at all
+    return dates;
 }
 
 function getFreeSlotsForTheDay(date, month, year) {
@@ -146,10 +142,9 @@ function getSlots(selectedDate) {
             });
             return selectedSlots;
         } else {
-            var hour = getIST().getHours() + 2;
             selectedSlots = {};
             $.each(slots, function(val, text) {
-                if (parseInt(val) >= hour) {
+                if (parseInt(val) >= delivery['hour']) {
                     selectedSlots[val] = text;
                 }
             });
@@ -227,7 +222,7 @@ function noteToCustomer() {
 }
 
 function getDefaultDates() {
-    var days = 1;
+    var days = 0;
     var dates = {};
     var curDate = new Date();
     while(days < 7) {
@@ -241,6 +236,23 @@ function getDefaultDates() {
     lbDatePicker['dates'] = dates;
 }
 
+function updateDefaultDeliveryDates() {
+    var date = getIST();
+    if (shopifyDs['cakeType'] == 'xpress') {
+        delivery['date'] = date.getDate();
+        delivery['hour'] = date.getHours() + 2;
+        delivery['month'] = date.getMonth() + 1;
+    } else if (shopifyDs['cakeType'] == 'signature') {
+        delivery['date'] = date.getDate();
+        delivery['hour'] = date.getHours() + 6;
+        delivery['month'] = date.getMonth() + 1;
+    } else {
+        date.setDate(date.getDate() + 1);
+        delivery['date'] = date.getDate();
+        delivery['hour'] = date.getHours();
+        delivery['month'] = date.getMonth() + 1;
+    }
+}
 function getDefaultSlots() {
     var slots = {};
     slots["10:00"] = "10 - 11 am";
@@ -283,6 +295,7 @@ if ($('#lbdt').length > 0) {
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
+            updateDefaultDeliveryDates();
         });
 
     /*
