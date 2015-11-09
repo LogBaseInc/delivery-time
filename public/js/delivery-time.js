@@ -260,7 +260,9 @@ if ($('#lbdt').length > 0) {
         loadCityValues();
         updateCakeDs();
     }).fail(function(){
-            console.log("Testing error cases");
+            myCitySelect.prop("disabled", false);
+            loadCityValues();
+            updateCakeDs();
         });
 
     /*
