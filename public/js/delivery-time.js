@@ -142,16 +142,16 @@ function getSlots(selectedDate) {
             });
             return selectedSlots;
         } else {
-            selectedSlots = {};
-            $.each(slots, function(val, text) {
-                if (parseInt(val) >= delivery['hour']) {
-                    selectedSlots[val] = text;
-                }
-            });
-            return selectedSlots;
+            return slots;
         }
     } else {
-        return slots;
+        selectedSlots = {};
+        $.each(slots, function(val, text) {
+            if (parseInt(val) >= delivery['hour']) {
+                selectedSlots[val] = text;
+            }
+        });
+        return selectedSlots;
     }
 }
 
