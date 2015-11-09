@@ -220,7 +220,7 @@ function noteToCustomer() {
 }
 
 function getDefaultDates() {
-    var days = 0;
+    var days = 1;
     var dates = {};
     var curDate = new Date();
     while(days < 7) {
