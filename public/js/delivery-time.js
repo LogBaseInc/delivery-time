@@ -223,7 +223,6 @@ function noteToCustomer() {
             eventLabel: 'Perhaps needed a cake sooner'
         });
     });
-
 }
 
 function getDefaultDates() {
@@ -317,7 +316,16 @@ if ($('#lbdt').length > 0) {
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
-        });
+
+            /*
+             * Google Analytics
+             */
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'Date Picker',
+                eventAction: 'Loaded Default Slot Options',
+                eventLabel: 'Error while fetching dates from Date Picker'
+            });
 
     /*
      * Disable all select elements while backed returns the data
