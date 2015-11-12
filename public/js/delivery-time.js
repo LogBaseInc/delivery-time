@@ -194,7 +194,16 @@ function updateCakeDs() {
 
         updateFirstPossibleDeliveryDate();
         noteToCustomer();
+        hideDeliverySlotForSampler();
     });
+}
+
+function hideDeliverySlotForSampler() {
+    if (shopifyDs["cartJson"]["item_count"] > 1 || shopifyDs['cakeType'] != 'sampler') {
+        $('#lbdt-slots-div').prop('hidden', false);
+    } else {
+        myTimeSelect.val('12:00');
+    }
 }
 
 function noteToCustomer() {
@@ -208,10 +217,11 @@ function noteToCustomer() {
     } else {
         prepTime = "1 day"
     }
+
     var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + shopifyDs['cakeType'] +
-        "</font> cakes</b> takes " + prepTime + " to prepare. " +
+        "</font> Cakes</b> takes " + prepTime + " to prepare. " +
         "If you need the cakes to be delivered sooner, please choose our " +
-        "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress cakes</b></a>.";
+        "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress Cakes</b></a>.";
     $('#lbdt-note').html(content);
 
     /*
