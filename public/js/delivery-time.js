@@ -368,9 +368,10 @@ if ($('#lbdt').length > 0) {
         ga('send', {
             hitType: 'event',
             eventCategory: 'Date Picker',
-            eventAction: 'Abandoned Cart',
-            eventLabel: 'Revisiting Xpress'
+            eventAction: 'Revisiting Xpress',
+            eventLabel: 'Perhaps needed a cake sooner'
         });
+        event.preventDefault();
     });
 
     /*
