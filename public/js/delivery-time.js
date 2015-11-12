@@ -219,7 +219,7 @@ function noteToCustomer() {
         ga('send', {
             hitType: 'event',
             eventCategory: 'Date Picker',
-            eventAction: 'Revisiting Xpress',
+            eventAction: 'Cart To Xpress',
             eventLabel: 'Perhaps needed a cake sooner'
         });
     });
