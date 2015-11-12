@@ -347,11 +347,19 @@ if ($('#lbdt').length > 0) {
             var date = $('#lbdt-date option:selected').text();
             ga('send', {
                 hitType: 'event',
-                eventCategory: 'Date Picker: orders',
-                eventAction: myCitySelect.val() +'-order',
+                eventCategory: 'Date Picker',
+                eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
                 eventLabel: date,
                 eventValue: parseInt(myTimeSelect.val())
             });
+
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'Date Picker',
+                eventAction: 'Slot Selected',
+                eventLabel: $('#lbdt-slots option:selected').text()
+            });
+
         }
 	});
 
@@ -359,8 +367,9 @@ if ($('#lbdt').length > 0) {
     $('#lbdt-note a').click(function(event) {
         ga('send', {
             hitType: 'event',
-            eventCategory: 'Date Picker: abandon',
-            eventAction: 'Revisiting Xpress'
+            eventCategory: 'Date Picker',
+            eventAction: 'Abandoned Cart',
+            eventLabel: 'Revisiting Xpress'
         });
     });
 
