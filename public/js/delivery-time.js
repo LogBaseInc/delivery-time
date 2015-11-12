@@ -344,26 +344,25 @@ if ($('#lbdt').length > 0) {
             /*
              * Google Aanalytics
              */
+            var date = $('#lbdt-date option:selected').text();
             ga('send', {
                 hitType: 'event',
-                eventCategory: 'order',
-                eventAction: 'city',
-                eventLabel: myCitySelect.val()
-            });
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'order',
-                eventAction: 'date',
-                eventLabel: myDateSelect.val()
-            });
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'order',
-                eventAction: 'slot',
-                eventLabel: myTimeSelect.val()
+                eventCategory: 'DT ' + myCitySelect.val() +'-order',
+                eventAction: date.split(" ")[1],
+                eventLabel: date,
+                eventValue: parseInt(myTimeSelect)
             });
         }
 	});
+
+
+    $('#revisit').click(function(event) {
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'DT abandon',
+            eventAction: 'Revisiting Xpress'
+        });
+    });
 
     /*
      * When the city gets selected, show appropriate dates to order
