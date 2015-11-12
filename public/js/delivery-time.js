@@ -204,6 +204,11 @@ function hideDeliverySlotForSampler() {
     } else {
         myTimeSelect.val('12:00');
     }
+
+    if (shopifyDs['cakeType'] == 'sampler') {
+        var content = "<br>Our <b>Sampler Cakes</b> takes a day to deliver."
+        $('#lbdt-note').html(content);
+    }
 }
 
 function noteToCustomer() {
