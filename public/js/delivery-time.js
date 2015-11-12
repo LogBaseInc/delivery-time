@@ -211,6 +211,19 @@ function noteToCustomer() {
         "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress cakes</b></a>.";
     $('#lbdt-note').html(content);
+
+    /*
+     * Google Analytics
+     */
+    $('#lbdt-note a').click(function(event) {
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Revisiting Xpress',
+            eventLabel: 'Perhaps needed a cake sooner'
+        });
+    });
+
 }
 
 function getDefaultDates() {
@@ -362,17 +375,6 @@ if ($('#lbdt').length > 0) {
 
         }
 	});
-
-
-    $('#lbdt-note a').click(function(event) {
-        ga('send', {
-            hitType: 'event',
-            eventCategory: 'Date Picker',
-            eventAction: 'Revisiting Xpress',
-            eventLabel: 'Perhaps needed a cake sooner'
-        });
-        event.preventDefault();
-    });
 
     /*
      * When the city gets selected, show appropriate dates to order
