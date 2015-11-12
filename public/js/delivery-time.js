@@ -201,8 +201,6 @@ function updateCakeDs() {
 function hideDeliverySlotForSampler() {
     if (shopifyDs["cartJson"]["item_count"] > 1 || shopifyDs['cakeType'] != 'sampler') {
         $('#lbdt-slots-div').prop('hidden', false);
-    } else {
-        myTimeSelect.val('12:00');
     }
 
     if (shopifyDs['cakeType'] == 'sampler') {
@@ -364,7 +362,18 @@ if ($('#lbdt').length > 0) {
 
 	//Validation
 	$('#checkout').click(function(event) {
-	  	if(myDateSelect.val() == 0 ||
+
+        /*
+         * Hack for sampler
+         */
+        if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+            myTimeSelect.append(
+                $('<option></option>').val("12:00").html("12 - 1 pm")
+            );
+            myTimeSelect.val('12:00');
+        }
+
+        if(myDateSelect.val() == 0 ||
             myCitySelect.val() == 'select' ||
             myTimeSelect.val() == 'select' ||
             myCitySelect.val() == 'loading') {
