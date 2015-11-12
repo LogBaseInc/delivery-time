@@ -326,6 +326,7 @@ if ($('#lbdt').length > 0) {
                 eventAction: 'Loaded Default Slot Options',
                 eventLabel: 'Error while fetching dates from Date Picker'
             });
+        });
 
     /*
      * Disable all select elements while backed returns the data
