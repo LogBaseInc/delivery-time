@@ -209,7 +209,7 @@ function noteToCustomer() {
     var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + shopifyDs['cakeType'] +
         "</font> cakes</b> takes " + prepTime + " to prepare. " +
         "If you need the cakes to be delivered sooner, please choose our " +
-        "<a id=\"revisit\" href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress cakes</b></a>.";
+        "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress cakes</b></a>.";
     $('#lbdt-note').html(content);
 }
 
@@ -342,24 +342,24 @@ if ($('#lbdt').length > 0) {
             $.get(url, function(data){});
 
             /*
-             * Google Aanalytics
+             * Google Analytics
              */
             var date = $('#lbdt-date option:selected').text();
             ga('send', {
                 hitType: 'event',
-                eventCategory: 'DT ' + myCitySelect.val() +'-order',
-                eventAction: date.split(" ")[1],
+                eventCategory: 'Date Picker: orders',
+                eventAction: myCitySelect.val() +'-order',
                 eventLabel: date,
-                eventValue: parseInt(myTimeSelect)
+                eventValue: parseInt(myTimeSelect.val())
             });
         }
 	});
 
 
-    $('#revisit').click(function(event) {
+    $('#lbdt-note a').click(function(event) {
         ga('send', {
             hitType: 'event',
-            eventCategory: 'DT abandon',
+            eventCategory: 'Date Picker: abandon',
             eventAction: 'Revisiting Xpress'
         });
     });
