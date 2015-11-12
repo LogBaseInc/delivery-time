@@ -208,7 +208,8 @@ function noteToCustomer() {
     }
     var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + shopifyDs['cakeType'] +
         "</font> cakes</b> takes " + prepTime + " to prepare. " +
-        "If you need the cakes to be delivered sooner, please choose our <b>Xpress cakes</b>.";
+        "If you need the cakes to be delivered sooner, please choose our " +
+        "<a id=\"revisit\" href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress cakes</b></a>.";
     $('#lbdt-note').html(content);
 }
 
@@ -264,6 +265,23 @@ function getDefaultSlots() {
     lbDatePicker['data']['config']['enableSlotChecks'] = false;
     lbDatePicker['data']['config']['defaultDateTimeChecks'] = false;
 }
+
+
+//For error reporting
+// Pure JavaScript errors handler
+window.addEventListener('error', function (err) {
+    var lineAndColumnInfo = err.colno ? ' line:' + err.lineno +', column:'+ err.colno : ' line:' + err.lineno;
+    ga(
+        'send',
+        'event',
+        'JavaScript Error',
+        err.message,
+        err.filename + lineAndColumnInfo + ' -> ' +  navigator.userAgent,
+        0,
+        true
+    );
+});
+
 
 if ($('#lbdt').length > 0) {
 
@@ -322,6 +340,28 @@ if ($('#lbdt').length > 0) {
                 "&slot=" + myTimeSelect.val();
             var url = "/apps/order" + query;
             $.get(url, function(data){});
+
+            /*
+             * Google Aanalytics
+             */
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'order',
+                eventAction: 'city',
+                eventLabel: myCitySelect.val()
+            });
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'order',
+                eventAction: 'date',
+                eventLabel: myDateSelect.val()
+            });
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'order',
+                eventAction: 'slot',
+                eventLabel: myTimeSelect.val()
+            });
         }
 	});
 
