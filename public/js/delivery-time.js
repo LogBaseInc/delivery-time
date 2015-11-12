@@ -182,7 +182,9 @@ function updateCakeDs() {
             shopifyDs['cakeVariant'] = 'egg';
         }
 
-        if (types.toString().indexOf("handcrafted") >= 0) {
+        if(types.toString().indexOf("sampler") >= 0) {
+            shopifyDs['cakeType'] = 'sampler';
+        } else if (types.toString().indexOf("handcrafted") >= 0) {
             shopifyDs['cakeType'] = 'handcrafted';
         } else if(types.toString().indexOf("signature") >= 0) {
             shopifyDs['cakeType'] = 'signature';
