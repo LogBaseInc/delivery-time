@@ -38,7 +38,7 @@ window.addEventListener("DOMContentLoaded", function() {
         errorSignature = validateProducts(signature, false);
         appendErrors("Signature Bee's", errorSignature);
 
-        errorHandcraft = validateProducts(signature, false);
+        errorHandcraft = validateProducts(handcraft, false);
         appendErrors("Handcrafted Bee's", errorHandcraft);
 
         $("#loadimg").hide();
@@ -55,6 +55,13 @@ function validateProducts(productlist, isXpress) {
         var sizesarray = filterOptions(productlist[i].options, "Size(Kg)");
         var sku = null;
 
+        if(flavoursarray.length==0) {
+            //if(productname.indexOf("Oreo Cake") >=0 ) {
+                flavoursarray = [];
+                flavoursarray.push({values:[""]});
+            //}
+        }
+
         if(flavoursarray.length >0 && sizesarray.length > 0) {
 
             var flavours = flavoursarray[0].values;
@@ -66,7 +73,7 @@ function validateProducts(productlist, isXpress) {
                     var size = sizes[s];
                     var flavour = flavours[f];
 
-                    var title = size +" / " + flavour;
+                    var title = size + (flavour != "" ?  (" / " + flavour) : "");
                     var variantArray = filterVariants(productlist[i].variants, title);
 
                     if(variantArray.length > 0) {
