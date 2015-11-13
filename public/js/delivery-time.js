@@ -336,23 +336,12 @@ if ($('#lbdt').length > 0) {
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
-
-        /*
-         * Enabled the button which is by default disabled on page load
-         */
-        $('#checkout').prop('disabled', false);
-
     }).fail(function(){
             getDefaultDates();
             getDefaultSlots();
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
-
-            /*
-             * Enabled the button which is by default disabled on page load
-             */
-            $('#checkout').prop('disabled', false);
 
             /*
              * Google Analytics
@@ -431,6 +420,11 @@ if ($('#lbdt').length > 0) {
      * When the city gets selected, show appropriate dates to order
      */
     myCitySelect.change(function(event) {
+
+        /*
+         * Enable the checkout button
+         */
+        $('#checkout').prop('disabled', false);
 
         if(myCitySelect.val().toString().indexOf("select") < 0) {
 
