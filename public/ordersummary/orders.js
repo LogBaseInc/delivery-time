@@ -10,6 +10,17 @@ window.addEventListener("DOMContentLoaded", function() {
         for(var i=0; i< data.orders.length; i++) {
             var order = {};
             var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
+            var timetosort = "";
+            if(notesplit.length >= 2) {
+                var timesplit = notesplit[2].split('-');
+                var ispm = false;
+                if(timesplit[1].indexOf('pm') >=0 ) {
+                    ispm = true;
+                }
+
+                timetosort = (isNaN(parseInt(timesplit[0])) ? 24 : (ispm ? (parseInt(timesplit[0])+12) : parseInt(timesplit[0])));
+            }
+
             order.id = data.orders[i].id;
             order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
             order.name = data.orders[i].name;
@@ -17,7 +28,7 @@ window.addEventListener("DOMContentLoaded", function() {
             order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
             order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
             order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
-            order.timetosort = notesplit.length > 2 ? notesplit[3]: "";
+            order.timetosort = timetosort;
             order.address = data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2;
             order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
 
