@@ -243,9 +243,13 @@ function noteToCustomer() {
     }
 
     var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
-        "</font> Cakes</b> takes " + prepTime + " to prepare. " +
-        "If you need the cakes to be delivered sooner, please choose our " +
+        "</font> Cakes</b> takes " + prepTime + " to prepare. ";
+
+    if (shopifyDs['cakeType'] != 'xpress') {
+        content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress Cakes</b></a>.";
+    }
+
     $('#lbdt-note').html(content);
 
     /*
