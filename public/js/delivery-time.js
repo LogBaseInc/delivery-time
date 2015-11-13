@@ -75,6 +75,15 @@ function updateFirstPossibleDeliveryDate() {
     }
 }
 
+function checkForHoliday(dt) {
+    $.each(lbDatePicker.data.config.holidays, function(val, text) {
+        console.log(text);
+        if (text.toString().indexOf(dt) >= 0) {
+            return true;
+        }
+    });
+    return false;
+}
 
 function getDates() {
     var dates = {};
@@ -85,11 +94,13 @@ function getDates() {
         var month = tokens[1];
         var date = tokens[2];
 
-        if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
-            parseInt(month) > delivery['month']) {
-            var freeSlots = getFreeSlotsForTheDay(date, month, year);
-            if (freeSlots != {}) {
-                dates[val] = text;
+        if (!checkForHoliday(val)) {
+            if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
+                parseInt(month) > delivery['month']) {
+                var freeSlots = getFreeSlotsForTheDay(date, month, year);
+                if (freeSlots != {}) {
+                    dates[val] = text;
+                }
             }
         }
     });
