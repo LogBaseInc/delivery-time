@@ -391,7 +391,7 @@ if ($('#lbdt').length > 0) {
 	  		event.preventDefault();
 		} else {
             var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
-                + " | " + $('#lbdt-slots option:selected').text() + " | " + myTimeSelect.val();
+                + " | " + $('#lbdt-slots option:selected').text();
             shopifyDs['cartJson']['note'] = notes;
             $.post('cart.js', shopifyDs['cartJson']);
             var query = "?city=" + shopifyDs['city'] +
