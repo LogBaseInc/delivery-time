@@ -76,13 +76,13 @@ function updateFirstPossibleDeliveryDate() {
 }
 
 function checkForHoliday(dt) {
+    var holiday = false;
     $.each(lbDatePicker.data.config.holidays, function(val, text) {
-        console.log(text, dt);
         if (text.toString().indexOf(dt) >= 0) {
-            return true;
+            holiday = true;
         }
     });
-    return false;
+    return holiday;
 }
 
 function getDates() {
