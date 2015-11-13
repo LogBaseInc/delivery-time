@@ -336,12 +336,23 @@ if ($('#lbdt').length > 0) {
         myCitySelect.prop("disabled", false);
         loadCityValues();
         updateCakeDs();
+
+        /*
+         * Enabled the button which is by default disabled on page load
+         */
+        $('#checkout').prop('disabled', false);
+
     }).fail(function(){
             getDefaultDates();
             getDefaultSlots();
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
+
+            /*
+             * Enabled the button which is by default disabled on page load
+             */
+            $('#checkout').prop('disabled', false);
 
             /*
              * Google Analytics
@@ -364,12 +375,6 @@ if ($('#lbdt').length > 0) {
         $('<option></option>').val("loading").html("Loading")
     );
     myCitySelect.prop("disabled", true);
-
-
-    /*
-     * Enabled the button which is by default disabled on page load
-     */
-    $('#checkout').prop('disabled', false);
 
 	//Validation
 	$('#checkout').click(function(event) {
