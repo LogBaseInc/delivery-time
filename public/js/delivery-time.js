@@ -221,18 +221,28 @@ function hideDeliverySlotForSampler() {
 }
 
 function noteToCustomer() {
-    if (shopifyDs['cakeType'] == 'xpress') {
+    /*
+     * Note not required for xpress egg cakes
+     */
+    if (shopifyDs['cakeType'] == 'xpress' && shopifyDs['cakeVariant'] == 'egg') {
         return;
     }
 
     var prepTime = null;
-    if (shopifyDs['cakeType'] == 'signature') {
+    if (shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'xpress') {
         prepTime = "6 hours";
     } else {
         prepTime = "1 day"
     }
 
-    var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + shopifyDs['cakeType'] +
+    var cakeName;
+    if (shopifyDs['cakeType'] == 'xpress') {
+        cakeName = "Eggless Xpress"
+    } else {
+        cakeName = shopifyDs['cakeType'];
+    }
+
+    var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
         "</font> Cakes</b> takes " + prepTime + " to prepare. " +
         "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress Cakes</b></a>.";
