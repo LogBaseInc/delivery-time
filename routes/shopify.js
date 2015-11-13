@@ -37,7 +37,6 @@ router.get("/dates", function(req, res) {
 
 
 router.get("/orders", function(req, res) {
-    console.log("Got request for orders");
      var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json',
         headers: {
@@ -46,8 +45,6 @@ router.get("/orders", function(req, res) {
     };
 
     function callback(error, response, body) {
-      console.log("response.statusCode");
-
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
         res.send(info);
@@ -58,6 +55,27 @@ router.get("/orders", function(req, res) {
 
 router.get("/summary", function(req, res) {
     res.sendFile(__dirname+'/ordersummary/orders.html');
+});
+
+router.get("/products", function(req, res) {
+     var options = {
+        url: 'https://cake-bee.myshopify.com/admin/products.json?limit=250',
+        headers: {
+            'X-Shopify-Access-Token': access_token
+          }
+    };
+
+    function callback(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        res.send(info);
+      }
+    }
+    request(options, callback);
+});
+
+router.get("/checkproducts", function(req, res) {
+    res.sendFile(__dirname+'/productvalidation/productvalidation.html');
 });
 
 
