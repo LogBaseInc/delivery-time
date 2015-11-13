@@ -77,7 +77,7 @@ function updateFirstPossibleDeliveryDate() {
 
 function checkForHoliday(dt) {
     $.each(lbDatePicker.data.config.holidays, function(val, text) {
-        console.log(text);
+        console.log(text, dt);
         if (text.toString().indexOf(dt) >= 0) {
             return true;
         }
