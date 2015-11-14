@@ -14,7 +14,7 @@ window.addEventListener("DOMContentLoaded", function() {
             if(notesplit.length >= 2) {
                 var timesplit = notesplit[2].split('-');
                 var ispm = false;
-                if(timesplit[1].indexOf('pm') >=0 ) {
+                if(timesplit[1].indexOf('pm') >=0 && timesplit[0] >= 1 && timesplit[0] <= 8) {
                     ispm = true;
                 }
 
@@ -122,5 +122,8 @@ function SortByDate(a, b){
 }
 
 function SortByTime(a, b){
-    return ((a > b) ? -1 : ((a < b) ? 0 : 1));
+    var a1 = parseInt(a.timetosort);
+    var b1 = parseInt(b.timetosort);
+
+    return ((b1 > a1) ? -1 : ((b1 < a1) ? 1 : 0));
 }
