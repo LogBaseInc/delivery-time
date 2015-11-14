@@ -512,3 +512,11 @@ function submitAction(event) {
         });
     }
 }
+
+//loggly
+var _LTracker = _LTracker || [];
+_LTracker.push({
+    'logglyKey': 'TOKEN',
+    'sendConsoleErrors' : true,
+    'tag' : 'loggly-jslogger'
+});
