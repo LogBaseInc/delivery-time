@@ -429,13 +429,15 @@ function submitAction(event) {
         );
         myCitySelect.prop("disabled", true);
 
+        console.log("Registering click event");
         //Validation
         $('#checkout').click(function(event) {
-            //submitAction();
+            submitAction(event);
         });
 
+        console.log("REgistering submit event");
         $('#lbdt-submit').submit(function(event) {
-            submitAction();
+            submitAction(event);
         })
 
         /*
