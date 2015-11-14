@@ -334,7 +334,8 @@ window.addEventListener('error', function (err) {
     );
 });
 
-function init() {
+
+$(function () {
     if ($('#lbdt').length > 0) {
 
 
@@ -487,6 +488,4 @@ function init() {
             }
         });
     }
-}
-
-$(document).ready(init);
+});
