@@ -358,9 +358,7 @@ function submitAction(event) {
         var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
             + " | " + $('#lbdt-slots option:selected').text();
         shopifyDs['cartJson']['note'] = notes;
-        $.post('cart.js', shopifyDs['cartJson'], function() {
-            return true;
-        });
+        $.post('cart.js', shopifyDs['cartJson']);
         var query = "?city=" + shopifyDs['city'] +
             "&date=" + myDateSelect.val().split(" ").join("") +
             "&slot=" + myTimeSelect.val();
@@ -369,7 +367,7 @@ function submitAction(event) {
 
         // Enable async
         jQuery.ajaxSetup({async:false});
-        
+
         /*
          * Google Analytics
          */
@@ -388,6 +386,7 @@ function submitAction(event) {
             eventAction: 'Slot Selected',
             eventLabel: $('#lbdt-slots option:selected').text()
         });
+        return true;
     }
 }
 
