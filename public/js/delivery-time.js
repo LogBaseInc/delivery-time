@@ -352,9 +352,6 @@ function submitAction(event) {
         myCitySelect.val() == 'loading') {
         event.preventDefault();
     } else {
-
-        // Disable async
-        jQuery.ajaxSetup({async:false});
         var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
             + " | " + $('#lbdt-slots option:selected').text();
         shopifyDs['cartJson']['note'] = notes;
@@ -364,9 +361,6 @@ function submitAction(event) {
             "&slot=" + myTimeSelect.val();
         var url = "/apps/order" + query;
         $.get(url, function(data){});
-
-        // Enable async
-        jQuery.ajaxSetup({async:false});
 
         /*
          * Google Analytics
