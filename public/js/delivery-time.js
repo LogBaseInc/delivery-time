@@ -429,6 +429,10 @@ window.addEventListener('error', function (err) {
                 });
 
             }
+            var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
+                + " | " + $('#lbdt-slots option:selected').text();
+            shopifyDs['cartJson']['note'] = notes;
+            $.post('cart.js', shopifyDs['cartJson']);
         });
 
         /*
