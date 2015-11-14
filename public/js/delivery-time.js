@@ -77,6 +77,10 @@ function updateFirstPossibleDeliveryDate() {
 
 function checkForHoliday(dt) {
     var holiday = false;
+    if (lbDatePicker['data']['config']['enableSlotChecks'] == false) {
+        return false;
+    }
+    
     $.each(lbDatePicker.data.config.holidays, function(val, text) {
         if (text.toString().indexOf(dt) >= 0) {
             holiday = true;
@@ -443,13 +447,11 @@ function submitAction(event) {
         );
         myCitySelect.prop("disabled", true);
 
-        console.log("Registering click event");
         //Validation
 /*        $('#checkout').click(function(event) {
             submitAction(event);
         });
 */
-        console.log("REgistering submit event");
         $('#lbdt-submit').submit(function(event) {
             submitAction(event);
         })
