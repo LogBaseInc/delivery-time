@@ -431,13 +431,14 @@ function submitAction(event) {
 
         console.log("Registering click event");
         //Validation
-        $('#checkout').click(function(event) {
+/*        $('#checkout').click(function(event) {
             submitAction(event);
         });
-
+*/
         console.log("REgistering submit event");
         $('#lbdt-submit').submit(function(event) {
             submitAction(event);
+            return true;
         })
 
         /*
