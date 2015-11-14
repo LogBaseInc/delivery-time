@@ -9,8 +9,7 @@ var shopifyDs = {
     cartJson: null,
     cakeVariant: null,
     cakeType: null,
-    city: null,
-    notesUpdated: false
+    city: null
 }
 
 function loadCityValues() {
@@ -353,43 +352,35 @@ function submitAction(event) {
         myCitySelect.val() == 'loading') {
         event.preventDefault();
     } else {
+        var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
+            + " | " + $('#lbdt-slots option:selected').text();
+        shopifyDs['cartJson']['note'] = notes;
+        $.post('cart.js', shopifyDs['cartJson']);
+        var query = "?city=" + shopifyDs['city'] +
+            "&date=" + myDateSelect.val().split(" ").join("") +
+            "&slot=" + myTimeSelect.val();
+        var url = "/apps/order" + query;
+        $.get(url, function(data){});
 
-        if (shopifyDs['notesUpdated'] == false) {
-            event.preventDefault();
+        /*
+         * Google Analytics
+         */
+        var date = $('#lbdt-date option:selected').text();
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
+            eventLabel: date,
+            eventValue: parseInt(myTimeSelect.val())
+        });
 
-            var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
-                + " | " + $('#lbdt-slots option:selected').text();
-            shopifyDs['cartJson']['note'] = notes;
-            $.post('cart.js', shopifyDs['cartJson'], function() {
-                shopifyDs['notesUpdated'] = true;
-                $('#lbdt-submit').submit();
-            });
-
-            var query = "?city=" + shopifyDs['city'] +
-                "&date=" + myDateSelect.val().split(" ").join("") +
-                "&slot=" + myTimeSelect.val();
-            var url = "/apps/order" + query;
-            $.get(url, function(data){});
-
-            /*
-             * Google Analytics
-             */
-            var date = $('#lbdt-date option:selected').text();
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'Date Picker',
-                eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
-                eventLabel: date,
-                eventValue: parseInt(myTimeSelect.val())
-            });
-
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'Date Picker',
-                eventAction: 'Slot Selected',
-                eventLabel: $('#lbdt-slots option:selected').text()
-            });
-        }
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Slot Selected',
+            eventLabel: $('#lbdt-slots option:selected').text()
+        });
+        return true;
     }
 }
 
