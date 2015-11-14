@@ -334,157 +334,159 @@ window.addEventListener('error', function (err) {
     );
 });
 
+function init() {
+    if ($('#lbdt').length > 0) {
 
-if ($('#lbdt').length > 0) {
 
+        var myDateSelect = $('#lbdt-date');
+        var myTimeSelect = $('#lbdt-slots');
+        var myCitySelect = $('#lbdt-city');
 
-    var myDateSelect = $('#lbdt-date');
-    var myTimeSelect = $('#lbdt-slots');
-    var myCitySelect = $('#lbdt-city');
-
-    /*
-     * Fetch available dates from backend
-     */
-    $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
-        lbDatePicker = data;
-        myCitySelect.prop("disabled", false);
-        loadCityValues();
-        updateCakeDs();
-    }).fail(function(){
-            getDefaultDates();
-            getDefaultSlots();
+        /*
+         * Fetch available dates from backend
+         */
+        $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
+            lbDatePicker = data;
             myCitySelect.prop("disabled", false);
             loadCityValues();
             updateCakeDs();
+        }).fail(function(){
+                getDefaultDates();
+                getDefaultSlots();
+                myCitySelect.prop("disabled", false);
+                loadCityValues();
+                updateCakeDs();
+
+                /*
+                 * Google Analytics
+                 */
+                ga('send', {
+                    hitType: 'event',
+                    eventCategory: 'Date Picker',
+                    eventAction: 'Loaded Default Slot Options',
+                    eventLabel: 'Error while fetching dates from Date Picker'
+                });
+            });
+
+        /*
+         * Disable all select elements while backed returns the data
+         */
+        myDateSelect.find("option").remove();
+        myCitySelect.find("option").remove();
+        myTimeSelect.find('option').remove();
+        myCitySelect.append(
+            $('<option></option>').val("loading").html("Loading")
+        );
+        myCitySelect.prop("disabled", true);
+
+        //Validation
+        $('#checkout').click(function(event) {
 
             /*
-             * Google Analytics
+             * Hack for sampler
              */
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'Date Picker',
-                eventAction: 'Loaded Default Slot Options',
-                eventLabel: 'Error while fetching dates from Date Picker'
-            });
+            if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+                myTimeSelect.append(
+                    $('<option></option>').val("12:00").html("12 - 1 pm")
+                );
+                myTimeSelect.val('12:00');
+            }
+
+            if(myDateSelect.val() == 0 ||
+                myCitySelect.val() == 'select' ||
+                myTimeSelect.val() == 'select' ||
+                myCitySelect.val() == 'loading') {
+                event.preventDefault();
+            } else {
+                var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
+                    + " | " + $('#lbdt-slots option:selected').text();
+                shopifyDs['cartJson']['note'] = notes;
+                $.post('cart.js', shopifyDs['cartJson']);
+                var query = "?city=" + shopifyDs['city'] +
+                    "&date=" + myDateSelect.val().split(" ").join("") +
+                    "&slot=" + myTimeSelect.val();
+                var url = "/apps/order" + query;
+                $.get(url, function(data){});
+
+                /*
+                 * Google Analytics
+                 */
+                var date = $('#lbdt-date option:selected').text();
+                ga('send', {
+                    hitType: 'event',
+                    eventCategory: 'Date Picker',
+                    eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
+                    eventLabel: date,
+                    eventValue: parseInt(myTimeSelect.val())
+                });
+
+                ga('send', {
+                    hitType: 'event',
+                    eventCategory: 'Date Picker',
+                    eventAction: 'Slot Selected',
+                    eventLabel: $('#lbdt-slots option:selected').text()
+                });
+
+            }
         });
 
-    /*
-     * Disable all select elements while backed returns the data
-     */
-    myDateSelect.find("option").remove();
-    myCitySelect.find("option").remove();
-    myTimeSelect.find('option').remove();
-    myCitySelect.append(
-        $('<option></option>').val("loading").html("Loading")
-    );
-    myCitySelect.prop("disabled", true);
-
-	//Validation
-	$('#checkout').click(function(event) {
-
         /*
-         * Hack for sampler
+         * When the city gets selected, show appropriate dates to order
          */
-        if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
-            myTimeSelect.append(
-                $('<option></option>').val("12:00").html("12 - 1 pm")
-            );
-            myTimeSelect.val('12:00');
-        }
-
-        if(myDateSelect.val() == 0 ||
-            myCitySelect.val() == 'select' ||
-            myTimeSelect.val() == 'select' ||
-            myCitySelect.val() == 'loading') {
-	  		event.preventDefault();
-		} else {
-            var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
-                + " | " + $('#lbdt-slots option:selected').text();
-            shopifyDs['cartJson']['note'] = notes;
-            $.post('cart.js', shopifyDs['cartJson']);
-            var query = "?city=" + shopifyDs['city'] +
-                "&date=" + myDateSelect.val().split(" ").join("") +
-                "&slot=" + myTimeSelect.val();
-            var url = "/apps/order" + query;
-            $.get(url, function(data){});
+        myCitySelect.change(function(event) {
 
             /*
-             * Google Analytics
+             * Enable the checkout button
              */
-            var date = $('#lbdt-date option:selected').text();
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'Date Picker',
-                eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
-                eventLabel: date,
-                eventValue: parseInt(myTimeSelect.val())
-            });
+            $('#checkout').prop('disabled', false);
 
-            ga('send', {
-                hitType: 'event',
-                eventCategory: 'Date Picker',
-                eventAction: 'Slot Selected',
-                eventLabel: $('#lbdt-slots option:selected').text()
-            });
+            if(myCitySelect.val().toString().indexOf("select") < 0) {
 
-        }
-	});
+                shopifyDs['city'] = myCitySelect.val();
 
-    /*
-     * When the city gets selected, show appropriate dates to order
-     */
-    myCitySelect.change(function(event) {
+                myDateSelect.find("option").remove();
+                var dates = {};
+                dates[0] = "Select date";
+
+                $.each(getDates(), function(val, text){
+                    dates[val] = text;
+                });
+
+                $.each(dates, function(val, text) {
+                    myDateSelect.append(
+                        $('<option></option>').val(val).html(text)
+                    );
+                });
+            } else {
+                myDateSelect.find("option").remove();
+                myTimeSelect.find("option").remove();
+            }
+        });
 
         /*
-         * Enable the checkout button
+         * When the date gets selected, show appropriate time slots
          */
-        $('#checkout').prop('disabled', false);
+        myDateSelect.change(function(event) {
 
-        if(myCitySelect.val().toString().indexOf("select") < 0) {
-
-            shopifyDs['city'] = myCitySelect.val();
-
-            myDateSelect.find("option").remove();
-            var dates = {};
-            dates[0] = "Select date";
-
-            $.each(getDates(), function(val, text){
-                dates[val] = text;
-            });
-
-            $.each(dates, function(val, text) {
-                myDateSelect.append(
-                    $('<option></option>').val(val).html(text)
-                );
-            });
-        } else {
-            myDateSelect.find("option").remove();
             myTimeSelect.find("option").remove();
-        }
-    });
 
-    /*
-     * When the date gets selected, show appropriate time slots
-     */
-    myDateSelect.change(function(event) {
+            selectedValue = $("#lbdt-date option:selected").text()
+            if(selectedValue.indexOf("Select") < 0) {
+                var timeOptions = {};
+                timeOptions['select'] = "Select time slot";
 
-        myTimeSelect.find("option").remove();
+                $.each(getSlots(myDateSelect.val()), function(val, text){
+                    timeOptions[val] = text;
+                });
 
-        selectedValue = $("#lbdt-date option:selected").text()
-        if(selectedValue.indexOf("Select") < 0) {
-            var timeOptions = {};
-            timeOptions['select'] = "Select time slot";
-
-            $.each(getSlots(myDateSelect.val()), function(val, text){
-                timeOptions[val] = text;
-            });
-
-            $.each(timeOptions, function(val, text) {
-                myTimeSelect.append(
-                    $('<option></option>').val(val).html(text)
-                );
-            });
-        }
-    });
+                $.each(timeOptions, function(val, text) {
+                    myTimeSelect.append(
+                        $('<option></option>').val(val).html(text)
+                    );
+                });
+            }
+        });
+    }
 }
 
+$(document).ready(init);
