@@ -335,7 +335,7 @@ window.addEventListener('error', function (err) {
 });
 
 
-$(function () {
+$(window).load(function () {
     if ($('#lbdt').length > 0) {
 
 
