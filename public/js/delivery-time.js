@@ -514,9 +514,9 @@ function submitAction(event) {
 }
 
 //loggly
-var _LTracker = _LTracker || [];
+/*var _LTracker = _LTracker || [];
 _LTracker.push({
-    'logglyKey': 'TOKEN',
+    'logglyKey': '7b9f6d3d-01ed-45c5-b4ed-e8d627764998',
     'sendConsoleErrors' : true,
     'tag' : 'loggly-jslogger'
-});
+});*/
