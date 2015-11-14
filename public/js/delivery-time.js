@@ -339,12 +339,14 @@ function submitAction(event) {
     /*
      * Hack for sampler
      */
+    /*
     if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
         myTimeSelect.append(
             $('<option></option>').val("12:00").html("12 - 1 pm")
         );
         myTimeSelect.val('12:00');
     }
+    */
 
     if(myDateSelect.val() == 0 ||
         myCitySelect.val() == 'select' ||
