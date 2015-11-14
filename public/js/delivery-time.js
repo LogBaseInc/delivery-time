@@ -335,6 +335,55 @@ window.addEventListener('error', function (err) {
 });
 
 
+function submitAction(event) {
+    /*
+     * Hack for sampler
+     */
+    if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+        myTimeSelect.append(
+            $('<option></option>').val("12:00").html("12 - 1 pm")
+        );
+        myTimeSelect.val('12:00');
+    }
+
+    if(myDateSelect.val() == 0 ||
+        myCitySelect.val() == 'select' ||
+        myTimeSelect.val() == 'select' ||
+        myCitySelect.val() == 'loading') {
+        event.preventDefault();
+    } else {
+
+        var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
+            + " | " + $('#lbdt-slots option:selected').text();
+        shopifyDs['cartJson']['note'] = notes;
+        $.post('cart.js', shopifyDs['cartJson']);
+        var query = "?city=" + shopifyDs['city'] +
+            "&date=" + myDateSelect.val().split(" ").join("") +
+            "&slot=" + myTimeSelect.val();
+        var url = "/apps/order" + query;
+        $.get(url, function(data){});
+
+        /*
+         * Google Analytics
+         */
+        var date = $('#lbdt-date option:selected').text();
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
+            eventLabel: date,
+            eventValue: parseInt(myTimeSelect.val())
+        });
+
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Slot Selected',
+            eventLabel: $('#lbdt-slots option:selected').text()
+        });
+    }
+}
+
 {
     if ($('#lbdt').length > 0) {
 
@@ -382,58 +431,12 @@ window.addEventListener('error', function (err) {
 
         //Validation
         $('#checkout').click(function(event) {
-
-            /*
-             * Hack for sampler
-             */
-            if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
-                myTimeSelect.append(
-                    $('<option></option>').val("12:00").html("12 - 1 pm")
-                );
-                myTimeSelect.val('12:00');
-            }
-
-            if(myDateSelect.val() == 0 ||
-                myCitySelect.val() == 'select' ||
-                myTimeSelect.val() == 'select' ||
-                myCitySelect.val() == 'loading') {
-                event.preventDefault();
-            } else {
-                var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
-                    + " | " + $('#lbdt-slots option:selected').text();
-                shopifyDs['cartJson']['note'] = notes;
-                $.post('cart.js', shopifyDs['cartJson']);
-                var query = "?city=" + shopifyDs['city'] +
-                    "&date=" + myDateSelect.val().split(" ").join("") +
-                    "&slot=" + myTimeSelect.val();
-                var url = "/apps/order" + query;
-                $.get(url, function(data){});
-
-                /*
-                 * Google Analytics
-                 */
-                var date = $('#lbdt-date option:selected').text();
-                ga('send', {
-                    hitType: 'event',
-                    eventCategory: 'Date Picker',
-                    eventAction: 'Ordered Cake - ' + $('#lbdt-city option:selected').text(),
-                    eventLabel: date,
-                    eventValue: parseInt(myTimeSelect.val())
-                });
-
-                ga('send', {
-                    hitType: 'event',
-                    eventCategory: 'Date Picker',
-                    eventAction: 'Slot Selected',
-                    eventLabel: $('#lbdt-slots option:selected').text()
-                });
-
-            }
-            var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
-                + " | " + $('#lbdt-slots option:selected').text();
-            shopifyDs['cartJson']['note'] = notes;
-            $.post('cart.js', shopifyDs['cartJson']);
+            //submitAction();
         });
+
+        $('#lbdt-submit').submit(function(event) {
+            submitAction();
+        })
 
         /*
          * When the city gets selected, show appropriate dates to order
