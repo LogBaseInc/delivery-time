@@ -356,7 +356,9 @@ function submitAction(event) {
         var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
             + " | " + $('#lbdt-slots option:selected').text();
         shopifyDs['cartJson']['note'] = notes;
-        $.post('cart.js', shopifyDs['cartJson']);
+        $.post('cart.js', shopifyDs['cartJson'], function() {
+            return true;
+        });
         var query = "?city=" + shopifyDs['city'] +
             "&date=" + myDateSelect.val().split(" ").join("") +
             "&slot=" + myTimeSelect.val();
@@ -438,7 +440,6 @@ function submitAction(event) {
         console.log("REgistering submit event");
         $('#lbdt-submit').submit(function(event) {
             submitAction(event);
-            return true;
         })
 
         /*
