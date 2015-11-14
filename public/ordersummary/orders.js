@@ -21,6 +21,9 @@ window.addEventListener("DOMContentLoaded", function() {
                 timetosort = (isNaN(parseInt(timesplit[0])) ? 24 : (ispm ? (parseInt(timesplit[0])+12) : parseInt(timesplit[0])));
             }
 
+            if(data.orders[i].shipping_address == undefined || data.orders[i].shipping_address == null)
+                console.log(data.orders[i]);
+
             order.id = data.orders[i].id;
             order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
             order.name = data.orders[i].name;
@@ -29,7 +32,8 @@ window.addEventListener("DOMContentLoaded", function() {
             order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
             order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
             order.timetosort = timetosort;
-            order.address = data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2;
+            order.address = (data.orders[i].shipping_address != undefined || data.orders[i].shipping_address != null) ? 
+                             data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2 : "This order doesn't have shipping address.";
             order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
 
             orders.push(order);
@@ -99,7 +103,7 @@ function listOrders (orderlist) {
         for(var i=0; i< orderlist.length; i++) {
             var rowCount = table.rows.length;
             var row = table.insertRow(rowCount);
-            row.insertCell(0).innerHTML = '<a href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
+            row.insertCell(0).innerHTML = '<a target="_blank" href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
             row.insertCell(1).innerHTML = orderlist[i].customername;
             row.insertCell(2).innerHTML = orderlist[i].orderdate;
             row.insertCell(3).innerHTML = orderlist[i].deliverydate;
