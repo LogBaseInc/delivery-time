@@ -1,5 +1,8 @@
 var orders = [];
 var filterorders = [];
+var selecteddate;
+var selectedcity = "All";
+var unfilterCityOrders = [];
 
 window.addEventListener("DOMContentLoaded", function() {
 
@@ -29,6 +32,7 @@ window.addEventListener("DOMContentLoaded", function() {
             order.name = data.orders[i].name;
             order.customername = data.orders[i].customer.first_name;
             order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
+            order.city = notesplit.length >0 ? notesplit[0] : "";
             order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
             order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
             order.timetosort = timetosort;
@@ -72,18 +76,35 @@ function initialize () {
     setSelectedDateOrders(todaydate);
 
     $("#filter").change(function() {
-        var selecteddate = $('#filter').val();
+        selecteddate = $('#filter').val();
         setSelectedDateOrders(selecteddate);
+    });
+
+    $("#cityfilter").change(function() {
+        selectedcity = $('#cityfilter').val();
+        setSelectedCityOrders();
     });
 }
 
 function setSelectedDateOrders(selecteddate) {
-    filterorders = $.grep(orders, function(v) {
+    unfilterCityOrders = $.grep(orders, function(v) {
         return $.trim(v.deliverydate) == $.trim(selecteddate);
     });
+    //unfilterCityOrders = filterorders;
+    setSelectedCityOrders();
+}
+
+function setSelectedCityOrders() {
+    if(selectedcity == "All") {
+        filterorders = unfilterCityOrders;
+    }
+    else {
+        filterorders = $.grep(unfilterCityOrders, function(v) {
+            return $.trim(v.city) == $.trim(selectedcity);
+        });
+    }
 
     filterorders.sort(SortByTime);
-
     listOrders(filterorders);
 }
 
@@ -109,7 +130,8 @@ function listOrders (orderlist) {
             row.insertCell(3).innerHTML = orderlist[i].deliverydate;
             row.insertCell(4).innerHTML = orderlist[i].deliverytime;
             row.insertCell(5).innerHTML = orderlist[i].address;
-            row.insertCell(6).innerHTML = orderlist[i].status;
+            row.insertCell(6).innerHTML = orderlist[i].city;
+            row.insertCell(7).innerHTML = orderlist[i].status;
         }
     }
 }
