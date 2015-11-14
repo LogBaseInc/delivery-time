@@ -383,6 +383,8 @@ function submitAction(event) {
             eventAction: 'Slot Selected',
             eventLabel: $('#lbdt-slots option:selected').text()
         });
+        console.log("Testing submit event");
+        event.preventDefault();
     }
 }
 
