@@ -340,17 +340,6 @@ window.addEventListener('error', function (err) {
 
 
 function submitAction(event) {
-    /*
-     * Hack for sampler
-     */
-    /*
-    if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
-        myTimeSelect.append(
-            $('<option></option>').val("12:00").html("12 - 1 pm")
-        );
-        myTimeSelect.val('12:00');
-    }
-    */
 
     if(myDateSelect.val() == 0 ||
         myCitySelect.val() == 'select' ||
@@ -501,10 +490,20 @@ function submitAction(event) {
                 var timeOptions = {};
                 timeOptions['select'] = "Select time slot";
 
-                $.each(getSlots(myDateSelect.val()), function(val, text){
-                    timeOptions[val] = text;
-                });
+                /*
+                 * Hack for sampler
+                 */
+                if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+                    timeOptions["11:00"] = "10 am - 1 pm";
+                } else {
+                    $.each(getSlots(myDateSelect.val()), function(val, text){
+                        timeOptions[val] = text;
+                    });
+                }
 
+                /*
+                 * Add options to the drop down list
+                 */
                 $.each(timeOptions, function(val, text) {
                     myTimeSelect.append(
                         $('<option></option>').val(val).html(text)
