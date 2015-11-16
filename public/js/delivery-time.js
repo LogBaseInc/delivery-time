@@ -66,6 +66,14 @@ function updateFirstPossibleDeliveryDate() {
         workingHoursLeftForDay = workingHoursPerDay;
     }
 
+
+    /*
+     * Hack for sampler
+     */
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
+        dayCount+=1;
+    }
+
     istDate.setDate(curDate + dayCount);
     delivery['date'] = istDate.getDate();
     delivery['month'] = istDate.getMonth() + 1;
@@ -79,7 +87,7 @@ function updateFirstPossibleDeliveryDate() {
      * Hack for sampler
      */
     if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
-        delivery['date']+=1;
+        delivery['hour'] = 9;
     }
 }
 
