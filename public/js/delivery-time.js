@@ -74,6 +74,13 @@ function updateFirstPossibleDeliveryDate() {
     } else {
         delivery['hour'] = workStartTime + prepTime + 1;
     }
+
+    /*
+     * Hack for sampler
+     */
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
+        delivery['date']+=1;
+    }
 }
 
 function checkForHoliday(dt) {
@@ -87,7 +94,48 @@ function checkForHoliday(dt) {
             holiday = true;
         }
     });
+
+    /*
+     * Hack for sampler
+     */
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
+        var maxLimitReached = checkForMaxOrders(dt);
+        if (maxLimitReached) {
+            return true;
+        }
+    }
+
     return holiday;
+}
+
+/*
+ * Hack for sampler
+ */
+function checkForMaxOrders(dt) {
+    var total = 0;
+    var maxLimitReached = false;
+    var slotMaxLimit = 0
+    var idx = dt.split(" ").join("")
+    var orders = lbDatePicker.data[shopifyDs['city']][idx];
+    if (orders == null || orders == undefined) {
+        return false;
+    }
+
+    $.each(orders, function(val, text){
+        if (val == "11:00" || val == "15:00") {
+            var curOrder = parseInt(text);
+            if (curOrder >= lbDatePicker.data.config.maxOrdersPerSlot) {
+                slotMaxLimit++;
+            }
+            total+=curOrder;
+        }
+    });
+
+    if (total >= (lbDatePicker.data.config.maxOrdersPerSlot * 2) || slotMaxLimit >= 2) {
+        maxLimitReached = true;
+    }
+
+    return maxLimitReached;
 }
 
 function getDates() {
@@ -501,8 +549,13 @@ function submitAction(event) {
                  * Hack for sampler
                  */
                 if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
-                    timeOptions["11:00"] = "10 am - 1 pm";
-                    timeOptions["15:00"] = "4 pm - 7 pm";
+                    var options = getSlots(myDateSelect.val());
+                    if (options["11:00"] != null) {
+                        timeOptions["11:00"] = "10 am - 1 pm";
+                    }
+                    if (options["15:00"] != null) {
+                        timeOptions["15:00"] = "4 pm - 7 pm";
+                    }
                 } else {
                     $.each(getSlots(myDateSelect.val()), function(val, text){
                         timeOptions[val] = text;
