@@ -346,7 +346,7 @@ function submitAction(event) {
     if (shopifyDs['submitType'] != 'checkout') {
         return true;
     } else {
-        shopifyDs['submitType'] = 'delivery';
+        shopifyDs['submitType'] = 'update';
     }
 
     if(myDateSelect.val() == 0 ||
