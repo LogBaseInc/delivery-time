@@ -214,12 +214,13 @@ function updateCakeDs() {
 }
 
 function hideDeliverySlotForSampler() {
-    if (shopifyDs["cartJson"]["item_count"] > 1 || shopifyDs['cakeType'] != 'sampler') {
-        $('#lbdt-slots-div').prop('hidden', false);
+    var addContent = "";
+    if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+        addContent = "For <b>Sampler cakes</b> only two delivery slots are available.";
     }
 
     if (shopifyDs['cakeType'] == 'sampler') {
-        var content = "<br>Our <b>Sampler Cakes</b> takes a day to deliver."
+        var content = "<br>Our <b>Sampler Cakes</b> takes a day to deliver. " + addContent;
         $('#lbdt-note').html(content);
     }
 }
@@ -495,6 +496,7 @@ function submitAction(event) {
                  */
                 if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
                     timeOptions["11:00"] = "10 am - 1 pm";
+                    timeOptions["15:00"] = "4 pm - 7 pm";
                 } else {
                     $.each(getSlots(myDateSelect.val()), function(val, text){
                         timeOptions[val] = text;
