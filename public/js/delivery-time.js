@@ -9,7 +9,8 @@ var shopifyDs = {
     cartJson: null,
     cakeVariant: null,
     cakeType: null,
-    city: null
+    city: null,
+    submitType: "update"
 }
 
 function loadCityValues() {
@@ -342,6 +343,12 @@ window.addEventListener('error', function (err) {
 
 function submitAction(event) {
 
+    if (shopifyDs['submitType'] != 'checkout') {
+        return true;
+    } else {
+        shopifyDs['submitType'] = 'delivery';
+    }
+
     if(myDateSelect.val() == 0 ||
         myCitySelect.val() == 'select' ||
         myTimeSelect.val() == 'select' ||
@@ -437,11 +444,10 @@ function submitAction(event) {
         );
         myCitySelect.prop("disabled", true);
 
-        //Validation
-/*        $('#checkout').click(function(event) {
-            submitAction(event);
+        $('#checkout').click(function(event) {
+            shopifyDs['submitType'] = "checkout";
         });
-*/
+
         $('#lbdt-submit').submit(function(event) {
             submitAction(event);
         })
