@@ -166,6 +166,9 @@ function getDates() {
         }
     });
     // TODO - need to handle case where we don't have a free slot at all
+    if (dates == {}) {
+        deliverySlotsFullNotification();
+    }
     return dates;
 }
 
@@ -280,6 +283,35 @@ function hideDeliverySlotForSampler() {
         var content = "<br>Our <b>Sampler Cakes</b> takes a day to deliver. " + addContent;
         $('#lbdt-note').html(content);
     }
+}
+
+function deliverySlotsFullNotification() {
+    var addContent = "";
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
+        addContent = "<br>All delivery slots for <b>Sampler cakes</b> are full. " +
+            "Please come back tomorrow to order <b>Sampler cakes</b>. " + "In the mean time " +
+            "you can order our <a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress Cakes</b></a>."
+
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Delivery Slots Full',
+            eventLabel: 'Sampler cakes delivery slots full'
+        });
+
+    } else {
+        addContent = "<br>All our delivery slots are full. Please come back tomorrow to order. We apologize for the " +
+            "inconvenience caused."
+
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Date Picker',
+            eventAction: 'Delivery Slots Full',
+            eventLabel: 'All cakes delivery slots full'
+        });
+    }
+
+    $('#lbdt-note').html(addContent);
 }
 
 function noteToCustomer() {
