@@ -166,7 +166,7 @@ function getDates() {
         }
     });
     // TODO - need to handle case where we don't have a free slot at all
-    if (dates == {}) {
+    if (Object.keys(dates).length == 0) {
         deliverySlotsFullNotification();
     }
     return dates;
