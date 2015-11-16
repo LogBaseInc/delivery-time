@@ -216,7 +216,7 @@ function updateCakeDs() {
 
 function hideDeliverySlotForSampler() {
     var addContent = "";
-    if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
         addContent = "For <b>Sampler cakes</b> only two delivery slots are available.";
     }
 
@@ -500,7 +500,7 @@ function submitAction(event) {
                 /*
                  * Hack for sampler
                  */
-                if (shopifyDs["cartJson"]["item_count"] == 1 && shopifyDs['cakeType'] == 'sampler') {
+                if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
                     timeOptions["11:00"] = "10 am - 1 pm";
                     timeOptions["15:00"] = "4 pm - 7 pm";
                 } else {
