@@ -17,7 +17,7 @@ window.addEventListener("DOMContentLoaded", function() {
             if(notesplit.length >= 2) {
                 var timesplit = notesplit[2].split('-');
                 var ispm = false;
-                if(timesplit[1].indexOf('pm') >=0 && timesplit[0] >= 1 && timesplit[0] <= 8) {
+                if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[0]) >= 1 && parseInt(timesplit[0]) <= 8) {
                     ispm = true;
                 }
 
