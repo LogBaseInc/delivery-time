@@ -288,8 +288,8 @@ function hideDeliverySlotForSampler() {
 function deliverySlotsFullNotification() {
     var addContent = "";
     if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
-        addContent = "<br>All delivery slots for <b>Sampler cakes</b> are full. " +
-            "Please come back tomorrow to order <b>Sampler cakes</b>. " + "In the mean time " +
+        addContent = "<br>All delivery slots for <b style=\"color:#FF0000\">Sampler Cakes are full</b>. " +
+            "Please come back tomorrow to order <b>Sampler Cakes</b>. " + "In the mean time " +
             "you can order our <a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress Cakes</b></a>."
 
         ga('send', {
@@ -300,8 +300,10 @@ function deliverySlotsFullNotification() {
         });
 
     } else {
-        addContent = "<br>All our delivery slots are full. Please come back tomorrow to order. We apologize for the " +
-            "inconvenience caused."
+        addContent = "<br>We are sorry, <font style=\"color:#FF0000\">all delivery slots are " +
+            "fully booked for this week!</font>" +
+            " Please check back tomorrow or " +
+            "<a href=\"http://www.cakebee.in/pages/get-in-touch\"> <b>Get in touch</b></a> with us."
 
         ga('send', {
             hitType: 'event',
