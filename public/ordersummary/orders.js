@@ -39,6 +39,7 @@ window.addEventListener("DOMContentLoaded", function() {
             order.address = (data.orders[i].shipping_address != undefined || data.orders[i].shipping_address != null) ? 
                              data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2 : "This order doesn't have shipping address.";
             order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
+            order.price = data.orders[i].total_price;
 
             orders.push(order);
         }
@@ -129,9 +130,10 @@ function listOrders (orderlist) {
             row.insertCell(2).innerHTML = orderlist[i].orderdate;
             row.insertCell(3).innerHTML = orderlist[i].deliverydate;
             row.insertCell(4).innerHTML = orderlist[i].deliverytime;
-            row.insertCell(5).innerHTML = orderlist[i].address;
-            row.insertCell(6).innerHTML = orderlist[i].city;
-            row.insertCell(7).innerHTML = orderlist[i].status;
+            row.insertCell(5).innerHTML = orderlist[i].price;
+            row.insertCell(6).innerHTML = orderlist[i].address;
+            row.insertCell(7).innerHTML = orderlist[i].city;
+            row.insertCell(8).innerHTML = orderlist[i].status;
         }
     }
 }
