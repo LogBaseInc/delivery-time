@@ -14,10 +14,6 @@ var shopifyDs = {
     submitType: "update"
 }
 
-window._trackJs = { token: 'b607146b7ff5473dbc93f34eeb861c2d' };
-trackJs.track('ahoy trackjs!');
-
-
 function loadCityValues() {
     var city = {
         select: "Select city",
@@ -578,9 +574,6 @@ function submitAction(event) {
                 myDateSelect.find("option").remove();
                 myTimeSelect.find("option").remove();
             }
-
-            // TODO - remove this
-            testTracker();
         });
 
         /*
