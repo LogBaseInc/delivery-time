@@ -14,12 +14,9 @@ var shopifyDs = {
     submitType: "update"
 }
 
-function testTracker() {
-    if (testTrack) {
-        window._trackJs = { token: 'b607146b7ff5473dbc93f34eeb861c2d' };
-        trackJs.track('ahoy trackjs!');
-    }
-}
+window._trackJs = { token: 'b607146b7ff5473dbc93f34eeb861c2d' };
+trackJs.track('ahoy trackjs!');
+
 
 function loadCityValues() {
     var city = {
