@@ -116,6 +116,8 @@ router.get("/cleanslot", function(req, res) {
         });
 
        }
+
+       res.send("Slots cleaned successfully");
     }
     request(options, callback);
 });
