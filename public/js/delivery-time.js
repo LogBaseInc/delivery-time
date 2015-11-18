@@ -34,7 +34,6 @@ function loadCityValues() {
             $('<option></option>').val(val).html(text)
         );
     });
-    testTracker();
 }
 
 function getIST() {
@@ -582,6 +581,9 @@ function submitAction(event) {
                 myDateSelect.find("option").remove();
                 myTimeSelect.find("option").remove();
             }
+
+            // TODO - remove this
+            testTracker();
         });
 
         /*
