@@ -1,4 +1,5 @@
 var lbDatePicker = {};
+var testTrack = false;
 var delivery = {
     date: 0,
     hour: 0,
@@ -11,6 +12,13 @@ var shopifyDs = {
     cakeType: null,
     city: null,
     submitType: "update"
+}
+
+function testTracker() {
+    if (testTrack) {
+        window._trackJs = { token: 'b607146b7ff5473dbc93f34eeb861c2d' };
+        trackJs.track('ahoy trackjs!');
+    }
 }
 
 function loadCityValues() {
@@ -26,6 +34,7 @@ function loadCityValues() {
             $('<option></option>').val(val).html(text)
         );
     });
+    testTracker();
 }
 
 function getIST() {
