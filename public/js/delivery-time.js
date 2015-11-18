@@ -13,8 +13,6 @@ var shopifyDs = {
     submitType: "update"
 }
 
-window._trackJs = { token: 'b607146b7ff5473dbc93f34eeb861c2d' };
-
 function loadCityValues() {
     var city = {
         select: "Select city",
