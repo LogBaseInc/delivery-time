@@ -38,7 +38,7 @@ router.get("/dates", function(req, res) {
 
 router.get("/orders", function(req, res) {
      var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json',
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any',
         headers: {
             'X-Shopify-Access-Token': access_token
           }
@@ -78,6 +78,80 @@ router.get("/checkproducts", function(req, res) {
     res.sendFile(__dirname+'/productvalidation/productvalidation.html');
 });
 
+router.get("/cleanslot", function(req, res) {
+     var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250',
+        headers: {
+            'X-Shopify-Access-Token': access_token
+          }
+    };
+
+    function callback(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var data = JSON.parse(body);
+        
+        var cbeslotArray = [];
+
+        var trichyslotArray = [];
+
+        for(var i=0; i< data.orders.length; i++) {
+            var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
+            if(notesplit.length>0 && notesplit[0].indexOf('Coimbatore') >= 0 ) {
+                calculateSlotCount(notesplit, cbeslotArray);
+            }
+            else if(notesplit.length>0 && notesplit[0].indexOf('Trichy') >= 0 ) {
+                calculateSlotCount(notesplit, trichyslotArray);
+            }
+         }
+
+        var firebase_url = "https://lb-date-picker.firebaseio.com/";
+        var cbe_firebase_ref = new Firebase(firebase_url + 'coimbatore');
+        cbe_firebase_ref.set(cbeslotArray , function() {
+            console.log("Coimbatore slots updated");
+        });
+
+        var trichy_firebase_ref = new Firebase(firebase_url + 'trichy');
+        trichy_firebase_ref.set(trichyslotArray , function() {
+            console.log("Trichy slots updated");
+        });
+
+       }
+    }
+    request(options, callback);
+});
+
+function calculateSlotCount(notesplit, slotArray, dates) {
+    var timeslot = "";
+    if(notesplit.length >= 2) {
+        var timesplit = notesplit[2].split('-');
+        var ispm = false;
+
+        if(parseInt(timesplit[0]) == 10 && parseInt(timesplit[1]) == 1) {
+            timeslot = '11:00';
+        }
+        else if(parseInt(timesplit[0]) == 4 && parseInt(timesplit[1]) == 7) {
+            timeslot = '15:00';
+        }
+        else {
+            if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[0]) >= 1 && parseInt(timesplit[0]) <= 8) {
+                ispm = true;
+            }
+
+            timeslot = (isNaN(parseInt(timesplit[0])) ? 24 : (ispm ? (parseInt(timesplit[0])+12) : parseInt(timesplit[0]))).toString()+":00"; 
+        }
+    }
+
+    var date = new Date(notesplit[1]).toString("yyyyMMdd");
+    if(slotArray[date] == undefined)
+        slotArray[date] = {};
+
+    if(slotArray[date][timeslot] == undefined) {
+        slotArray[date][timeslot] = 1
+    }
+    else {
+        slotArray[date][timeslot] = 1+ parseInt(slotArray[date][timeslot]);
+    }
+}
 
 function removeOldOrders(fburl, city) {
     // remove old values

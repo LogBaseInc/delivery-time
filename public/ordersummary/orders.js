@@ -2,7 +2,9 @@ var orders = [];
 var filterorders = [];
 var selecteddate;
 var selectedcity = "All";
+var selectedstatus = "All";
 var unfilterCityOrders = [];
+var unfilterStatusOrders = [];
 
 window.addEventListener("DOMContentLoaded", function() {
 
@@ -11,37 +13,40 @@ window.addEventListener("DOMContentLoaded", function() {
 
     $.get( "/shopify/orders", function( data ) {
         for(var i=0; i< data.orders.length; i++) {
-            var order = {};
-            var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
-            var timetosort = "";
-            if(notesplit.length >= 2) {
-                var timesplit = notesplit[2].split('-');
-                var ispm = false;
-                if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[0]) >= 1 && parseInt(timesplit[0]) <= 8) {
-                    ispm = true;
+            if(data.orders[i].cancelled_at == null) {
+                var order = {};
+                var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
+                var timetosort = "";
+                if(notesplit.length >= 2) {
+                    var timesplit = notesplit[2].split('-');
+                    var ispm = false;
+                    if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[0]) >= 1 && parseInt(timesplit[0]) <= 8) {
+                        ispm = true;
+                    }
+
+                    timetosort = (isNaN(parseInt(timesplit[0])) ? 24 : (ispm ? (parseInt(timesplit[0])+12) : parseInt(timesplit[0])));
                 }
 
-                timetosort = (isNaN(parseInt(timesplit[0])) ? 24 : (ispm ? (parseInt(timesplit[0])+12) : parseInt(timesplit[0])));
+                if(data.orders[i].shipping_address == undefined || data.orders[i].shipping_address == null)
+                    console.log(data.orders[i]);
+
+                order.id = data.orders[i].id;
+                order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
+                order.name = data.orders[i].name;
+                order.customername = data.orders[i].customer.first_name;
+                order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
+                order.city = notesplit.length >0 ? notesplit[0] : "";
+                order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
+                order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
+                order.timetosort = timetosort;
+                order.address = (data.orders[i].shipping_address != undefined || data.orders[i].shipping_address != null) ? 
+                                 data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2 : "This order doesn't have shipping address.";
+                order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
+                order.price = data.orders[i].total_price;
+                order.openorclose = data.orders[i].closed_at != null ? "Closed" : "Open";
+
+                orders.push(order);
             }
-
-            if(data.orders[i].shipping_address == undefined || data.orders[i].shipping_address == null)
-                console.log(data.orders[i]);
-
-            order.id = data.orders[i].id;
-            order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
-            order.name = data.orders[i].name;
-            order.customername = data.orders[i].customer.first_name;
-            order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
-            order.city = notesplit.length >0 ? notesplit[0] : "";
-            order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
-            order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
-            order.timetosort = timetosort;
-            order.address = (data.orders[i].shipping_address != undefined || data.orders[i].shipping_address != null) ? 
-                             data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2 : "This order doesn't have shipping address.";
-            order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
-            order.price = data.orders[i].total_price;
-
-            orders.push(order);
         }
 
         initialize();
@@ -85,23 +90,39 @@ function initialize () {
         selectedcity = $('#cityfilter').val();
         setSelectedCityOrders();
     });
+
+    $("#openorclosedfilter").change(function() {
+        selectedstatus = $('#openorclosedfilter').val();
+        setSelectedStatusOrders();
+    });
 }
 
 function setSelectedDateOrders(selecteddate) {
     unfilterCityOrders = $.grep(orders, function(v) {
         return $.trim(v.deliverydate) == $.trim(selecteddate);
     });
-    //unfilterCityOrders = filterorders;
     setSelectedCityOrders();
 }
 
 function setSelectedCityOrders() {
     if(selectedcity == "All") {
-        filterorders = unfilterCityOrders;
+        unfilterStatusOrders = unfilterCityOrders;
     }
     else {
-        filterorders = $.grep(unfilterCityOrders, function(v) {
+        unfilterStatusOrders = $.grep(unfilterCityOrders, function(v) {
             return $.trim(v.city) == $.trim(selectedcity);
+        });
+    }
+    setSelectedStatusOrders();
+}
+
+function setSelectedStatusOrders() {
+    if(selectedstatus == "All") {
+        filterorders = unfilterStatusOrders;
+    }
+    else {
+        filterorders = $.grep(unfilterStatusOrders, function(v) {
+            return $.trim(v.openorclose) == $.trim(selectedstatus);
         });
     }
 
@@ -134,6 +155,7 @@ function listOrders (orderlist) {
             row.insertCell(6).innerHTML = orderlist[i].address;
             row.insertCell(7).innerHTML = orderlist[i].city;
             row.insertCell(8).innerHTML = orderlist[i].status;
+            row.insertCell(9).innerHTML = orderlist[i].openorclose;
         }
     }
 }

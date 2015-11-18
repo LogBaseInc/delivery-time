@@ -29,9 +29,17 @@
 							<option value="Trichy">Trichy</option>
 						</select>
 					</span>
+					<span style="margin-left:10px;">
+						Open/Closed: 
+						<select id="openorclosedfilter">
+							<option value="All">All</option>
+							<option value="Open">Open</option>
+							<option value="Closed">Closed</option>
+						</select>
+					</span>
 				</h4>
 				<center id="noorderdiv" style="margin-top:100px;">
-					No orders found for the selected date and city.
+					No orders found for the selected filters.
 				</center>
 				<table id="ordertable" name="ordertable">
 					<thead>
@@ -45,6 +53,7 @@
 						<th>Address</th>
 						<th>City</th>
 						<th>Status</th>
+						<th>Open/Closed</th>
 					</tr>
 					</thead>
 					<tbody>
