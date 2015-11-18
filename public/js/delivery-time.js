@@ -1,5 +1,4 @@
 var lbDatePicker = {};
-var testTrack = false;
 var delivery = {
     date: 0,
     hour: 0,
@@ -13,6 +12,8 @@ var shopifyDs = {
     city: null,
     submitType: "update"
 }
+
+window._trackJs = { token: 'b607146b7ff5473dbc93f34eeb861c2d' };
 
 function loadCityValues() {
     var city = {
