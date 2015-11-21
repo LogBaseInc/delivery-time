@@ -14,10 +14,17 @@ var shopifyDs = {
 }
 
 function loadCityValues() {
-    var city = {
-        select: "Select city",
-        coimbatore: "Coimbatore",
-        trichy: "Trichy"
+    if (shopifyDs['cakeType'] == 'sampler') {
+        var city = {
+            select: "Select city",
+            coimbatore: "Coimbatore"
+        }
+    } else {
+        var city = {
+            select: "Select city",
+            coimbatore: "Coimbatore",
+            trichy: "Trichy"
+        }
     }
     myCitySelect.find("option").remove();
 
@@ -132,14 +139,14 @@ function checkForMaxOrders(dt) {
     $.each(orders, function(val, text){
         if (val == "11:00" || val == "15:00") {
             var curOrder = parseInt(text);
-            if (curOrder >= lbDatePicker.data.config.maxOrdersPerSlot) {
+            if (curOrder >= lbDatePicker.data.config.maxSamplersPerSlot) {
                 slotMaxLimit++;
             }
             total+=curOrder;
         }
     });
 
-    if (total >= (lbDatePicker.data.config.maxOrdersPerSlot * 2) || slotMaxLimit >= 2) {
+    if (total >= (lbDatePicker.data.config.maxSamplersPerSlot * 2) || slotMaxLimit >= 2) {
         maxLimitReached = true;
     }
 
@@ -175,6 +182,12 @@ function getDates() {
 function getFreeSlotsForTheDay(date, month, year) {
     var slots = {};
     var slotDateFormat = year.toString() + month.toString() + date.toString();
+
+    var maxOrderPerSlot = lbDatePicker.data.config.maxOrdersPerSlot;
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
+        maxOrderPerSlot = lbDatePicker.data.config.maxSamplersPerSlot;
+    }
+
     $.each(lbDatePicker.data.config.slots, function(val, text) {
         // Check if we have data available for the city
         var slotsForTheDay = lbDatePicker.data[shopifyDs['city']];
@@ -186,7 +199,7 @@ function getFreeSlotsForTheDay(date, month, year) {
             slots[val] = text
         } else {
             var existingOrders = slotsForTheDay[val];
-            if (existingOrders == null || existingOrders < 3) {
+            if (existingOrders == null || existingOrders < maxOrderPerSlot) {
                 slots[val] = text
             }
         }
@@ -280,7 +293,8 @@ function hideDeliverySlotForSampler() {
     }
 
     if (shopifyDs['cakeType'] == 'sampler') {
-        var content = "<br>Our <b>Sampler Cakes</b> takes a day to deliver. " + addContent;
+        var content = "<br><b>Sampler Cakes</b> are available only for Coimbatore. " +
+            "Our <b>Sampler Cakes</b> takes a day to deliver. " + addContent;
         $('#lbdt-note').html(content);
     }
 }
