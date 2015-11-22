@@ -39,7 +39,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
                 order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
                 order.timetosort = timetosort;
-                order.address = (data.orders[i].shipping_address != undefined || data.orders[i].shipping_address != null) ? 
+                order.address = (data.orders[i].shipping_address != undefined && data.orders[i].shipping_address != null) ? 
                                  data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2 : "This order doesn't have shipping address.";
                 order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
                 order.price = data.orders[i].total_price;
