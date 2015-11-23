@@ -19,12 +19,14 @@ function loadCityValues() {
             select: "Select city",
             coimbatore: "Coimbatore"
         }
+        console.log("Sampler cakes selected");
     } else {
         var city = {
             select: "Select city",
             coimbatore: "Coimbatore",
             trichy: "Trichy"
         }
+        console.log("Other cakes selected");
     }
     myCitySelect.find("option").remove();
 
