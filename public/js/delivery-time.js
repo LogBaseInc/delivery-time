@@ -282,6 +282,7 @@ function updateCakeDs() {
             shopifyDs['cakeType'] = 'xpress';
         }
 
+        loadCityValues();
         updateFirstPossibleDeliveryDate();
         noteToCustomer();
         hideDeliverySlotForSampler();
@@ -520,13 +521,11 @@ function submitAction(event) {
             lbDatePicker = data;
             myCitySelect.prop("disabled", false);
             updateCakeDs();
-            loadCityValues();
         }).fail(function(){
                 getDefaultDates();
                 getDefaultSlots();
                 myCitySelect.prop("disabled", false);
                 updateCakeDs();
-                loadCityValues();
 
                 /*
                  * Google Analytics
