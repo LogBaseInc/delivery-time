@@ -519,14 +519,14 @@ function submitAction(event) {
         $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
             lbDatePicker = data;
             myCitySelect.prop("disabled", false);
-            loadCityValues();
             updateCakeDs();
+            loadCityValues();
         }).fail(function(){
                 getDefaultDates();
                 getDefaultSlots();
                 myCitySelect.prop("disabled", false);
-                loadCityValues();
                 updateCakeDs();
+                loadCityValues();
 
                 /*
                  * Google Analytics
