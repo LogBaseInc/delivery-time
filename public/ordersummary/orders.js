@@ -5,11 +5,48 @@ var selectedcity = "All";
 var selectedstatus = "All";
 var unfilterCityOrders = [];
 var unfilterStatusOrders = [];
+var todaydate;
+var firebaseorders = [];
+var selectedorderinfo = null;
+var selectedorderid = null;
+var selectedorderbutton = null;
 
 window.addEventListener("DOMContentLoaded", function() {
+    $( "#dialog" ).dialog({
+        modal: true,
+        draggable: false,
+        resizable: false,
+        autoOpen: false,
+        hide: {
+            effect: "explode",
+            duration: 500
+        },
+        width: 400,
+        dialogClass: 'ui-dialog-osx',
+        buttons: {
+            "OK": function() {
+                var selectedoption = document.querySelector('input[name="driver"]:checked');
+                if(selectedoption != null) {
+                    var date = moment(new Date()).format("YYYYMMDD");
+                    var firebase_url = "https://cakebee-delivery.firebaseio.com//";
+                    var firebase_ref = new Firebase(firebase_url + selectedoption.value + "/" + date + "/" + selectedorderid);
+                    firebase_ref.set(selectedorderinfo , function() {
+                        //alert("Order assigned to driver");
+                    });
+                    selectedorderinfo = null;
+                    selectedorderid = null;
+                    selectedorderbutton.html('Undo');
+                    selectedorderbutton = null;
+                }
+                $(this).dialog("close");
+            }
+        }
+    });
 
     $("#orderdiv").hide();
     $("#noorderdiv").hide();
+
+    getDrivers();
 
     $.get( "/shopify/orders", function( data ) {
         for(var i=0; i< data.orders.length; i++) {
@@ -33,18 +70,26 @@ window.addEventListener("DOMContentLoaded", function() {
                 order.id = data.orders[i].id;
                 order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
                 order.name = data.orders[i].name;
-                order.customername = data.orders[i].customer.first_name;
+                order.customername = data.orders[i].customer.first_name + " " +data.orders[i].customer.last_name;
                 order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
                 order.city = notesplit.length >0 ? notesplit[0] : "";
                 order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
                 order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
                 order.timetosort = timetosort;
-                order.address = (data.orders[i].shipping_address != undefined && data.orders[i].shipping_address != null) ? 
-                                 data.orders[i].shipping_address.address1 + " " + data.orders[i].shipping_address.address2 : "This order doesn't have shipping address.";
+                order.address = "This order doesn't have shipping address.";
+                if(data.orders[i].shipping_address != undefined && data.orders[i].shipping_address != null) {
+                    order.address = data.orders[i].shipping_address.address1;
+                    if(data.orders[i].shipping_address.address2 != null && data.orders[i].shipping_address.address2 != "")
+                        order.address = order.address + ", " +data.orders[i].shipping_address.address2;
+                    order.address = order.address + ", " + data.orders[i].shipping_address.city;
+                    order.address = order.address + " - " + data.orders[i].shipping_address.zip;
+                }
+                order.phone = data.orders[i].shipping_address.phone;
                 order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
                 order.price = data.orders[i].total_price;
                 order.openorclose = data.orders[i].closed_at != null ? "Closed" : "Open";
-
+                order.financial_status = data.orders[i].financial_status;
+                order.iscod = (data.orders[i].gateway != null && (data.orders[i].gateway.indexOf('COD') >=0 || data.orders[i].gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
                 orders.push(order);
             }
         }
@@ -52,6 +97,41 @@ window.addEventListener("DOMContentLoaded", function() {
         initialize();
     });
 }, false);
+
+function getFirebaseOrders(deviceId) {
+    var date = moment(new Date()).format("YYYYMMDD");
+    var firebase_url = "https://cakebee-delivery.firebaseio.com/";
+    var firebase_ref = new Firebase(firebase_url + deviceId + "/" + date);
+    firebase_ref.on("value", function(snapshot) {
+        var data = snapshot.val();
+        for(property in data){
+            firebaseorders[property] = {};
+            firebaseorders[property].deviceId = deviceId;
+        }
+        if(selecteddate == todaydate)
+            listOrders(filterorders);
+    }, function (errorObject) {
+       console.error("The read failed: " + errorObject.code);
+    });
+}
+
+function getDrivers() {
+    var firebase_ref = new Firebase("https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/devices" );
+    firebase_ref.on("value", function(snapshot) {
+        var dialog = $("#dialog");
+        dialog.append("");
+        var data = snapshot.val();
+
+        firebaseorders = [];
+
+        for(property in data){
+            dialog.append('<input type="radio" style="margin-top: 20px; font-size: 3em;" name="driver" value="' + property + '">' + data[property].vehiclenumber+ '</input></br>');
+            getFirebaseOrders(property);
+        }
+    }, function (errorObject) {
+       console.error("The read devices failed: " + errorObject.code);
+    });
+}
 
 function initialize () {
     var filterdates = [];
@@ -64,7 +144,7 @@ function initialize () {
         }
     }
 
-    var todaydate = moment(new Date()).format("dddd MMM DD, YYYY");
+    todaydate = moment(new Date()).format("dddd MMM DD, YYYY");
     if(filterdates.indexOf(todaydate) < 0)
         filterdates.push(todaydate);
 
@@ -73,12 +153,13 @@ function initialize () {
     var sel = $("#filter");
     sel.empty();
     for(var j=0; j<filterdates.length; j++) {
-        sel.append('<option value="' + filterdates[j] + '">' + filterdates[j]+ '</option>');
+        sel.append('<option value="' + filterdates[j] + '">' + filterdates[j]+ '</option></br>');
     }
 
     $("#orderdiv").show();
     $("#loadimg").hide();
     sel.val(todaydate).change();
+    selecteddate = todaydate;
     setSelectedDateOrders(todaydate);
 
     $("#filter").change(function() {
@@ -144,6 +225,8 @@ function listOrders (orderlist) {
         $("#ordertable > tbody").html("");
 
         for(var i=0; i< orderlist.length; i++) {
+            var id  = orderlist[i].name.replace("#", "");
+
             var rowCount = table.rows.length;
             var row = table.insertRow(rowCount);
             row.insertCell(0).innerHTML = '<a target="_blank" href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
@@ -156,7 +239,45 @@ function listOrders (orderlist) {
             row.insertCell(7).innerHTML = orderlist[i].city;
             row.insertCell(8).innerHTML = orderlist[i].status;
             row.insertCell(9).innerHTML = orderlist[i].openorclose;
+            if(selecteddate == todaydate && orderlist[i].city.indexOf('Coimbatore') >= 0)
+                row.insertCell(10).innerHTML = '<button class="driver-button">'+ (firebaseorders[id] != undefined ? "Undo" : "Assign Driver") +'</button>';
+            else
+                row.insertCell(10).innerHTML = '';
         }
+
+        $(".driver-button").click(function() {
+           var index = $(this).closest('td').parent()[0].sectionRowIndex;
+           var order = filterorders[index];
+           var date = moment(new Date()).format("YYYYMMDD");
+           selectedorderid  = order.name.replace("#", "");
+           selectedorderinfo = null;
+
+           if($(this).html() == 'Assign Driver'){
+                //Assign order to driver
+                selectedorderinfo = {};
+                selectedorderinfo.Address = order.address;
+                selectedorderinfo.Amount = 0;
+                selectedorderinfo.Mobile = order.phone;
+                selectedorderinfo.Name = order.customername;
+                selectedorderinfo.Time = order.deliverytime;
+                if(selectedorderinfo.iscod == true && order.financial_status.indexOf('pending') >=0) {
+                    selectedorderinfo.Amount = parseInt(order.price);
+                }
+                selectedorderbutton = $(this);
+                $("#dialog").dialog( "open" );
+           }
+           else {
+                //Delete order from driver
+                var deviceId = firebaseorders[selectedorderid].deviceId;
+                delete firebaseorders[selectedorderid];
+                var firebase_url = "https://cakebee-delivery.firebaseio.com//";
+                var firebase_ref = new Firebase(firebase_url + deviceId + "/" + date + "/" + selectedorderid);
+                firebase_ref.remove(function() {
+                    //alert("Order removed from driver");
+                });
+                $(this).html('Assign Driver');
+            }
+        });
     }
 }
 

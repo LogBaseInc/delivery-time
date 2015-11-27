@@ -37,8 +37,10 @@ router.get("/dates", function(req, res) {
 
 
 router.get("/orders", function(req, res) {
-     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any',
+    var d = Date.today().addDays(-10);
+    d = d.toString("yyyy-MM-dd HH:mm:ss");
+    var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&created_at_min='+d+' IST',
         headers: {
             'X-Shopify-Access-Token': access_token
           }
@@ -79,8 +81,10 @@ router.get("/checkproducts", function(req, res) {
 });
 
 router.get("/cleanslot", function(req, res) {
-     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250',
+    var d = Date.today().addDays(-10);
+    d = d.toString("yyyy-MM-dd HH:mm:ss");
+    var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&created_at_min='+d+' IST',
         headers: {
             'X-Shopify-Access-Token': access_token
           }
