@@ -99,14 +99,27 @@ window.addEventListener("DOMContentLoaded", function() {
 }, false);
 
 function getFirebaseOrders(deviceId) {
-    var date = moment(new Date()).format("YYYYMMDD");
+    //var date = moment(new Date()).format("YYYYMMDD");
     var firebase_url = "https://cakebee-delivery.firebaseio.com/";
-    var firebase_ref = new Firebase(firebase_url + deviceId + "/" + date);
+    var firebase_ref = new Firebase(firebase_url + deviceId);
     firebase_ref.on("value", function(snapshot) {
-        var data = snapshot.val();
-        for(property in data){
-            firebaseorders[property] = {};
-            firebaseorders[property].deviceId = deviceId;
+        var orderdata = snapshot.val();
+        for(datepro in orderdata) {
+            var data = orderdata[datepro];
+            for(property in data){
+                firebaseorders[property] = {};
+                firebaseorders[property].deviceId = deviceId;
+                firebaseorders[property].pickedon =  null;
+                if(data[property].Pickedon != undefined && data[property].Pickedon != null && 
+                    data[property].Pickedon != ""){
+                    firebaseorders[property].pickedon = moment(data[property].Pickedon).format("hh:mm a");
+                }
+                firebaseorders[property].deliveredon = null;
+                if(data[property].Deliveredon != undefined && data[property].Deliveredon != null && 
+                    data[property].Deliveredon != ""){
+                    firebaseorders[property].deliveredon = moment(data[property].Deliveredon).format("hh:mm a");
+                }
+            }
         }
         if(selecteddate == todaydate)
             listOrders(filterorders);
@@ -239,10 +252,23 @@ function listOrders (orderlist) {
             row.insertCell(7).innerHTML = orderlist[i].city;
             row.insertCell(8).innerHTML = orderlist[i].status;
             row.insertCell(9).innerHTML = orderlist[i].openorclose;
-            if(selecteddate == todaydate && orderlist[i].city.indexOf('Coimbatore') >= 0)
-                row.insertCell(10).innerHTML = '<button class="driver-button">'+ (firebaseorders[id] != undefined ? "Undo" : "Assign Driver") +'</button>';
-            else
-                row.insertCell(10).innerHTML = '';
+            row.insertCell(10).innerHTML = "<span></span>";
+            var isclosed = orderlist[i].openorclose.indexOf('Closed') >=0 ? true : false;
+            if(orderlist[i].city.indexOf('Coimbatore') >= 0) {
+                if(selecteddate == todaydate && firebaseorders[id] == undefined) {
+                    if(isclosed == false)
+                        row.insertCell(10).innerHTML = '<button class="driver-button">Assign Driver</button>'
+                }
+                else if(firebaseorders[id] != undefined) {
+                    var firebaseorder = firebaseorders[id];
+                    if(firebaseorder.deliveredon != null)
+                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
+                    else if(firebaseorder.pickedon != null)
+                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
+                    else if(selecteddate == todaydate && isclosed == false)
+                        row.insertCell(10).innerHTML = '<button class="driver-button">Not yet picked</button>'
+               } 
+            }
         }
 
         $(".driver-button").click(function() {
