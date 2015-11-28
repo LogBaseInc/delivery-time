@@ -245,30 +245,28 @@ function listOrders (orderlist) {
             var row = table.insertRow(rowCount);
             row.insertCell(0).innerHTML = '<a target="_blank" href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
             row.insertCell(1).innerHTML = orderlist[i].customername;
-            row.insertCell(2).innerHTML = orderlist[i].orderdate;
-            row.insertCell(3).innerHTML = orderlist[i].deliverydate;
-            row.insertCell(4).innerHTML = orderlist[i].deliverytime;
-            row.insertCell(5).innerHTML = orderlist[i].price;
-            row.insertCell(6).innerHTML = orderlist[i].address;
-            row.insertCell(7).innerHTML = orderlist[i].city;
-            row.insertCell(8).innerHTML = orderlist[i].tag;
-            row.insertCell(9).innerHTML = orderlist[i].status;
-            row.insertCell(10).innerHTML = orderlist[i].openorclose;
-            row.insertCell(11).innerHTML = "<span></span>";
+            row.insertCell(2).innerHTML = orderlist[i].deliverytime;
+            row.insertCell(3).innerHTML = orderlist[i].price;
+            row.insertCell(4).innerHTML = orderlist[i].address;
+            row.insertCell(5).innerHTML = orderlist[i].city;
+            row.insertCell(6).innerHTML = orderlist[i].tag;
+            row.insertCell(7).innerHTML = orderlist[i].status;
+            row.insertCell(8).innerHTML = orderlist[i].openorclose;
+            row.insertCell(9).innerHTML = "<span></span>";
             var isclosed = orderlist[i].openorclose.indexOf('Closed') >=0 ? true : false;
             if(orderlist[i].city.indexOf('Coimbatore') >= 0) {
                 if(selecteddate == todaydate && firebaseorders[id] == undefined) {
                     if(isclosed == false)
-                        row.insertCell(11).innerHTML = '<button class="driver-button">Assign Driver</button>'
+                        row.insertCell(9).innerHTML = '<button class="driver-button">Assign Driver</button>'
                 }
                 else if(firebaseorders[id] != undefined) {
                     var firebaseorder = firebaseorders[id];
                     if(firebaseorder.deliveredon != null)
-                        row.insertCell(11).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
+                        row.insertCell(9).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
                     else if(firebaseorder.pickedon != null)
-                        row.insertCell(11).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
+                        row.insertCell(9).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
                     else if(selecteddate == todaydate && isclosed == false)
-                        row.insertCell(11).innerHTML = '<button class="driver-button">Not yet picked</button>'
+                        row.insertCell(9).innerHTML = '<button class="driver-button">Not yet picked</button>'
                } 
             }
         }
