@@ -71,7 +71,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
                 order.name = data.orders[i].name;
                 order.customername = data.orders[i].customer.first_name + " " +data.orders[i].customer.last_name;
-                order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY');
+                order.orderdate = moment(data.orders[i].created_at).format('MMM DD, YYYY hh:mm a');
                 order.city = notesplit.length >0 ? notesplit[0] : "";
                 order.deliverydate = notesplit.length >0 ? $.trim(notesplit[1]).replace(/ +(?= )/g,'') : "";
                 order.deliverytime = notesplit.length >0 ? notesplit[2]: "";
@@ -89,6 +89,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 order.price = data.orders[i].total_price;
                 order.openorclose = data.orders[i].closed_at != null ? "Closed" : "Open";
                 order.financial_status = data.orders[i].financial_status;
+                order.tag = data.orders[i].tags;
                 order.iscod = (data.orders[i].gateway != null && (data.orders[i].gateway.indexOf('COD') >=0 || data.orders[i].gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
                 orders.push(order);
             }
@@ -250,23 +251,24 @@ function listOrders (orderlist) {
             row.insertCell(5).innerHTML = orderlist[i].price;
             row.insertCell(6).innerHTML = orderlist[i].address;
             row.insertCell(7).innerHTML = orderlist[i].city;
-            row.insertCell(8).innerHTML = orderlist[i].status;
-            row.insertCell(9).innerHTML = orderlist[i].openorclose;
-            row.insertCell(10).innerHTML = "<span></span>";
+            row.insertCell(8).innerHTML = orderlist[i].tag;
+            row.insertCell(9).innerHTML = orderlist[i].status;
+            row.insertCell(10).innerHTML = orderlist[i].openorclose;
+            row.insertCell(11).innerHTML = "<span></span>";
             var isclosed = orderlist[i].openorclose.indexOf('Closed') >=0 ? true : false;
             if(orderlist[i].city.indexOf('Coimbatore') >= 0) {
                 if(selecteddate == todaydate && firebaseorders[id] == undefined) {
                     if(isclosed == false)
-                        row.insertCell(10).innerHTML = '<button class="driver-button">Assign Driver</button>'
+                        row.insertCell(11).innerHTML = '<button class="driver-button">Assign Driver</button>'
                 }
                 else if(firebaseorders[id] != undefined) {
                     var firebaseorder = firebaseorders[id];
                     if(firebaseorder.deliveredon != null)
-                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
+                        row.insertCell(11).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
                     else if(firebaseorder.pickedon != null)
-                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
+                        row.insertCell(11).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
                     else if(selecteddate == todaydate && isclosed == false)
-                        row.insertCell(10).innerHTML = '<button class="driver-button">Not yet picked</button>'
+                        row.insertCell(11).innerHTML = '<button class="driver-button">Not yet picked</button>'
                } 
             }
         }

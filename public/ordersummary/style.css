@@ -111,9 +111,10 @@ p {
 		td:nth-of-type(5):before { content: "Delivery time"; }
 		td:nth-of-type(6):before { content: "Price"; }
 		td:nth-of-type(7):before { content: "Address"; }
-		td:nth-of-type(9):before { content: "City"; }
-		td:nth-of-type(9):before { content: "Status"; }
-		td:nth-of-type(10):before { content: "Open/Closed"; }
+		td:nth-of-type(8):before { content: "City"; }
+		td:nth-of-type(9):before { content: "Tags"; }
+		td:nth-of-type(10):before { content: "Status"; }
+		td:nth-of-type(11):before { content: "Open/Closed"; }
 	}
 	
 	/* Smartphones (portrait and landscape) ----------- */
