@@ -240,7 +240,6 @@ function listOrders (orderlist) {
 
         for(var i=0; i< orderlist.length; i++) {
             var id  = orderlist[i].name.replace("#", "");
-
             var rowCount = table.rows.length;
             var row = table.insertRow(rowCount);
             row.insertCell(0).innerHTML = '<a target="_blank" href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
@@ -286,7 +285,7 @@ function listOrders (orderlist) {
                 selectedorderinfo.Mobile = order.phone;
                 selectedorderinfo.Name = order.customername;
                 selectedorderinfo.Time = order.deliverytime;
-                if(selectedorderinfo.iscod == true && order.financial_status.indexOf('pending') >=0) {
+                if(order.iscod == true && order.financial_status.indexOf('pending') >=0) {
                     selectedorderinfo.Amount = parseInt(order.price);
                 }
                 selectedorderbutton = $(this);
