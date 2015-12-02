@@ -37,7 +37,7 @@ router.get("/dates", function(req, res) {
 
 
 router.get("/orders", function(req, res) {
-    var d = Date.today().addDays(-10);
+    var d = Date.today().addDays(-15);
     d = d.toString("yyyy-MM-dd HH:mm:ss");
     var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&created_at_min='+d+' IST',
@@ -81,7 +81,7 @@ router.get("/checkproducts", function(req, res) {
 });
 
 router.get("/cleanslot", function(req, res) {
-    var d = Date.today().addDays(-10);
+    var d = Date.today().addDays(-15);
     d = d.toString("yyyy-MM-dd HH:mm:ss");
     var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&created_at_min='+d+' IST',
