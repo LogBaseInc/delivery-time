@@ -51,11 +51,22 @@ window.addEventListener("DOMContentLoaded", function() {
     $.get( "/shopify/orders", function( data ) {
         orders = [];
         setOrders(data);
+        setInterval(tick, 2000);
+
         $.get( "/shopify/oldopenorders", function( opendata ) {
             setOrders(opendata);
         });
     });
 }, false);
+
+function tick() {
+    //get the mins of the current time
+    var mins = new Date().getMinutes();
+    if(mins == "00" && selecteddate == todaydate){
+        listOrders(filterorders);
+     }
+}
+
 
 function setOrders(data) {
     for(var i=0; i< data.orders.length; i++) {
@@ -63,8 +74,9 @@ function setOrders(data) {
                 var order = {};
                 var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
                 var timetosort = "";
+                var timesplit = "";
                 if(notesplit.length >= 2) {
-                    var timesplit = notesplit[2].split('-');
+                    timesplit = notesplit[2].split('-');
                     var ispm = false;
                     if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[0]) >= 1 && parseInt(timesplit[0]) <= 8) {
                         ispm = true;
@@ -75,7 +87,12 @@ function setOrders(data) {
 
                 if(data.orders[i].shipping_address == undefined || data.orders[i].shipping_address == null)
                     console.log(data.orders[i]);
-
+                if(timesplit.length >0 && ispm == false && parseInt(timesplit[0]) == 12) {
+                    order.delivertimelimit = parseInt(timesplit[1])+12;
+                }
+                else {
+                    order.delivertimelimit = timesplit.length >0 ? (ispm == true ? parseInt(timesplit[1])+12 : parseInt(timesplit[1])) : "";
+                }
                 order.id = data.orders[i].id;
                 order.link = "https://cake-bee.myshopify.com/admin/orders/"+order.id;
                 order.name = data.orders[i].name;
@@ -108,7 +125,7 @@ function setOrders(data) {
             }
         }
 
-        initialize();
+    initialize();
 }
 
 function getFirebaseOrders(deviceId) {
@@ -272,7 +289,12 @@ function listOrders (orderlist) {
                 }
                 else if(firebaseorders[id] != undefined) {
                     var firebaseorder = firebaseorders[id];
-                    if(firebaseorder.deliveredon != null)
+                    var currenthour = (new Date()).getHours();
+                    if(selecteddate == todaydate && firebaseorder.pickedon != null && (firebaseorder.deliveredon == null || firebaseorder.deliveredon == "")
+                        && currenthour >= orderlist[i].delivertimelimit) {
+                        row.insertCell(9).innerHTML = '<span style="color:red"> Pickedon: </span><span style="font-weight:bold; color:red">'+ firebaseorder.pickedon + '</span>'
+                    }
+                    else if(firebaseorder.deliveredon != null)
                         row.insertCell(9).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
                     else if(firebaseorder.pickedon != null)
                         row.insertCell(9).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
