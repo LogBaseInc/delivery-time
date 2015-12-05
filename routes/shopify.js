@@ -37,10 +37,30 @@ router.get("/dates", function(req, res) {
 
 
 router.get("/orders", function(req, res) {
-    var d = Date.today().addDays(-15);
+    var d = Date.today().addDays(-7);
     d = d.toString("yyyy-MM-dd HH:mm:ss");
+    console.log(d);
     var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&created_at_min='+d+' IST',
+        headers: {
+            'X-Shopify-Access-Token': access_token
+          }
+    };
+
+    function callback(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var info = JSON.parse(body);
+        res.send(info);
+      }
+    }
+    request(options, callback);
+});
+
+router.get("/oldopenorders", function(req, res) {
+    var d = Date.today().addDays(-7);
+    d = d.toString("yyyy-MM-dd HH:mm:ss");
+    var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&created_at_max='+d+' IST',
         headers: {
             'X-Shopify-Access-Token': access_token
           }
@@ -81,10 +101,8 @@ router.get("/checkproducts", function(req, res) {
 });
 
 router.get("/cleanslot", function(req, res) {
-    var d = Date.today().addDays(-15);
-    d = d.toString("yyyy-MM-dd HH:mm:ss");
     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&created_at_min='+d+' IST',
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250',
         headers: {
             'X-Shopify-Access-Token': access_token
           }

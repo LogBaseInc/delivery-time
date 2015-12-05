@@ -49,7 +49,16 @@ window.addEventListener("DOMContentLoaded", function() {
     getDrivers();
 
     $.get( "/shopify/orders", function( data ) {
-        for(var i=0; i< data.orders.length; i++) {
+        orders = [];
+        setOrders(data);
+        $.get( "/shopify/oldopenorders", function( opendata ) {
+            setOrders(opendata);
+        });
+    });
+}, false);
+
+function setOrders(data) {
+    for(var i=0; i< data.orders.length; i++) {
             if(data.orders[i].cancelled_at == null) {
                 var order = {};
                 var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
@@ -91,13 +100,16 @@ window.addEventListener("DOMContentLoaded", function() {
                 order.financial_status = data.orders[i].financial_status;
                 order.tag = data.orders[i].tags;
                 order.iscod = (data.orders[i].gateway != null && (data.orders[i].gateway.indexOf('COD') >=0 || data.orders[i].gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
+                order.items = [];
+                for(var j=0; j < data.orders[i].line_items.length; j++) {
+                    order.items.push({Name: data.orders[i].line_items[j].title, Description: data.orders[i].line_items[j].variant_title});
+                }
                 orders.push(order);
             }
         }
 
         initialize();
-    });
-}, false);
+}
 
 function getFirebaseOrders(deviceId) {
     //var date = moment(new Date()).format("YYYYMMDD");
@@ -285,6 +297,7 @@ function listOrders (orderlist) {
                 selectedorderinfo.Mobile = order.phone;
                 selectedorderinfo.Name = order.customername;
                 selectedorderinfo.Time = order.deliverytime;
+                //selectedorderinfo.Items = order.items;
                 if(order.iscod == true && order.financial_status.indexOf('pending') >=0) {
                     selectedorderinfo.Amount = parseInt(order.price);
                 }
