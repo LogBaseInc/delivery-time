@@ -2,7 +2,8 @@ var lbDatePicker = {};
 var delivery = {
     date: 0,
     hour: 0,
-    month: 0
+    month: 0,
+    year: 0
 }
 
 var shopifyDs = {
@@ -84,6 +85,7 @@ function updateFirstPossibleDeliveryDate() {
     istDate.setDate(curDate + dayCount);
     delivery['date'] = istDate.getDate();
     delivery['month'] = istDate.getMonth() + 1;
+    delivery['year'] = istDate.getFullYear();
     if (curhour > workStartTime && dayCount == 0) {
         delivery['hour'] = curhour + prepTime + 1;
     } else {
@@ -163,8 +165,9 @@ function getDates() {
         var date = tokens[2];
 
         if (!checkForHoliday(val)) {
-            if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month']) ||
-                parseInt(month) > delivery['month']) {
+            if ((parseInt(date) >= delivery['date'] && parseInt(month) == delivery['month'] && parseInt(year) == delivery['year']) ||
+                (parseInt(month) > delivery['month'] && parseInt(year) == delivery['year']) ||
+                parseInt(year) > delivery['year']) {
                 var freeSlots = getFreeSlotsForTheDay(date, month, year);
                 if (freeSlots != {}) {
                     dates[val] = text;
