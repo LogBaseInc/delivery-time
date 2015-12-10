@@ -11,7 +11,8 @@ var shopifyDs = {
     cakeVariant: null,
     cakeType: null,
     city: null,
-    submitType: "update"
+    submitType: "update",
+    productTitles: []
 }
 
 function loadCityValues() {
@@ -106,6 +107,11 @@ function checkForHoliday(dt) {
         return false;
     }
 
+    if (checkForStockAvailability(dt) == false) {
+        // stock not available. Return true
+        return true;
+    }
+
     $.each(lbDatePicker.data.config.holidays, function(val, text) {
         if (text.toString().indexOf(dt) >= 0) {
             holiday = true;
@@ -125,6 +131,43 @@ function checkForHoliday(dt) {
     return holiday;
 }
 
+/*
+ * A hack to do stock keeping
+ */
+function checkForStockAvailability(dt) {
+    var outOfStockItems = lbDatePicker['data']['config']['outOfStock'][shopifyDs['city']];
+    if (outOfStockItems == null || outOfStockItems == undefined) {
+        return true;
+    }
+
+    var stockAvailable = true;
+    $.each(shopifyDs['productTitles'], function(index, value) {
+        var stockAvailableDate = outOfStockItems[value];
+        console.log(stockAvailableDate);
+        if (stockAvailableDate != null && stockAvailableDate != undefined) {
+            // key format - "yyyy mm dd"
+            var tokens = dt.split(" ");
+            var delYear = parseInt(tokens[0]);
+            var delMonth = parseInt(tokens[1]);
+            var delDate = parseInt(tokens[2]);
+
+            tokens = stockAvailableDate.split(" ");
+            var stockAvailYear = parseInt(tokens[0]);
+            var stockAvailMonth = parseInt(tokens[1]);
+            var stockAvailDate = parseInt(tokens[2]);
+
+            if (delYear > stockAvailYear ||
+                (delMonth > stockAvailMonth && delYear == stockAvailYear) ||
+                (delDate >= stockAvailDate && delMonth == stockAvailMonth && delYear == stockAvailYear)) {
+                stockAvailable = true;
+            } else {
+                stockAvailable = false;
+                return;
+            }
+        }
+    });
+    return stockAvailable;
+}
 /*
  * Hack for sampler
  */
@@ -265,6 +308,9 @@ function updateCakeDs() {
                 variant = item['variant_options'].toString();
                 variants.push(variant.toLowerCase());
             }
+
+            // pick the titles
+            shopifyDs['productTitles'].push(item['product_title'].toString())
         });
 
         if (variants.toString().indexOf("eggless") >= 0) {
