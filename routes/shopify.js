@@ -548,6 +548,6 @@ function getCardId(order, existingOrdersIdsTrello) {
 function getIST(date) {
     var currentOffset = date.getTimezoneOffset();
     var ISTOffset = 330;   // IST offset UTC +5:30
-    var ISTTime = new Date(currentTime.getTime() + (ISTOffset + currentOffset)*60000);
+    var ISTTime = new Date(date.getTime() + (ISTOffset + currentOffset)*60000);
     return ISTTime;
 }
