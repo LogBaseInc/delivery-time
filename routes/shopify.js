@@ -335,10 +335,9 @@ function getDateFromNotes(notes) {
     } else {
         hour = parseInt(timeSlot);
     }
-
     var dt = Date.parse(day);
+    dt.setTimezone("IST");
     dt.setHours(hour, mins);
-    dt.setTimezoneOffset("+5:30")
     return dt;
 }
 
