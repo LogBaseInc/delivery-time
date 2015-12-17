@@ -338,6 +338,7 @@ function getDateFromNotes(notes) {
 
     var dt = Date.parse(day);
     dt.setHours(hour, mins);
+    dt.setTimezone("IST");
     return dt;
 }
 
@@ -486,7 +487,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             "\t" + order['shipping_address']['zip'] + "\n" +
             "\t" + order['shipping_address']['phone'] + "\n";
         var desc = itms + notes + address;
-        var dueDate = getIST(getDateFromNotes(notes));
+        var dueDate = (getDateFromNotes(notes));
         var newCard =
         {
             name: name + " | " + trelloHashCode(desc),
