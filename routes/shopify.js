@@ -336,8 +336,8 @@ function getDateFromNotes(notes) {
         hour = parseInt(timeSlot);
     }
     var dt = Date.parse(day);
-    dt.setTimezone("IST");
     dt.setHours(hour, mins);
+    dt.setTimezone("IST");
     return dt;
 }
 
