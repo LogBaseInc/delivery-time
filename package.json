@@ -4,7 +4,7 @@
   "description": "Delivery Time App for Shopify",
   "main": "app.js",
   "engines": {
-      "node": "0.12.x"
+    "node": "0.12.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,7 @@
     "fs": "0.0.2",
     "https": "^1.0.0",
     "request": "^2.65.0",
-    "shopify-node-api": "^1.4.10"
+    "shopify-node-api": "^1.4.10",
+    "trello": "^0.5.0"
   }
 }
