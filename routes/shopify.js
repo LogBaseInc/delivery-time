@@ -39,6 +39,15 @@ router.get("/dates", function(req, res) {
     });
 });
 
+router.get("/synctrello", function (req, res) {
+    updateNewOrders();
+    res.sendStatus(200);
+});
+
+router.get("/test", function (req, res) {
+    updateNewOrders();
+    res.sendStatus(200);
+});
 
 router.get("/orders", function(req, res) {
     var d = Date.today().addDays(-7);
@@ -58,11 +67,6 @@ router.get("/orders", function(req, res) {
       }
     }
     request(options, callback);
-});
-
-router.get("/synctrello", function (req, res) {
-    updateNewOrders();
-    res.sendStatus(200);
 });
 
 router.get("/oldopenorders", function(req, res) {
