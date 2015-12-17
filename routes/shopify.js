@@ -401,8 +401,8 @@ function processShopifyOrders(trelloExistingIdList) {
  */
 function selectOrdersForTrello(orders) {
     var selectedOrders = [];
-    var today = Date.today();
-    var tomo = Date.today().addDays(1);
+    var today = getIST(Date.today());
+    var tomo = getIST(Date.today().addDays(1));
     for (var index in orders) {
         var order = orders[index];
         var notes = order['note'];
@@ -486,12 +486,13 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             "\t" + order['shipping_address']['zip'] + "\n" +
             "\t" + order['shipping_address']['phone'] + "\n";
         var desc = itms + notes + address;
+        var dueDate = getIST(getDateFromNotes(notes));
         var newCard =
         {
             name: name + " | " + trelloHashCode(desc),
             desc: desc,
             pos: "top",
-            due: getDateFromNotes(notes),
+            due: dueDate,
             idList: "566563bd1cc575d849c316e7"
         };
 
@@ -503,7 +504,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             if (isShopifyOrderUpdated(order, desc, existingOrdersIdsTrello)) {
                 var baseUrl = "/1/cards/" + getCardId(order, existingOrdersIdsTrello);
                 trello.put(baseUrl + "/desc", { value: desc }, trelloSuccess, trelloError);
-                trello.put(baseUrl + "/due", { value: getDateFromNotes(notes) } , trelloSuccess, trelloError);
+                trello.put(baseUrl + "/due", { value: dueDate } , trelloSuccess, trelloError);
                 trello.put(baseUrl + "/name", { value: name + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
                 //console.log("Shopify order updated");
             }
@@ -542,5 +543,11 @@ function getCardId(order, existingOrdersIdsTrello) {
             return trelloOrders['id'];
         }
     }
+}
 
+function getIST(date) {
+    var currentOffset = date.getTimezoneOffset();
+    var ISTOffset = 330;   // IST offset UTC +5:30
+    var ISTTime = new Date(currentTime.getTime() + (ISTOffset + currentOffset)*60000);
+    return ISTTime;
 }
