@@ -410,8 +410,8 @@ function selectOrdersForTrello(orders) {
             // Alarm to be added
         } else {
             var dt = getDateFromNotes(notes);
-            if ((dt.getDate() == today.getDate() ||
-                 dt.getDate() == tomo.getDate()) &&
+            if (((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
+                 (dt.getDate() == tomo.getDate() && dt.getMonth() == tomo.getMonth())) &&
                 notes.indexOf("Coimbatore") >= 0) {
                 selectedOrders.push(order);
             }
