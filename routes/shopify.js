@@ -4,6 +4,7 @@ var shopifyAPI = require('shopify-node-api');
 var Firebase = require('firebase');
 var request = require('request');
 var Trello = require("node-trello");
+//var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
 require("datejs");
 
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
@@ -452,14 +453,14 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             var prop = item['properties'];
             if (prop != null && prop != undefined) {
                 for (var i in prop) {
-                    if (prop[i].toString().indexOf("Message") >= 0) {
+                    if (prop[i]['name'].toString().indexOf("Message") >= 0) {
                         message = prop[i]['value'];
                         message = message.replace("\n", "");
                         message = message.replace("\r", "");
                     }
 
-                    if (prop[i].toString().indexOf("Egg/Eggless") >= 0) {
-                        eggOptions = " // " + prop[i]['value'];
+                    if (prop[i]['name'].toString().indexOf("Egg/Eggless") >= 0) {
+                        eggOptions = " / " + prop[i]['value'];
                     }
                 }
             }
