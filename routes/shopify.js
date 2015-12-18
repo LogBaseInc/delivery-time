@@ -4,7 +4,7 @@ var shopifyAPI = require('shopify-node-api');
 var Firebase = require('firebase');
 var request = require('request');
 var Trello = require("node-trello");
-//var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
+var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
 require("datejs");
 
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
@@ -46,7 +46,8 @@ router.get("/synctrello", function (req, res) {
 });
 
 router.get("/test", function (req, res) {
-    updateNewOrders();
+    //var order = { 'name' : 'Test Order', 'id' : '2175299332'};
+    //sendNotesMissingEmail("kousik@logbase.io", order);
     res.sendStatus(200);
 });
 
@@ -408,7 +409,9 @@ function selectOrdersForTrello(orders) {
         var order = orders[index];
         var notes = order['note'];
         if (notes == "" || notes == null || notes == undefined) {
-            // Alarm to be added
+            // Send an alarm that notes are missing
+            sendNotesMissingEmail("abishek@cakeebee.in", order);
+            sendNotesMissingEmail("kousik@logbase.io", order);
         } else {
             var dt = getDateFromNotes(notes);
             if (((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
@@ -419,6 +422,24 @@ function selectOrdersForTrello(orders) {
         }
     }
     return selectedOrders;
+}
+
+/*
+ * Warn users about the missing notes
+ */
+function sendNotesMissingEmail(emailId, order) {
+    var payload   = {
+        to      : emailId,
+        from    : 'CakeBeeBot@cakebee.in',
+        subject : 'Notes missing from order - ' + order['name'],
+        text    : 'Notes are missing from the order - ' + "https://cake-bee.myshopify.com/admin/orders/" +
+            order['id'] + ". Please take necessary action. \n"
+    }
+
+    sendgrid.send(payload, function(err, json) {
+        if (err) { console.error(err); }
+        console.log(json);
+    });
 }
 
 /*
