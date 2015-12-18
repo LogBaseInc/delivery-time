@@ -351,7 +351,7 @@ function updateNewOrders() {
     var idList = [];
 
     // Fetch existing order id's from trello
-    trello.get("/1/boards/566563896dbd75a026943a18/cards",
+    trello.get("/1/boards/566405f9a6394f7126c09439/cards",
         {
             fields: "name,id"
         },
@@ -361,7 +361,7 @@ function updateNewOrders() {
                 var fields = data[idx];
                 if (fields != undefined && fields != null) {
                     var name = fields['name'];
-                    if (name != null && name != undefined && name.indexOf('#') >= 0) {
+                    if (name != null && name != undefined && name.indexOf('CB') >= 0) {
                         var content = {
                             orderId : name.split("|")[0],
                             id: fields['id'],
@@ -520,7 +520,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             desc: desc,
             pos: "top",
             due: dueDate,
-            idList: "566563bd1cc575d849c316e7"
+            idList: "56640605440193b69caaf4c2"
         };
 
         if (isOrderAbsentInTrello(order, existingOrdersIdsTrello)) {
