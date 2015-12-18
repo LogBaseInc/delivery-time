@@ -459,7 +459,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                     }
 
                     if (prop[i].toString().indexOf("Egg/Eggless") >= 0) {
-                        eggOptions = " / " + prop[i]['value'];
+                        eggOptions = " // " + prop[i]['value'];
                     }
                 }
             }
