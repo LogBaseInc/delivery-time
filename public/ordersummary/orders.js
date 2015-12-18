@@ -28,7 +28,7 @@ window.addEventListener("DOMContentLoaded", function() {
                 var selectedoption = document.querySelector('input[name="driver"]:checked');
                 if(selectedoption != null) {
                     var date = moment(new Date()).format("YYYYMMDD");
-                    var firebase_url = "https://cakebee-delivery.firebaseio.com//";
+                    var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/orders/";
                     var firebase_ref = new Firebase(firebase_url + selectedoption.value + "/" + date + "/" + selectedorderid);
                     firebase_ref.set(selectedorderinfo , function() {
                         //alert("Order assigned to driver");
@@ -130,7 +130,7 @@ function setOrders(data) {
 
 function getFirebaseOrders(deviceId) {
     //var date = moment(new Date()).format("YYYYMMDD");
-    var firebase_url = "https://cakebee-delivery.firebaseio.com/";
+    var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/orders/";
     var firebase_ref = new Firebase(firebase_url + deviceId);
     firebase_ref.on("value", function(snapshot) {
         var orderdata = snapshot.val();
@@ -159,7 +159,7 @@ function getFirebaseOrders(deviceId) {
 }
 
 function getDrivers() {
-    var firebase_ref = new Firebase("https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/devices" );
+    var firebase_ref = new Firebase("https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/devices/" );
     firebase_ref.on("value", function(snapshot) {
         var dialog = $("#dialog");
         dialog.append("");
@@ -319,7 +319,7 @@ function listOrders (orderlist) {
                 selectedorderinfo.Mobile = order.phone;
                 selectedorderinfo.Name = order.customername;
                 selectedorderinfo.Time = order.deliverytime;
-                //selectedorderinfo.Items = order.items;
+                selectedorderinfo.Items = order.items;
                 if(order.iscod == true && order.financial_status.indexOf('pending') >=0) {
                     selectedorderinfo.Amount = parseInt(order.price);
                 }
@@ -330,7 +330,7 @@ function listOrders (orderlist) {
                 //Delete order from driver
                 var deviceId = firebaseorders[selectedorderid].deviceId;
                 delete firebaseorders[selectedorderid];
-                var firebase_url = "https://cakebee-delivery.firebaseio.com//";
+                var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/orders/";
                 var firebase_ref = new Firebase(firebase_url + deviceId + "/" + date + "/" + selectedorderid);
                 firebase_ref.remove(function() {
                     //alert("Order removed from driver");
