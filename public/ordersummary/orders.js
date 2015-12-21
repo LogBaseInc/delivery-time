@@ -109,8 +109,9 @@ function setOrders(data) {
                         order.address = order.address + ", " +data.orders[i].shipping_address.address2;
                     order.address = order.address + ", " + data.orders[i].shipping_address.city;
                     order.address = order.address + " - " + data.orders[i].shipping_address.zip;
+                    order.phone = data.orders[i].shipping_address.phone;
                 }
-                order.phone = data.orders[i].shipping_address.phone;
+                
                 order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
                 order.price = data.orders[i].total_price;
                 order.openorclose = data.orders[i].closed_at != null ? "Closed" : "Open";
