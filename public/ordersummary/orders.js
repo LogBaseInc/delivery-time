@@ -120,7 +120,7 @@ function setOrders(data) {
                 order.iscod = (data.orders[i].gateway != null && (data.orders[i].gateway.indexOf('COD') >=0 || data.orders[i].gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
                 order.items = [];
                 for(var j=0; j < data.orders[i].line_items.length; j++) {
-                    order.items.push({Name: data.orders[i].line_items[j].title, Description: data.orders[i].line_items[j].variant_title});
+                    order.items.push({Name: data.orders[i].line_items[j].title, Description: data.orders[i].line_items[j].variant_title + " | Quantity: " + data.orders[i].line_items[j].quantity});
                 }
                 orders.push(order);
             }
