@@ -415,7 +415,7 @@ function selectOrdersForTrello(orders) {
         var notes = order['note'];
         if (notes == "" || notes == null || notes == undefined) {
             // Send an alarm that notes are missing
-            sendNotesMissingEmail("abishek@cakeebee.in", order);
+            sendNotesMissingEmail("abishek@cakebee.in", order);
             sendNotesMissingEmail("kousik@logbase.io", order);
         } else {
             var dt = getDateFromNotes(notes);
