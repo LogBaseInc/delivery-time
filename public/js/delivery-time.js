@@ -143,7 +143,6 @@ function checkForStockAvailability(dt) {
     var stockAvailable = true;
     $.each(shopifyDs['productTitles'], function(index, value) {
         var stockAvailableDate = outOfStockItems[value];
-        console.log(stockAvailableDate);
         if (stockAvailableDate != null && stockAvailableDate != undefined) {
             // key format - "yyyy mm dd"
             var tokens = dt.split(" ");
@@ -426,6 +425,15 @@ function noteToCustomer() {
 }
 
 function getDefaultDates() {
+    var dayFormat = {
+        "Mon": "Monday",
+        "Tue": "Tuesday",
+        "Wed": "Wednesday",
+        "Thu": "Thursday",
+        "Fri": "Friday",
+        "Sat": "Saturday",
+        "Sun": "Sunday"
+    };
     var days = 0;
     var dates = {};
     var curDate = new Date();
@@ -433,7 +441,10 @@ function getDefaultDates() {
         var idx = curDate.getFullYear().toString() + " " +
             (curDate.getMonth() + 1).toString() + " " +
             curDate.getDate().toString();
-        dates[idx] = curDate.toDateString();
+        var dateString = curDate.toDateString();
+        var day = dateString.split(" ")[0];
+        dateString = dateString.replace(day, dayFormat[day]);
+        dates[idx] = dateString;
         days++;
         curDate.setDate(curDate.getDate() + 1);
     }

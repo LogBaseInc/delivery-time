@@ -325,6 +325,11 @@ function getDateFromNotes(notes) {
     var timeSlot = tokens[2];
     var hour = 0;
     var mins = 0;
+    var dt = null;
+
+    if (day == null || day == undefined || timeSlot == null || timeSlot == undefined) {
+        return dt;
+    }
 
     if (timeSlot.indexOf("11:45") >= 0) {
         hour = 23;
@@ -414,7 +419,8 @@ function selectOrdersForTrello(orders) {
             sendNotesMissingEmail("kousik@logbase.io", order);
         } else {
             var dt = getDateFromNotes(notes);
-            if (((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
+            if (dt != null &&
+                ((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
                  (dt.getDate() == tomo.getDate() && dt.getMonth() == tomo.getMonth())) &&
                 notes.indexOf("Coimbatore") >= 0) {
                 selectedOrders.push(order);
