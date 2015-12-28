@@ -277,30 +277,31 @@ function listOrders (orderlist) {
             row.insertCell(2).innerHTML = orderlist[i].deliverytime;
             row.insertCell(3).innerHTML = orderlist[i].price;
             row.insertCell(4).innerHTML = orderlist[i].address;
-            row.insertCell(5).innerHTML = orderlist[i].city;
-            row.insertCell(6).innerHTML = orderlist[i].tag;
-            row.insertCell(7).innerHTML = orderlist[i].status;
-            row.insertCell(8).innerHTML = orderlist[i].openorclose;
-            row.insertCell(9).innerHTML = "<span></span>";
+            row.insertCell(5).innerHTML = orderlist[i].phone
+            row.insertCell(6).innerHTML = orderlist[i].city;
+            row.insertCell(7).innerHTML = orderlist[i].tag;
+            row.insertCell(8).innerHTML = orderlist[i].status;
+            row.insertCell(9).innerHTML = orderlist[i].openorclose;
+            row.insertCell(10).innerHTML = "<span></span>";
             var isclosed = orderlist[i].openorclose.indexOf('Closed') >=0 ? true : false;
             if(orderlist[i].city.indexOf('Coimbatore') >= 0) {
                 if(selecteddate == todaydate && firebaseorders[id] == undefined) {
                     if(isclosed == false)
-                        row.insertCell(9).innerHTML = '<button class="driver-button">Assign Driver</button>'
+                        row.insertCell(10).innerHTML = '<button class="driver-button">Assign Driver</button>'
                 }
                 else if(firebaseorders[id] != undefined) {
                     var firebaseorder = firebaseorders[id];
                     var currenthour = (new Date()).getHours();
                     if(selecteddate == todaydate && firebaseorder.pickedon != null && (firebaseorder.deliveredon == null || firebaseorder.deliveredon == "")
                         && currenthour >= orderlist[i].delivertimelimit) {
-                        row.insertCell(9).innerHTML = '<span style="color:red"> Pickedon: </span><span style="font-weight:bold; color:red">'+ firebaseorder.pickedon + '</span>'
+                        row.insertCell(10).innerHTML = '<span style="color:red"> Pickedon: </span><span style="font-weight:bold; color:red">'+ firebaseorder.pickedon + '</span>'
                     }
                     else if(firebaseorder.deliveredon != null)
-                        row.insertCell(9).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
+                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
                     else if(firebaseorder.pickedon != null)
-                        row.insertCell(9).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
+                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
                     else if(selecteddate == todaydate && isclosed == false)
-                        row.insertCell(9).innerHTML = '<button class="driver-button">Not yet picked</button>'
+                        row.insertCell(10).innerHTML = '<button class="driver-button">Not yet picked</button>'
                } 
             }
         }
