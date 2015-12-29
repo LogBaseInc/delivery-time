@@ -51,6 +51,16 @@ router.get("/test", function (req, res) {
     res.sendStatus(200);
 });
 
+router.get("/trellocleanup", function (req, res) {
+    var ids = ["566405f9a6394f7126c09439", "566405f9a6394f7126c09439"];
+    var testIds = ["568282740d26463b4f8b010f", "568282863e3ddec5e947e13a"];
+    for (var id in testIds) {
+        var url = "/1/lists/" + testIds[id] + "/archiveAllCards";
+        trello.post(url, null, trelloSuccess, trelloError);
+    }
+    res.sendStatus(200);
+});
+
 router.get("/order/fulfill/:orderid", function (req, res) {
     var options = {
         url: 'https://cake-bee.myshopify.com//admin/orders/'+req.params.orderid+'/fulfillments.json',
