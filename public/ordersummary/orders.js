@@ -200,6 +200,7 @@ function initialize () {
         filterdates.push(todaydate);
 
     filterdates.sort(SortByDate);
+    filterdates.push("All");
 
     var sel = $("#filter");
     sel.empty();
@@ -230,9 +231,15 @@ function initialize () {
 }
 
 function setSelectedDateOrders(selecteddate) {
-    unfilterCityOrders = $.grep(orders, function(v) {
-        return $.trim(v.deliverydate) == $.trim(selecteddate);
-    });
+    if (selecteddate == "All") {
+        unfilterCityOrders = $.grep(orders, function (v) {
+            return $.trim(v.deliverydate) < $.trim(todaydate);
+        });
+    } else {
+        unfilterCityOrders = $.grep(orders, function (v) {
+            return $.trim(v.deliverydate) == $.trim(selecteddate);
+        });
+    }
     setSelectedCityOrders();
 }
 
