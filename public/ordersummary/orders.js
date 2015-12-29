@@ -10,9 +10,10 @@ var firebaseorders = [];
 var selectedorderinfo = null;
 var selectedorderid = null;
 var selectedorderbutton = null;
+var devices = [];
 
 window.addEventListener("DOMContentLoaded", function() {
-    $( "#dialog" ).dialog({
+    $("#dialog").dialog({
         modal: true,
         draggable: false,
         resizable: false,
@@ -45,10 +46,12 @@ window.addEventListener("DOMContentLoaded", function() {
 
     $("#orderdiv").hide();
     $("#noorderdiv").hide();
+    $("#dialog-fulfillconfirm").hide();
+    $("#dialog-paymentconfirm").hide();
 
     getDrivers();
 
-    $.get( "/shopify/orders", function( data ) {
+    $.get("/shopify/orders", function( data ) {
         orders = [];
         setOrders(data);
         setInterval(tick, 2000);
@@ -112,7 +115,7 @@ function setOrders(data) {
                     order.phone = data.orders[i].shipping_address.phone;
                 }
                 
-                order.status = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
+                order.fulfillmentstatus = data.orders[i].fulfillment_status == null ? "Pending" : data.orders[i].fulfillment_status;
                 order.price = data.orders[i].total_price;
                 order.openorclose = data.orders[i].closed_at != null ? "Closed" : "Open";
                 order.financial_status = data.orders[i].financial_status;
@@ -138,18 +141,21 @@ function getFirebaseOrders(deviceId) {
         for(datepro in orderdata) {
             var data = orderdata[datepro];
             for(property in data){
-                firebaseorders[property] = {};
-                firebaseorders[property].deviceId = deviceId;
-                firebaseorders[property].pickedon =  null;
-                if(data[property].Pickedon != undefined && data[property].Pickedon != null && 
-                    data[property].Pickedon != ""){
-                    firebaseorders[property].pickedon = moment(data[property].Pickedon).format("hh:mm a");
-                }
-                firebaseorders[property].deliveredon = null;
-                if(data[property].Deliveredon != undefined && data[property].Deliveredon != null && 
-                    data[property].Deliveredon != ""){
-                    firebaseorders[property].deliveredon = moment(data[property].Deliveredon).format("hh:mm a");
-                }
+                //if(!(property.toString().contains("Logged"))) {
+                    firebaseorders[property] = {};
+                    firebaseorders[property].deviceId = deviceId;
+                    firebaseorders[property].vehiclenumber = devices[deviceId];
+                    firebaseorders[property].pickedon =  null;
+                    if(data[property].Pickedon != undefined && data[property].Pickedon != null && 
+                        data[property].Pickedon != ""){
+                        firebaseorders[property].pickedon = moment(data[property].Pickedon).format("hh:mm a");
+                    }
+                    firebaseorders[property].deliveredon = null;
+                    if(data[property].Deliveredon != undefined && data[property].Deliveredon != null && 
+                        data[property].Deliveredon != ""){
+                        firebaseorders[property].deliveredon = moment(data[property].Deliveredon).format("hh:mm a");
+                    }
+                //}
             }
         }
         if(selecteddate == todaydate)
@@ -165,12 +171,13 @@ function getDrivers() {
         var dialog = $("#dialog");
         dialog.append("");
         var data = snapshot.val();
-
+        devices = [];
         firebaseorders = [];
 
         for(property in data){
             dialog.append('<input type="radio" style="margin-top: 20px; font-size: 3em;" name="driver" value="' + property + '">' + data[property].vehiclenumber+ '</input></br>');
             getFirebaseOrders(property);
+            devices[property] = data[property].vehiclenumber;
         }
     }, function (errorObject) {
        console.error("The read devices failed: " + errorObject.code);
@@ -273,38 +280,116 @@ function listOrders (orderlist) {
             var rowCount = table.rows.length;
             var row = table.insertRow(rowCount);
             row.insertCell(0).innerHTML = '<a target="_blank" href="'+orderlist[i].link+'">'+orderlist[i].name+'</a>'
-            row.insertCell(1).innerHTML = orderlist[i].customername;
+            row.insertCell(1).innerHTML = '<span>'+orderlist[i].customername+'</span><br/>'+orderlist[i].phone;
             row.insertCell(2).innerHTML = orderlist[i].deliverytime;
             row.insertCell(3).innerHTML = orderlist[i].price;
             row.insertCell(4).innerHTML = orderlist[i].address;
-            row.insertCell(5).innerHTML = orderlist[i].phone
-            row.insertCell(6).innerHTML = orderlist[i].city;
-            row.insertCell(7).innerHTML = orderlist[i].tag;
-            row.insertCell(8).innerHTML = orderlist[i].status;
-            row.insertCell(9).innerHTML = orderlist[i].openorclose;
-            row.insertCell(10).innerHTML = "<span></span>";
+            var itemdesc = "";
+            for(var j=0; j< orderlist[i].items.length; j++) {
+                itemdesc = itemdesc+ "Item" + (j+1) +":" + orderlist[i].items[j].Name + " | " + orderlist[i].items[j].Description+"\n";
+            }
+            row.insertCell(5).innerHTML = itemdesc;
+            row.insertCell(6).innerHTML = orderlist[i].tag;
+
+            var status = "";
+            if(orderlist[i].financial_status == "pending") {
+                status = '<button class="unpaid-button">Unpaid</button><br/>';
+            }
+            if(orderlist[i].fulfillmentstatus == 'Pending') {
+                status = status + '<button class="unfulfill-button">Unfulfilled</button><br/>';
+            }
+            else {
+                status = status + 'Fulfilled';
+            }
+
+            row.insertCell(7).innerHTML = status;
+            row.insertCell(8).innerHTML = orderlist[i].openorclose;
+            row.insertCell(9).innerHTML = "<span></span>";
             var isclosed = orderlist[i].openorclose.indexOf('Closed') >=0 ? true : false;
             if(orderlist[i].city.indexOf('Coimbatore') >= 0) {
                 if(selecteddate == todaydate && firebaseorders[id] == undefined) {
                     if(isclosed == false)
-                        row.insertCell(10).innerHTML = '<button class="driver-button">Assign Driver</button>'
+                        row.insertCell(9).innerHTML = '<button class="driver-button">Assign Driver</button>'
                 }
                 else if(firebaseorders[id] != undefined) {
                     var firebaseorder = firebaseorders[id];
                     var currenthour = (new Date()).getHours();
                     if(selecteddate == todaydate && firebaseorder.pickedon != null && (firebaseorder.deliveredon == null || firebaseorder.deliveredon == "")
                         && currenthour >= orderlist[i].delivertimelimit) {
-                        row.insertCell(10).innerHTML = '<span style="color:red"> Pickedon: </span><span style="font-weight:bold; color:red">'+ firebaseorder.pickedon + '</span>'
+                        row.insertCell(9).innerHTML = '<span style="font-weight:bold">'+ firebaseorder.vehiclenumber + '</span></br>' + '<span style="color:red"> Pickedon: </span><span style="font-weight:bold; color:red">'+ firebaseorder.pickedon + '</span>'
                     }
                     else if(firebaseorder.deliveredon != null)
-                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
+                        row.insertCell(9).innerHTML = '<span style="font-weight:bold">'+ firebaseorder.vehiclenumber + '</span></br>' + '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span></br>' + '<span> Deliveredon: </span><span style="font-weight:bold">'+ firebaseorder.deliveredon + '</span>' 
                     else if(firebaseorder.pickedon != null)
-                        row.insertCell(10).innerHTML = '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
+                        row.insertCell(9).innerHTML = '<span style="font-weight:bold">'+ firebaseorder.vehiclenumber + '</span></br>' + '<span> Pickedon: </span><span style="font-weight:bold">'+ firebaseorder.pickedon + '</span>'
                     else if(selecteddate == todaydate && isclosed == false)
-                        row.insertCell(10).innerHTML = '<button class="driver-button">Not yet picked</button>'
+                        row.insertCell(9).innerHTML = '<span style="font-weight:bold">'+ firebaseorder.vehiclenumber + '</span></br>' +'<button class="driver-button">Not yet picked</button>'
                } 
             }
         }
+
+        $(".unfulfill-button").click(function() {
+            var cell =  $(this).closest('td');
+            var index = $(this).closest('td').parent()[0].sectionRowIndex;
+            var order = filterorders[index];
+            $("#dialog-fulfillconfirm").dialog({
+                resizable: false,
+                height:220,
+                modal: true,
+                buttons: {
+                    "Yes": function() {
+                        $.get("/shopify/order/fulfill/"+order.id, function( data ) {
+                            order.fulfillmentstatus = 'fulfilled';
+
+                            var status = "";
+                            if(order.financial_status == "pending") {
+                                status = '<button class="unpaid-button">Unpaid</button><br/>';
+                            }                        
+                            status = status + "Fulfilled";
+                            cell.html(status);
+                        });
+
+                        $(this).dialog( "close" );
+                    },
+                    No: function() {
+                        $(this).dialog( "close" );
+                    }
+                }
+            });
+        });
+
+        $(".unpaid-button").click(function() {
+            var cell =  $(this).closest('td');
+            var index = $(this).closest('td').parent()[0].sectionRowIndex;
+            var order = filterorders[index];
+
+            $("#dialog-paymentconfirm").dialog({
+                resizable: false,
+                height:220,
+                modal: true,
+                buttons: {
+                    "Yes": function() {
+                        $.get("/shopify/order/makepayment/"+order.id, function( data ) {
+                            order.financial_status = 'paid';
+
+                            var status = "";
+                            if(order.fulfillmentstatus == 'Pending') {
+                                status = status + '<button class="unfulfill-button">Unfulfilled</button><br/>';
+                            }
+                            else {
+                                status = status + 'Fulfilled';
+                            }
+                            cell.html(status);
+                        });
+
+                        $(this).dialog( "close" );
+                    },
+                    No: function() {
+                        $(this).dialog( "close" );
+                    }
+                }
+            });
+        });
 
         $(".driver-button").click(function() {
            var index = $(this).closest('td').parent()[0].sectionRowIndex;

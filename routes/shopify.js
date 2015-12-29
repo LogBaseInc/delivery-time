@@ -51,6 +51,48 @@ router.get("/test", function (req, res) {
     res.sendStatus(200);
 });
 
+router.get("/order/fulfill/:orderid", function (req, res) {
+    var options = {
+        url: 'https://cake-bee.myshopify.com//admin/orders/'+req.params.orderid+'/fulfillments.json',
+        method: "POST",
+        headers: {
+            'X-Shopify-Access-Token': access_token,
+            'Content-Type' : 'application/json',
+        },
+        json: true,
+        body : {"fulfillment": {"tracking_number": null,"notify_customer": true }}
+    };
+
+    function callback(error, response, body) {
+       if (!error && (response != null && response != undefined && (response.statusCode == 201 || response.statusCode == 422))) {
+            //201 means fullfilled and 422 means already fullfilled
+            res.sendStatus(200);
+       }
+    }
+    request(options, callback);
+});
+
+router.get("/order/makepayment/:orderid", function (req, res) {
+    var options = {
+        url: 'https://cake-bee.myshopify.com//admin/orders/'+req.params.orderid+'/transactions.json',
+        method: "POST",
+        headers: {
+            'X-Shopify-Access-Token': access_token,
+            'Content-Type' : 'application/json',
+        },
+        json: true,
+        body : {"transaction": {"kind": "capture"}}
+    };
+
+    function callback(error, response, body) {
+       if (!error && (response != null && response != undefined && (response.statusCode == 201 || response.statusCode == 422))) {
+            //201 means fullfilled and 422 means already fullfilled
+            res.sendStatus(200);
+       }
+    }
+    request(options, callback);
+});
+
 router.get("/orders", function(req, res) {
     var d = Date.today().addDays(-7);
     d = d.toString("yyyy-MM-dd HH:mm:ss");
