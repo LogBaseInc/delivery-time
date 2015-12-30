@@ -52,7 +52,7 @@ router.get("/test", function (req, res) {
 });
 
 router.get("/trellocleanup", function (req, res) {
-    var testIds = ["567e9dc1f840b25378313953", "5668fa951740225c9c51aa64"];
+    var testIds = ["567e9dc1f840b25378313953"];
     var ids = ["568282740d26463b4f8b010f", "568282863e3ddec5e947e13a"];
     for (var id in testIds) {
         var url = "/1/lists/" + testIds[id] + "/archiveAllCards";
