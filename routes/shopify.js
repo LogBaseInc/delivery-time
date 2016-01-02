@@ -466,7 +466,7 @@ function selectOrdersForTrello(orders) {
     if (today.getHours >= 16) {
         var tomo = getIST(Date.today().addDays(1));
     } else {
-        var tomo = getIST(Date.today().addDays(2));
+        var tomo = getIST(Date.today().addDays(0));
 
     }
     for (var index in orders) {
