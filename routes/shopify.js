@@ -464,8 +464,8 @@ function selectOrdersForTrello(orders) {
     var selectedOrders = [];
     var today = getIST(Date.today());
     var test = getIST(new Date());
-    console.log(test);
     if (test.getHours >= 15) {
+        console.log("TESTING - " + test);
         var tomo = getIST(Date.today().addDays(1));
     } else {
         var tomo = getIST(Date.today().addDays(0));
