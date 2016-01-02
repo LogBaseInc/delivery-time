@@ -24,8 +24,8 @@ function loadCityValues() {
     } else {
         var city = {
             select: "Select city",
-            coimbatore: "Coimbatore"
-//            trichy: "Trichy"
+            coimbatore: "Coimbatore",
+            trichy: "Trichy"
         }
     }
     myCitySelect.find("option").remove();
