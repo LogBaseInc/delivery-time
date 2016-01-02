@@ -463,11 +463,11 @@ function processShopifyOrders(trelloExistingIdList) {
 function selectOrdersForTrello(orders) {
     var selectedOrders = [];
     var today = getIST(Date.today());
-    if (today.getHours >= 15) {
+    var test = new Date();
+    if (test.getHours >= 15) {
         var tomo = getIST(Date.today().addDays(1));
     } else {
         var tomo = getIST(Date.today().addDays(0));
-
     }
     for (var index in orders) {
         var order = orders[index];
