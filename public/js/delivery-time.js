@@ -406,7 +406,7 @@ function noteToCustomer() {
     if (shopifyDs['cakeType'] == 'xpress') {
         cakeName = "Eggless Xpress"
     } else if(shopifyDs['cakeType'] == 'xpress2kg') {
-        cakeName = "Xpress 2Kg";
+        cakeName = "2 Kg";
     } else {
         cakeName = shopifyDs['cakeType'];
     }
