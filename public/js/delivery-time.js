@@ -284,6 +284,7 @@ function updateCakeDs() {
         shopifyDs['cartJson'] = json;
         var types = [];
         var variants = [];
+        var title = [];
 
         /*
          * Get type and variant
@@ -310,6 +311,7 @@ function updateCakeDs() {
 
             // pick the titles
             shopifyDs['productTitles'].push(item['product_title'].toString())
+            title.push(item['title'].toString().toLowerCase());
         });
 
         if (variants.toString().indexOf("eggless") >= 0) {
@@ -325,7 +327,11 @@ function updateCakeDs() {
         } else if(types.toString().indexOf("signature") >= 0) {
             shopifyDs['cakeType'] = 'signature';
         } else {
-            shopifyDs['cakeType'] = 'xpress';
+            if (title.toString().indexOf("2 kg") >=0 || title.toString().indexOf("2kg") >= 0) {
+                shopifyDs['cakeType'] = 'xpress2kg';
+            } else {
+                shopifyDs['cakeType'] = 'xpress';
+            }
         }
 
         loadCityValues();
@@ -388,15 +394,19 @@ function noteToCustomer() {
     }
 
     var prepTime = null;
-    if (shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'xpress') {
+    if (shopifyDs['cakeType'] == 'signature' ||
+        shopifyDs['cakeType'] == 'xpress' ||
+        shopifyDs['cakeType'] == 'xpress2kg') {
         prepTime = "6 hours";
     } else {
-        prepTime = "1 day"
+        prepTime = "1 day";
     }
 
     var cakeName;
     if (shopifyDs['cakeType'] == 'xpress') {
         cakeName = "Eggless Xpress"
+    } else if(shopifyDs['cakeType'] == 'xpress2kg') {
+        cakeName = "Xpress 2Kg";
     } else {
         cakeName = shopifyDs['cakeType'];
     }
