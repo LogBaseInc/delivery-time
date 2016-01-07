@@ -406,7 +406,7 @@ function noteToCustomer() {
     if (shopifyDs['cakeType'] == 'xpress') {
         cakeName = "Eggless Xpress"
     } else if(shopifyDs['cakeType'] == 'xpress2kg') {
-        cakeName = "2 Kg";
+        cakeName = "2 kg";
     } else {
         cakeName = shopifyDs['cakeType'];
     }
@@ -416,7 +416,7 @@ function noteToCustomer() {
 
     if (shopifyDs['cakeType'] != 'xpress') {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
-        "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 Kg Xpress Cakes</b></a>.";
+        "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
     }
 
     $('#lbdt-note').html(content);
