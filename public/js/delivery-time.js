@@ -411,8 +411,13 @@ function noteToCustomer() {
         cakeName = shopifyDs['cakeType'];
     }
 
-    var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
-        "</font> Cakes</b> takes " + prepTime + " to prepare. ";
+    if (shopifyDs['cakeType'] == 'xpress2kg') {
+        var content = "<br>Our <b>" + cakeName +
+            " Cakes</b> takes " + prepTime + " to prepare. ";
+    } else {
+        var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
+            "</font> Cakes</b> takes " + prepTime + " to prepare. ";
+    }
 
     if (shopifyDs['cakeType'] != 'xpress') {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
