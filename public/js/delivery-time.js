@@ -415,7 +415,7 @@ function noteToCustomer() {
         "</font> Cakes</b> takes " + prepTime + " to prepare. ";
 
     if (shopifyDs['cakeType'] != 'xpress') {
-        content = content + "If you need the cakes to be delivered sooner, please choose our " +
+        content = content + "If you need the cakes to be delivered sooner, please choose our 0.5/1 Kg " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>Xpress Cakes</b></a>.";
     }
 
