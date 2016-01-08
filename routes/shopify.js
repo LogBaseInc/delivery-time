@@ -104,7 +104,7 @@ router.get("/order/makepayment/:orderid", function (req, res) {
 });
 
 router.get("/orders", function(req, res) {
-    var d = Date.today().addDays(-7);
+    var d = Date.today().addDays(-10); //All orders for last 10 days
     d = d.toString("yyyy-MM-dd HH:mm:ss");
     console.log(d);
     var options = {
