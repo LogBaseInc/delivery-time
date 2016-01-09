@@ -106,7 +106,6 @@ router.get("/order/makepayment/:orderid", function (req, res) {
 router.get("/orders", function(req, res) {
     var d = Date.today().addDays(-10); //All orders for last 10 days
     d = d.toString("yyyy-MM-dd HH:mm:ss");
-    console.log(d);
     var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&created_at_min='+d+' IST',
         headers: {
@@ -122,6 +121,71 @@ router.get("/orders", function(req, res) {
     }
     request(options, callback);
 });
+
+function parseorder(order) {
+    var parsedOrder = {};
+    parsedOrder.Ordernumber = order.name;
+    parsedOrder.OrderId = order.id;
+    var orderedDate = new Date(order.created_at);
+    parsedOrder.Orderdate = orderedDate.toString("yyyy/MM/dd");
+    parsedOrder.Ordertime = orderedDate.toString("HH:mm:ss");
+    var deiveryDate = getDateFromNotes(order.note);
+    parsedOrder.Deliverydate = deiveryDate.toString("yyyy/MM/dd");
+    parsedOrder.Deliverytime = " ";
+    if(order.note.split('|').length >= 3) {
+        parsedOrder.Deliverytime = order.note.split('|')[2];
+    }
+    parsedOrder.Price = order.total_price;
+    if(order.shipping_address != null && order.shipping_address != undefined) {
+        parsedOrder.Name = order.shipping_address.first_name + order.shipping_address.last_name;
+        parsedOrder.Address = order.shipping_address.address1;
+        if(order.shipping_address.address2 != null && order.shipping_address != undefined) {
+            parsedOrder.Address = parsedOrder.Address + ","+order.shipping_address.address2;
+        }
+        parsedOrder.City = order.shipping_address.city;
+        parsedOrder.PinCode = order.shipping_address.zip;
+        parsedOrder.Phone = order.shipping_address.phone;
+    }
+    if(order.customer != null && order.customer != undefined) {
+        parsedOrder.Email = order.customer.email;
+    }
+
+    parsedOrder.Paymentmode = order.gateway;
+
+    parsedOrder.Items = [];
+    for(var i=0; i <order.line_items.length; i++) {
+        var lineitem = {};
+        lineitem.Name = order.line_items[i].name;
+        lineitem.Quantity = order.line_items[i].quantity;
+        lineitem.Message = "";
+        for(var j= 0; j< order.line_items[i].properties.length; j++ ){
+            if(order.line_items[i].properties[j].name.indexOf("Message on the Cake") >= 0){
+                lineitem.Message = order.line_items[i].properties[j].value;
+                break;
+            }
+        }
+        
+        parsedOrder.Birthday = false;
+        parsedOrder.Anniversary = false;
+
+        var message = lineitem.Message.toLowerCase();
+        if(message.indexOf('birthday') >=0 || 
+           message.indexOf('bday') >=0 || 
+           message.indexOf("b'day") >=0) {
+           parsedOrder.Birthday = true;
+        }
+        if(message.indexOf('anniversary') >=0 || 
+           message.indexOf('wedding') >=0 || 
+           message.indexOf('married') >=0) {
+           parsedOrder.Anniversary = true;
+        }
+
+        parsedOrder.Items.push(lineitem);
+    }
+
+    console.log(parsedOrder);
+    return parsedOrder;
+}
 
 router.get("/oldopenorders", function(req, res) {
     var d = Date.today().addDays(-7);
@@ -383,7 +447,7 @@ function getDateFromNotes(notes) {
         return dt;
     }
 
-    if (timeSlot.indexOf("11:45") >= 0) {
+    if (timeSlot.indexOf("11:45") >= 0 || timeSlot.indexOf("11.45") >= 0) {
         hour = 23;
         mins = 45;
     } else if (timeSlot.indexOf("11") >= 0 && timeSlot.indexOf("12") >= 0 && timeSlot.indexOf("pm") >= 0) {
