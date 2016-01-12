@@ -741,7 +741,6 @@ function archieveOFDOrders() {
         });
 }
 
-
 function closeOFDOrders(idList) {
     for (var idx in idList) {
         var baseUrl = "/1/cards/" + idList[idx];
