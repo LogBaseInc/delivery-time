@@ -42,12 +42,12 @@ router.get("/dates", function(req, res) {
 
 router.get("/synctrello", function (req, res) {
     updateNewOrders();
+    archieveOFDOrders();
     res.sendStatus(200);
 });
 
 router.get("/test", function (req, res) {
-    //var order = { 'name' : 'Test Order', 'id' : '2175299332'};
-    //sendNotesMissingEmail("kousik@logbase.io", order);
+    //getOFDOrders();
     res.sendStatus(200);
 });
 
@@ -428,7 +428,7 @@ module.exports = router;
 // Functions
 
 var trelloSuccess = function(successMsg) {
-    console.log(successMsg);
+    console.log("Trello op success " + successMsg);
 };
 
 var trelloError = function(errorMsg) {
@@ -708,4 +708,43 @@ function getIST(date) {
     var ISTTime = new Date(date.getTime() + (ISTOffset + currentOffset)*60000);
     console.log(date, ISTTime)
     return ISTTime;
+}
+
+
+/*
+ * Get out for delivery orders and archive old orders
+ */
+function archieveOFDOrders() {
+    var idList = [];
+
+    // Fetch existing order id's from trello
+    trello.get("/1/lists/567e9dc1f840b25378313953",
+        {
+            fields: "name,id",
+            cards: "open",
+            card_fields: "name,id,due"
+        },
+        function(err, data) {
+            if (err) throw err;
+            var cards = data['cards'];
+            for (var idx in cards) {
+                var card = cards[idx];
+                var due = Date.parse(card['due']);
+                due.setTimeToNow();
+                var today = getIST(new Date());
+                var yesterday = today.addDays(-1);
+                if (due <= yesterday) {
+                    idList.push(card['id']);
+                }
+            }
+            archieveOFDOrders(idList);
+        });
+}
+
+
+function closeOFDOrders(idList) {
+    for (var idx in idList) {
+        var baseUrl = "/1/cards/" + idList[idx];
+        trello.put(baseUrl + "/closed", { value: true }, trelloSuccess, trelloError);
+    }
 }
