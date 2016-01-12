@@ -731,7 +731,7 @@ function archieveOFDOrders() {
                 var due = Date.parse(card['due']);
                 var today = getIST(new Date());
                 var yesterday = today.addDays(-1);
-                due.setTime(yesterday.getTime());
+                due.setHours(yesterday.getHours()-1);
                 console.log(due, yesterday);
                 if (due <= yesterday) {
                     idList.push(card['id']);

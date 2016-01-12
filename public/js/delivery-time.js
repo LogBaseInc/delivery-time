@@ -470,8 +470,12 @@ function getDefaultDates() {
 function updateDefaultDeliveryDates() {
     var date = getIST();
     if (shopifyDs['cakeType'] == 'xpress') {
+        var hourReq = 3;
+        if (shopifyDs['cakeVariant'] == 'eggless') {
+            var hourReq = 7;
+        }
         delivery['date'] = date.getDate();
-        delivery['hour'] = date.getHours() + 3;
+        delivery['hour'] = date.getHours() + hourReq;
         delivery['month'] = date.getMonth() + 1;
     } else if (shopifyDs['cakeType'] == 'signature') {
         delivery['date'] = date.getDate();
