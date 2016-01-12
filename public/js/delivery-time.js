@@ -459,6 +459,7 @@ function getDefaultDates() {
         var dateString = curDate.toDateString();
         var day = dateString.split(" ")[0];
         dateString = dateString.replace(day, dayFormat[day]);
+        dateString = dateString.replace(" " + curDate.getFullYear(), ", " + curDate.getFullYear());
         dates[idx] = dateString;
         days++;
         curDate.setDate(curDate.getDate() + 1);
