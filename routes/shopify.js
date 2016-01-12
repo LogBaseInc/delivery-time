@@ -706,7 +706,6 @@ function getIST(date) {
     var currentOffset = date.getTimezoneOffset();
     var ISTOffset = 330;   // IST offset UTC +5:30
     var ISTTime = new Date(date.getTime() + (ISTOffset + currentOffset)*60000);
-    console.log(date, ISTTime)
     return ISTTime;
 }
 
@@ -738,7 +737,7 @@ function archieveOFDOrders() {
                     idList.push(card['id']);
                 }
             }
-            archieveOFDOrders(idList);
+            closeOFDOrders(idList);
         });
 }
 
