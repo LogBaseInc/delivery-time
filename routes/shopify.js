@@ -563,18 +563,37 @@ function selectOrdersForTrello(orders) {
  * Warn users about the missing notes
  */
 function sendNotesMissingEmail(emailId, order) {
+    var subject = 'Notes missing from order - ' + order['name'];
+    var text = 'Notes are missing from the order - ' + "https://cake-bee.myshopify.com/admin/orders/" +
+            order['id'] + ". Please take necessary action. \n";
+    sendEmail(emailId, order, subject, text)
+}
+
+
+/*
+ * Send notification mails
+ */
+function sendEmail(emailId, order, subject, text) {
     var payload   = {
         to      : emailId,
         from    : 'CakeBeeBot@cakebee.in',
-        subject : 'Notes missing from order - ' + order['name'],
-        text    : 'Notes are missing from the order - ' + "https://cake-bee.myshopify.com/admin/orders/" +
-            order['id'] + ". Please take necessary action. \n"
+        subject : subject,
+        text    : text
     }
 
     sendgrid.send(payload, function(err, json) {
         if (err) { console.error(err); }
         console.log(json);
     });
+}
+
+/*
+ * Warn admin about non reviewed orders in Trello
+ */
+function sendReviewEscalationEmail(emailId, order) {
+    var subject = "Order - " + order['name'] + " not yet reviewed in Trello";
+    var text = "Order - " + order['name'] + " needs to be reviewed in Trello. Please take necessary action. \n";
+    sendEmail(emailId, order, subject, text);
 }
 
 /*
@@ -773,6 +792,14 @@ function updateNonReviewedOrders() {
                 if (due.getDate() == today.getDate()) {
                     var url = "/1/cards/" + card['id'] + "/actions/comments";
                     trello.post(url, { text : "Order not yet reviewed."}, trelloSuccess, trelloError);
+                }
+
+                if (card.badges.comments >= 6) {
+                    var order = {
+                        name: card['name'].split("|")[0]
+                    }
+                    sendReviewEscalationEmail("abishek@cakebee.in", order);
+                    sendReviewEscalationEmail("kousik@logbase.io", order);
                 }
             }
         });
