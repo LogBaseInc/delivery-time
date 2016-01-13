@@ -112,7 +112,7 @@ function checkForHoliday(dt) {
         return true;
     }
 
-    $.each(lbDatePicker.data.config.holidays, function(val, text) {
+    $.each(lbDatePicker.data.config.holiday[shopifyDs['city']], function(val, text) {
         if (text.toString().indexOf(dt) >= 0) {
             holiday = true;
         }
