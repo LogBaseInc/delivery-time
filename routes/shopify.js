@@ -46,8 +46,13 @@ router.get("/synctrello", function (req, res) {
     res.sendStatus(200);
 });
 
+router.get("/reviewreminder", function(req, res) {
+    updateNonReviewedOrders();
+    res.sendStatus(200);
+});
+
 router.get("/test", function (req, res) {
-    //getOFDOrders();
+    //updateNonReviewedOrders();
     res.sendStatus(200);
 });
 
@@ -746,4 +751,25 @@ function closeOFDOrders(idList) {
         var baseUrl = "/1/cards/" + idList[idx];
         trello.put(baseUrl + "/closed", { value: true }, trelloSuccess, trelloError);
     }
+}
+
+
+function updateNonReviewedOrders() {
+    var idList = [];
+    //56640605440193b69caaf4c2
+    trello.get("/1/lists/56640605440193b69caaf4c2",
+        {
+            fields: "name,id",
+            cards: "open",
+            card_fields: "name,id,badges"
+        },
+        function(err, data){
+            if (err) throw err;
+            var cards = data['cards'];
+            for (var idx in cards) {
+                var card = cards[idx];
+                var url = "/1/cards/" + card['id'] + "/actions/comments";
+                trello.post(url, { text : "Order not yet reviewed."}, trelloSuccess, trelloError);
+            }
+        });
 }
