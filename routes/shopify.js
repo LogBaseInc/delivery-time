@@ -761,15 +761,19 @@ function updateNonReviewedOrders() {
         {
             fields: "name,id",
             cards: "open",
-            card_fields: "name,id,badges"
+            card_fields: "name,id,badges,due"
         },
         function(err, data){
             if (err) throw err;
             var cards = data['cards'];
             for (var idx in cards) {
                 var card = cards[idx];
-                var url = "/1/cards/" + card['id'] + "/actions/comments";
-                trello.post(url, { text : "Order not yet reviewed."}, trelloSuccess, trelloError);
+                var due = Date.parse(card['due']);
+                var today = getIST(new Date());
+                if (due.getDate() == today.getDate()) {
+                    var url = "/1/cards/" + card['id'] + "/actions/comments";
+                    trello.post(url, { text : "Order not yet reviewed."}, trelloSuccess, trelloError);
+                }
             }
         });
 }
