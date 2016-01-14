@@ -623,6 +623,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             itemsSeparater = "  ----  ";
 
             var eggOptions = "";
+            var flavours = "";
             var message = null;
             var messageDesc = "";
             var prop = item['properties'];
@@ -637,6 +638,10 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                     if (prop[i]['name'].toString().indexOf("Egg/Eggless") >= 0) {
                         eggOptions = " / " + prop[i]['value'];
                     }
+
+                    if (prop[i]['name'].toString().indexOf("Flavours") >= 0) {
+                        flavours = " / " + prop[i]['value'];
+                    }
                 }
             }
 
@@ -646,14 +651,14 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 messageDesc = "\tMESSAGE ON THE CAKE: " + "\n";
             }
 
-            itemDesc += "\t" + itemName + eggOptions + " (SKU : " + sku +")" + "\n" + messageDesc + "\n";
+            itemDesc += "\t" + itemName + eggOptions + flavours + " (SKU : " + sku +")" + "\n" + messageDesc + "\n";
 
         }
 
         if (items.length > 1) {
             var name = order['name'] + " | " + "Multiple items in the order";
         } else {
-            var name = order['name'] + " | " + itemsName + eggOptions;
+            var name = order['name'] + " | " + itemsName + eggOptions + flavours;
         }
 
         // construct the description
