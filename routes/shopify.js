@@ -93,7 +93,7 @@ router.get("/order/makepayment/:orderid", function (req, res) {
         method: "POST",
         headers: {
             'X-Shopify-Access-Token': access_token,
-            'Content-Type' : 'application/json',
+            'Content-Type' : 'application/json'
         },
         json: true,
         body : {"transaction": {"kind": "capture"}}
@@ -696,6 +696,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             }
         }
     }
+    moveCancelledOrders(existingOrdersIdsTrello);
 }
 
 function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
@@ -808,4 +809,30 @@ function updateNonReviewedOrders() {
                 }
             }
         });
+}
+
+
+function moveCancelledOrders(existingOrdersInTrello) {
+    var d = Date.today().addDays(-10); //Cancelled orders for last 5 days
+    d = d.toString("yyyy-MM-dd HH:mm:ss");
+    var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=cancelled&created_at_min='+d+' IST',
+        headers: {
+            'X-Shopify-Access-Token': access_token
+        }
+    };
+
+    function callback(error, response, body) {
+        var idList = [];
+        if (!error && response.statusCode == 200) {
+            var info = JSON.parse(body);
+            for (var idx in info.orders) {
+                var order = { name : info.orders[idx].name}
+                if(!isOrderAbsentInTrello(order, existingOrdersInTrello)) {
+                    closeOFDOrders([getCardId(order, existingOrdersInTrello)]);
+                }
+            }
+        }
+    }
+    request(options, callback);
 }
