@@ -800,7 +800,7 @@ function updateNonReviewedOrders() {
                     trello.post(url, { text : "Order not yet reviewed."}, trelloSuccess, trelloError);
                 }
 
-                if (card.badges.comments >= 6) {
+                if (card.badges.comments >= 4) {
                     var order = {
                         name: card['name'].split("|")[0]
                     }
