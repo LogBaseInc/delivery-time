@@ -466,6 +466,11 @@ function getDateFromNotes(notes) {
         hour = parseInt(timeSlot);
     }
     var dt = Date.parse(day);
+
+    if (dt == null || dt == undefined) {
+        return null;
+    }
+
     dt.setHours(hour, mins);
     dt.setTimezone("IST");
     return dt;
