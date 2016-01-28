@@ -7,6 +7,7 @@ var Trello = require("node-trello");
 var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
 require("datejs");
 
+var stickToken = process.env.STICK_TOKEN;
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
 var redirect_uri = process.env.REDIRECT_URI;
@@ -72,7 +73,7 @@ router.get("/order/fulfill/:orderid", function (req, res) {
         method: "POST",
         headers: {
             'X-Shopify-Access-Token': access_token,
-            'Content-Type' : 'application/json',
+            'Content-Type' : 'application/json'
         },
         json: true,
         body : {"fulfillment": {"tracking_number": null,"notify_customer": true }}
@@ -612,6 +613,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
     for (var index in orders) {
         var order = orders[index];
         var items = order['line_items'];
+        var address = "";
 
         // construct the name
         var itemsName = "";
@@ -669,13 +671,16 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         // construct the description
         var itms = "ITEMS:\n" + itemDesc + "\n";
         var notes = "NOTES: \n" + "\t" + order['note'] + '\n\n';
-        var address = "ADDRESS:" + "\n" +
-            "\t" + order['shipping_address']['first_name'] + " " + order['shipping_address']['last_name'] + "\n" +
-            "\t" + order['shipping_address']['address1'] + "\n" +
-            "\t" + order['shipping_address']['address2'] + "\n" +
-            "\t" + order['shipping_address']['city'] + "\n" +
-            "\t" + order['shipping_address']['zip'] + "\n" +
-            "\t" + order['shipping_address']['phone'] + "\n";
+        if (order['shipping_address'] != null && order['shipping_address'] != undefined) {
+            address = "ADDRESS:" + "\n" +
+                "\t" + order['shipping_address']['first_name'] + " " + order['shipping_address']['last_name'] + "\n" +
+                "\t" + order['shipping_address']['address1'] + "\n" +
+                "\t" + order['shipping_address']['address2'] + "\n" +
+                "\t" + order['shipping_address']['city'] + "\n" +
+                "\t" + order['shipping_address']['zip'] + "\n" +
+                "\t" + order['shipping_address']['phone'] + "\n";
+        }
+
         var desc = itms + notes + address;
         var dueDate = (getDateFromNotes(notes));
         var newCard =
@@ -689,6 +694,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
         if (isOrderAbsentInTrello(order, existingOrdersIdsTrello)) {
             trello.post("/1/cards/", newCard, trelloSuccess, trelloError);
+            postToStick(getStickOrderDetails(order));
             //console.log("Posting an order to Trello");
         } else {
             //console.log("Testing updated orders");
@@ -697,9 +703,11 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 trello.put(baseUrl + "/desc", { value: desc }, trelloSuccess, trelloError);
                 trello.put(baseUrl + "/due", { value: dueDate } , trelloSuccess, trelloError);
                 trello.put(baseUrl + "/name", { value: name + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
+                postToStick(getStickOrderDetails(order));
                 //console.log("Shopify order updated");
             }
         }
+        //console.log(stickOrderDetails);
     }
     moveCancelledOrders(existingOrdersIdsTrello);
 }
@@ -840,4 +848,123 @@ function moveCancelledOrders(existingOrdersInTrello) {
         }
     }
     request(options, callback);
+}
+
+function postToStick(stickOrderDetails) {
+    var options = {
+        url: 'http://stick-write-dev.logbase.io/api/orders/'+ stickToken,
+        method: "POST",
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        json: true,
+        body : stickOrderDetails
+    };
+
+    function callback(error, response, body) {
+        // Need to handle cases when post fails
+    }
+
+    request(options, callback);
+}
+
+
+function getStickOrderDetails(order) {
+
+    var shipping_address = order.shipping_address;
+    var address;
+    var mobile;
+    if (shipping_address != null && shipping_address != undefined) {
+        address = order['shipping_address']['address1'] + "\n" +
+            "\t" + order['shipping_address']['address2'] + "\n" +
+            "\t" + order['shipping_address']['city'] + "\n" +
+            "\t" + order['shipping_address']['zip'] + "\n";
+        mobile = order.shipping_address.phone;
+    } else {
+        address = "Shipping address is missing";
+        mobile = "";
+    }
+
+    var dueDate = getDateFromNotes(order['note']);
+
+    // Item details
+    var items = order['line_items'];
+    var itemDesc = "\n";
+    for (var idx in items) {
+        var item = items[idx];
+        var itemName = item['quantity'] + " X " + item['name'];
+
+        var eggOptions = "";
+        var flavours = "";
+        var message = null;
+        var messageDesc = "";
+        var prop = item['properties'];
+        if (prop != null && prop != undefined) {
+            for (var i in prop) {
+                if (prop[i]['name'].toString().indexOf("Message") >= 0) {
+                    message = prop[i]['value'];
+                    message = message.replace("\n", "");
+                    message = message.replace("\r", "");
+                }
+
+                if (prop[i]['name'].toString().indexOf("Egg/Eggless") >= 0) {
+                    eggOptions = " / " + prop[i]['value'];
+                }
+
+                if (prop[i]['name'].toString().indexOf("Flavours") >= 0) {
+                    flavours = " / " + prop[i]['value'];
+                }
+            }
+        }
+
+        if (message != null && message != undefined && message.length > 1) {
+            messageDesc = "MESSAGE ON THE CAKE: " + message + "\n";
+        }
+
+        itemDesc += itemName + eggOptions + flavours + "\n" + messageDesc + "\n";
+
+    }
+
+    // Specific notes while delivering
+    var notes = order['note'].split("|");
+    var selected_notes = "";
+    for (var i in notes) {
+        if (i > 2) {
+            selected_notes += notes[i] + " | ";
+        }
+    }
+
+    // Amount to be collected from customer
+    var iscod = (order.gateway != null && (order.gateway.indexOf('COD') >=0 ||
+        order.gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
+    var cod = (iscod == true) ? order.total_price : 0;
+    var tags = order.tags;
+
+    if (tags != "") {
+        tags += ", ";
+    }
+
+    if (iscod) {
+        tags += "UNPAID";
+    } else {
+        tags += "PAID";
+    }
+
+    var stickOrderDetails = {
+        "order_id" : order.name.replace("#",""),
+        "name" : order.customer.first_name,
+        "address" : address,
+        "delivery_date" : dueDate.toString("yyyy/MM/dd"),
+        "mobile_number" : mobile,
+        "delivery_start_time": dueDate.getHours(),
+        "delivery_end_time": dueDate.getHours() + 1,
+        "cod_amount": order.total_price,
+        "product_name": "",
+        "product_desc": itemDesc,
+        "notes": selected_notes + " ** " + order.id,
+        "tags" : tags
+    }
+
+    return stickOrderDetails;
+
 }
