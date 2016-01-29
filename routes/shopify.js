@@ -68,7 +68,7 @@ router.get("/trellocleanup", function (req, res) {
 });
 
 router.get("/order/fulfill/:orderid", function (req, res) {
-    fulfillOrders(req.params.orderid);
+    fulfillOrders(req.params.orderid, res);
 });
 
 router.get("/order/makepayment/:orderid", function (req, res) {
@@ -126,7 +126,7 @@ router.post("/events/listener", function(req, res){
     console.log("Order id " + orderId);
 
     if (activity == "PICKEDUP") {
-        fulfillOrders(orderId);
+        fulfillOrders(orderId, res);
     } else {
         res.status(200).end();
     }
@@ -970,7 +970,8 @@ function getStickOrderDetails(order) {
 }
 
 
-function fulfillOrders(orderId) {
+function fulfillOrders(orderId, res) {
+    console.log("Fulfillfing order " + orderId);
     var options = {
         url: 'https://cake-bee.myshopify.com//admin/orders/'+orderId+'/fulfillments.json',
         method: "POST",
