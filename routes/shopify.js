@@ -132,6 +132,12 @@ router.post("/events/listener", function(req, res){
     var order = req.body.order;
     var activity = req.body.activity;
     var time_ms = req.body.time_ms;
+    var token = req.body.token;
+
+    if (token != stickToken) {
+        res.status(400).send("Invalid Token");
+        return;
+    }
 
     console.log(order, activity, time_ms);
     res.status(200).end();
