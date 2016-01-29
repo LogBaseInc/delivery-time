@@ -711,6 +711,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 //console.log("Shopify order updated");
             }
         }
+        //postToStick(getStickOrderDetails(order));
         //console.log(stickOrderDetails);
     }
     moveCancelledOrders(existingOrdersIdsTrello);
@@ -930,13 +931,7 @@ function getStickOrderDetails(order) {
     }
 
     // Specific notes while delivering
-    var notes = order['note'].split("|");
-    var selected_notes = "";
-    for (var i in notes) {
-        if (i > 2) {
-            selected_notes += notes[i] + " | ";
-        }
-    }
+    var notes = order['note'];
 
     // Amount to be collected from customer
     var iscod = (order.gateway != null && (order.gateway.indexOf('COD') >=0 ||
@@ -965,10 +960,11 @@ function getStickOrderDetails(order) {
         "cod_amount": order.total_price,
         "product_name": "",
         "product_desc": itemDesc,
-        "notes": selected_notes + " ** " + order.id,
+        "notes": notes + " ** " + order.id,
         "tags" : tags
     }
 
+    //console.log(stickOrderDetails);
     return stickOrderDetails;
 
 }
