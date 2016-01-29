@@ -128,6 +128,15 @@ router.get("/orders", function(req, res) {
     request(options, callback);
 });
 
+router.post("/events/listener", function(req, res){
+    var order = req.body.order;
+    var activity = req.body.activity;
+    var time_ms = req.body.time_ms;
+
+    console.log(order, activity, time_ms);
+    res.status(200).end();
+});
+
 function parseorder(order) {
     var parsedOrder = {};
     parsedOrder.Ordernumber = order.name;
