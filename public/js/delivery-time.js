@@ -501,7 +501,6 @@ function getDefaultSlots() {
     slots["18:00"] = "6 - 7 pm";
     slots["19:00"] = "7 - 8 pm";
     slots["20:00"] = "8 - 9 pm";
-    slots["24:00"] = "Midnight 11:45 - 12:00";
     lbDatePicker['data'] = {};
     lbDatePicker['data']['config'] = {};
     lbDatePicker['data']['config']['slots'] = slots;
