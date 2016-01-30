@@ -139,7 +139,7 @@ function parseorder(order) {
     var orderedDate = new Date(order.created_at);
     parsedOrder.Orderdate = orderedDate.toString("yyyy/MM/dd");
     parsedOrder.Ordertime = orderedDate.toString("HH:mm:ss");
-    var deiveryDate = getDateFromNotes(order.note);
+    var deiveryDate = getDateFromNotes(order.note, true);
     parsedOrder.Deliverydate = deiveryDate.toString("yyyy/MM/dd");
     parsedOrder.Deliverytime = " ";
     if(order.note.split('|').length >= 3) {
@@ -445,7 +445,7 @@ var trelloError = function(errorMsg) {
     console.log("Error: " + errorMsg);
 };
 
-function getDateFromNotes(notes) {
+function getDateFromNotes(notes, ist) {
     var tokens = notes.split("|");
     var day = tokens[1];
     var timeSlot = tokens[2];
@@ -477,7 +477,9 @@ function getDateFromNotes(notes) {
     }
 
     dt.setHours(hour, mins);
-    dt.setTimezone("IST");
+    if (ist == true) {
+        dt.setTimezone("IST");
+    }
     return dt;
 }
 
@@ -557,7 +559,7 @@ function selectOrdersForTrello(orders) {
             sendNotesMissingEmail("abishek@cakebee.in", order);
             sendNotesMissingEmail("kousik@logbase.io", order);
         } else {
-            var dt = getDateFromNotes(notes);
+            var dt = getDateFromNotes(notes, true);
             if (dt != null &&
                 ((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
                  (dt.getDate() == tomo.getDate() && dt.getMonth() == tomo.getMonth())) &&
@@ -686,7 +688,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         }
 
         var desc = itms + notes + address;
-        var dueDate = (getDateFromNotes(notes));
+        var dueDate = (getDateFromNotes(notes, true));
         var newCard =
         {
             name: name + " | " + trelloHashCode(desc),
@@ -890,7 +892,7 @@ function getStickOrderDetails(order) {
         mobile = "";
     }
 
-    var dueDate = getDateFromNotes(order['note']);
+    var dueDate = getDateFromNotes(order['note'], false);
 
     // Item details
     var items = order['line_items'];
