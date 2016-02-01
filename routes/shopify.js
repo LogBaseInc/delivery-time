@@ -882,10 +882,21 @@ function getStickOrderDetails(order) {
     var address;
     var mobile;
     if (shipping_address != null && shipping_address != undefined) {
-        address = order['shipping_address']['address1'] + "\n" +
-            "\t" + order['shipping_address']['address2'] + "\n" +
-            "\t" + order['shipping_address']['city'] + "\n" +
-            "\t" + order['shipping_address']['zip'] + "\n";
+        if (shipping_address.address1 != null) {
+            address = shipping_address.address1;
+        }
+
+        if (shipping_address.address2 != null) {
+            address += ", " + shipping_address.address2;
+        }
+
+        if (shipping_address.city != null) {
+            address += ", " + shipping_address.city;
+        }
+
+        if (shipping_address.zip != null) {
+            address += ", " + shipping_address.zip;
+        }
         mobile = order.shipping_address.phone;
     } else {
         address = "Shipping address is missing";
@@ -959,11 +970,12 @@ function getStickOrderDetails(order) {
         "mobile_number" : mobile,
         "delivery_start_time": dueDate.getHours(),
         "delivery_end_time": dueDate.getHours() + 1,
-        "cod_amount": order.total_price,
+        "cod_amount": parseInt(order.total_price),
         "product_name": "",
         "product_desc": itemDesc,
         "notes": notes + " ** " + order.id,
-        "tags" : tags
+        "tags" : tags,
+        "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id
     }
 
     //console.log(stickOrderDetails);
