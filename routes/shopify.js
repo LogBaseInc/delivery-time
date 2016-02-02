@@ -5,6 +5,7 @@ var Firebase = require('firebase');
 var request = require('request');
 var Trello = require("node-trello");
 var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
+var Keen = require("keen-js");
 require("datejs");
 
 var stickToken = process.env.STICK_TOKEN;
@@ -16,6 +17,13 @@ var shopify_scope = 'read_products,read_orders,write_orders,read_script_tags,wri
 var trello_key = process.env.TRELLO_KEY;
 var trello_token = process.env.TRELLO_TOKEN;
 var trello = new Trello(trello_key, trello_token);
+var keen_write_api_key = process.env.KEEN_WRITE_API_KEY;
+var keen_project_id = process.env.KEEN_PROJECT_ID;
+
+var keenClient = new Keen({
+    projectId: keen_project_id,
+    writeKey: keen_write_api_key
+});
 
 router.get("/dates", function(req, res) {
     var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/");
@@ -111,6 +119,30 @@ router.get("/orders", function(req, res) {
     request(options, callback);
 });
 
+router.get("/updatekeenio/:count", function(req, res) {
+    var count = req.params.count;
+    var options = {
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&page='+count,
+        headers: {
+            'X-Shopify-Access-Token': access_token
+        }
+    };
+
+    function callback(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var info = JSON.parse(body);
+            res.send(info);
+            for (var i in info.orders) {
+                var order = info.orders[i];
+                var pasedOrder = parseorder(order);
+                updateKeen(pasedOrder);
+            }
+        }
+    }
+
+    request(options, callback);
+});
+
 router.post("/events/listener", function(req, res){
     var order = req.body.order;
     var activity = req.body.activity;
@@ -133,67 +165,28 @@ router.post("/events/listener", function(req, res){
 });
 
 function parseorder(order) {
-    var parsedOrder = {};
-    parsedOrder.Ordernumber = order.name;
-    parsedOrder.OrderId = order.id;
-    var orderedDate = new Date(order.created_at);
-    parsedOrder.Orderdate = orderedDate.toString("yyyy/MM/dd");
-    parsedOrder.Ordertime = orderedDate.toString("HH:mm:ss");
-    var deiveryDate = getDateFromNotes(order.note, true);
-    parsedOrder.Deliverydate = deiveryDate.toString("yyyy/MM/dd");
-    parsedOrder.Deliverytime = " ";
-    if(order.note.split('|').length >= 3) {
-        parsedOrder.Deliverytime = order.note.split('|')[2];
-    }
-    parsedOrder.Price = order.total_price;
-    if(order.shipping_address != null && order.shipping_address != undefined) {
-        parsedOrder.Name = order.shipping_address.first_name + order.shipping_address.last_name;
-        parsedOrder.Address = order.shipping_address.address1;
-        if(order.shipping_address.address2 != null && order.shipping_address != undefined) {
-            parsedOrder.Address = parsedOrder.Address + ","+order.shipping_address.address2;
-        }
-        parsedOrder.City = order.shipping_address.city;
-        parsedOrder.PinCode = order.shipping_address.zip;
-        parsedOrder.Phone = order.shipping_address.phone;
-    }
-    if(order.customer != null && order.customer != undefined) {
-        parsedOrder.Email = order.customer.email;
-    }
-
-    parsedOrder.Paymentmode = order.gateway;
-
-    parsedOrder.Items = [];
-    for(var i=0; i <order.line_items.length; i++) {
-        var lineitem = {};
-        lineitem.Name = order.line_items[i].name;
-        lineitem.Quantity = order.line_items[i].quantity;
-        lineitem.Message = "";
-        for(var j= 0; j< order.line_items[i].properties.length; j++ ){
-            if(order.line_items[i].properties[j].name.indexOf("Message on the Cake") >= 0){
-                lineitem.Message = order.line_items[i].properties[j].value;
-                break;
+    var parsedOrder = {}
+    parsedOrder.order = order;
+    if (order.note != null && order.note != undefined) {
+        var deiveryDate = getDateFromNotes(order.note, false);
+        if (deiveryDate != null) {
+            parsedOrder.Deliverydate = deiveryDate.toString("yyyy/MM/dd");
+            parsedOrder.Deliverytime = " ";
+            parsedOrder.DeliveryStartTime = deiveryDate.getHours();
+            if (order.note.split('|').length >= 3) {
+                parsedOrder.Deliverytime = order.note.split('|')[2];
             }
+            parsedOrder.city = order.note.split('|')[0];
         }
-        
-        parsedOrder.Birthday = false;
-        parsedOrder.Anniversary = false;
-
-        var message = lineitem.Message.toLowerCase();
-        if(message.indexOf('birthday') >=0 || 
-           message.indexOf('bday') >=0 || 
-           message.indexOf("b'day") >=0) {
-           parsedOrder.Birthday = true;
-        }
-        if(message.indexOf('anniversary') >=0 || 
-           message.indexOf('wedding') >=0 || 
-           message.indexOf('married') >=0) {
-           parsedOrder.Anniversary = true;
-        }
-
-        parsedOrder.Items.push(lineitem);
     }
-
-    console.log(parsedOrder);
+    var created_at_ = new Date(order.created_at);
+    if (created_at_ != "Invalid Date") {
+        parsedOrder.keen = {
+            timestamp: (new Date(order.created_at)).toISOString()
+        };
+    }
+    parsedOrder.cancelled = parsedOrder.order.cancelled_at == null ? false : true;
+    parsedOrder.price = parseInt(order.total_price);
     return parsedOrder;
 }
 
@@ -983,7 +976,6 @@ function getStickOrderDetails(order) {
 
 }
 
-
 function fulfillOrders(orderId, res) {
     console.log("Fulfillfing order " + orderId);
     var options = {
@@ -1005,4 +997,15 @@ function fulfillOrders(orderId, res) {
     }
     request(options, callback);
 
+}
+
+function updateKeen(parsedOrder) {
+    keenClient.addEvent("Order", parsedOrder, function(err, res){
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log(res);
+        }
+    });
 }
