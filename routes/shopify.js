@@ -702,10 +702,11 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 trello.put(baseUrl + "/desc", { value: desc }, trelloSuccess, trelloError);
                 trello.put(baseUrl + "/due", { value: dueDate } , trelloSuccess, trelloError);
                 trello.put(baseUrl + "/name", { value: name + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
-                postToStick(getStickOrderDetails(order));
+                updateStick(order, true);
                 //console.log("Shopify order updated");
             }
         }
+        //updateStick(order);
         //postToStick(getStickOrderDetails(order));
         //console.log(stickOrderDetails);
     }
@@ -844,6 +845,7 @@ function moveCancelledOrders(existingOrdersInTrello) {
                 if(!isOrderAbsentInTrello(order, existingOrdersInTrello)) {
                     closeOFDOrders([getCardId(order, existingOrdersInTrello)]);
                 }
+                updateStick(orders[idx], false);
             }
         }
     }
@@ -868,6 +870,48 @@ function postToStick(stickOrderDetails) {
     request(options, callback);
 }
 
+function deleteFromStick(order, date, update) {
+    var orderId = order.name.replace("#","");
+    var options = {
+        url: 'http://stick-write-dev.logbase.io/api/orders/'+ stickToken,
+        method: "DELETE",
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        json: true,
+        body : {
+            order_id: orderId,
+            date: date
+        }
+    };
+
+    function callback(error, response, body) {
+        if (update == true) {
+            order.deleteCount--;
+            if (order.deleteCount == 0 && update == true) {
+                postToStick(getStickOrderDetails(order))
+            }
+        }
+    }
+
+    request(options, callback);
+}
+
+
+function updateStick(order, update) {
+    order['deleteCount'] = 0;
+    order.deleteCount++;
+    var d = Date.today().toDateString("yyyy/MM/dd");
+    deleteFromStick(order, d, update);
+
+    order.deleteCount++;
+    d = Date.today().addDays(-1).toDateString("yyyy/MM/dd");
+    deleteFromStick(order, d, update);
+
+    order.deleteCount++;
+    d = Date.today().addDays(1).toDateString("yyyy/MM/dd");
+    deleteFromStick(order, d, update);
+}
 
 function getStickOrderDetails(order) {
 
@@ -973,7 +1017,6 @@ function getStickOrderDetails(order) {
 
     //console.log(stickOrderDetails);
     return stickOrderDetails;
-
 }
 
 function fulfillOrders(orderId, res) {
