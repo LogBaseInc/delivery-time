@@ -561,7 +561,8 @@ function submitAction(event) {
         $.ajax({
             url: url,
             type: 'GET',
-            async: false
+            async: false,
+            timeout: 1000
         });
 
         /*
