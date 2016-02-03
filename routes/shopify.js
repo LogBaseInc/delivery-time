@@ -368,7 +368,6 @@ router.get("/order", function(req, res) {
         res.status(200).end;
     })
 
-
 });
 
 // define the home page route
