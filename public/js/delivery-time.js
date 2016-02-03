@@ -15,6 +15,9 @@ var shopifyDs = {
     productTitles: []
 }
 
+// 20 seconds timeout
+$.ajaxSetup({ timeout: 20000 });
+
 function loadCityValues() {
     if (shopifyDs['cakeType'] == 'sampler') {
         var city = {
