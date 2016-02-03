@@ -365,7 +365,7 @@ router.get("/order", function(req, res) {
         res.status(200).end();
     }, function (err) {
         console.log(err);
-        res.send(200).end;
+        res.status(200).end;
     })
 
 
