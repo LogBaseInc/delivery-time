@@ -956,7 +956,7 @@ function getStickOrderDetails(order) {
 
     // Item details
     var items = order['line_items'];
-    var itemDesc = "\n";
+    var itemDesc = "";
     for (var idx in items) {
         var item = items[idx];
         var itemName = item['quantity'] + " X " + item['name'];
@@ -988,7 +988,7 @@ function getStickOrderDetails(order) {
             messageDesc = "MESSAGE ON THE CAKE: " + message + "\n";
         }
 
-        itemDesc += itemName + eggOptions + flavours + "\n" + messageDesc + "\n";
+        itemDesc += itemName + eggOptions + flavours + "\n" + messageDesc + "\n\n";
 
     }
 
