@@ -598,7 +598,7 @@ function submitAction(event) {
         /*
          * Fetch available dates from backend
          */
-        $.get( "https://microsoft-apiapp54692aa0abc4415dbcbe3f2db1325121.azurewebsites.net/shopify/dates", function( data ) {
+        $.get("https://shopifyapp.azurewebsites.net/shopify/dates", function( data ) {
             lbDatePicker = data;
             myCitySelect.prop("disabled", false);
             updateCakeDs();
