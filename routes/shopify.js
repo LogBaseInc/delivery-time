@@ -760,7 +760,9 @@ function archieveOFDOrders() {
     var idList = [];
 
     // Fetch existing order id's from trello
-    trello.get("/1/lists/567e9dc1f840b25378313953",
+    // 5664061695c72afb26e8cab4 - prepared list
+    // 567e9dc1f840b25378313953 - Out for delivery list
+    trello.get("/1/lists/5664061695c72afb26e8cab4",
         {
             fields: "name,id",
             cards: "open",
