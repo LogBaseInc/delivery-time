@@ -683,7 +683,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var dueDate = (getDateFromNotes(notes, true));
         var newCard =
         {
-            name: name + " | " + trelloHashCode(desc),
+            name: name + dueDate.toString(" --- MMM dd ---") + " | " + trelloHashCode(desc),
             desc: desc,
             pos: "top",
             due: dueDate,
@@ -705,6 +705,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 //console.log("Shopify order updated");
             }
         }
+
         //updateStick(order, true);
         //postToStick(getStickOrderDetails(order));
         //console.log(stickOrderDetails);
@@ -918,7 +919,7 @@ function updateStick(order, update) {
 function getStickOrderDetails(order) {
 
     var shipping_address = order.shipping_address;
-    var address;
+    var address = "";
     var mobile;
     if (shipping_address != null && shipping_address != undefined) {
         if (shipping_address.address1 != null) {
@@ -936,7 +937,7 @@ function getStickOrderDetails(order) {
         if (shipping_address.zip != null) {
             address += ", " + shipping_address.zip;
         }
-        mobile = order.shipping_address.phone;
+        mobile = order.shipping_address.phone || "";
     } else {
         address = "Shipping address is missing";
         mobile = "";
