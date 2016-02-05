@@ -996,6 +996,7 @@ function getStickOrderDetails(order) {
     var notes = order['note'];
     var tokns = notes.split("|");
     var formatted_notes = "";
+    var time_slt = tokns[2];
     for (var idx in tokns) {
         if (idx > 2) {
             formatted_notes += tokns[idx] + " | ";
@@ -1029,7 +1030,7 @@ function getStickOrderDetails(order) {
         "cod_amount": parseInt(order.total_price),
         "product_name": "",
         "product_desc": itemDesc,
-        "notes": billing_details + formatted_notes + "\n ** " + order.id,
+        "notes": time_slt + "\n" + billing_details + formatted_notes + "\n ** " + order.id,
         "tags" : tags,
         "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id
     }
