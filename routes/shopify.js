@@ -705,7 +705,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 //console.log("Shopify order updated");
             }
         }
-        //updateStick(order);
+        //updateStick(order, true);
         //postToStick(getStickOrderDetails(order));
         //console.log(stickOrderDetails);
     }
@@ -846,7 +846,7 @@ function moveCancelledOrders(existingOrdersInTrello) {
                 if(!isOrderAbsentInTrello(order, existingOrdersInTrello)) {
                     closeOFDOrders([getCardId(order, existingOrdersInTrello)]);
                 }
-                updateStick(orders[idx], false);
+                updateStick(info.orders[idx], false);
             }
         }
     }
@@ -865,6 +865,7 @@ function postToStick(stickOrderDetails) {
     };
 
     function callback(error, response, body) {
+        //console.log(response.statusCode);
         // Need to handle cases when post fails
     }
 
@@ -990,7 +991,11 @@ function getStickOrderDetails(order) {
             messageDesc = "MESSAGE ON THE CAKE: " + message + "\n";
         }
 
-        itemDesc += itemName + eggOptions + flavours + "\n" + messageDesc + "\n\n";
+        if (idx > 0) {
+            itemDesc += "\n";
+        }
+
+        itemDesc += itemName + eggOptions + flavours + "\n" + messageDesc;
 
     }
 
@@ -1000,8 +1005,11 @@ function getStickOrderDetails(order) {
     var formatted_notes = "";
     var time_slt = tokns[2];
     for (var idx in tokns) {
+        if (idx > 3) {
+            formatted_notes += " | ";
+        }
         if (idx > 2) {
-            formatted_notes += tokns[idx] + " | ";
+            formatted_notes += tokns[idx];
         }
     }
 
