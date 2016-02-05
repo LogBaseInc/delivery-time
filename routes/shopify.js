@@ -683,7 +683,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var dueDate = (getDateFromNotes(notes, true));
         var newCard =
         {
-            name: name + dueDate.toString(" --- MMM dd ---") + " | " + trelloHashCode(desc),
+            name: name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
             desc: desc,
             pos: "top",
             due: dueDate,
