@@ -1030,7 +1030,7 @@ function getStickOrderDetails(order) {
         "cod_amount": parseInt(order.total_price),
         "product_name": "",
         "product_desc": itemDesc,
-        "notes": time_slt + "\n" + billing_details + formatted_notes + "\n ** " + order.id,
+        "notes": time_slt + "  \nOrdered by - " + billing_details + formatted_notes + "\n ** " + order.id,
         "tags" : tags,
         "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id
     }
