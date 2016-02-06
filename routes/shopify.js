@@ -884,7 +884,7 @@ function deleteFromStick(order, date, update) {
         json: true,
         body : {
             order_id: orderId,
-            date: date
+            delivery_date: date
         }
     };
 
@@ -904,15 +904,15 @@ function deleteFromStick(order, date, update) {
 function updateStick(order, update) {
     order['deleteCount'] = 0;
     order.deleteCount++;
-    var d = Date.today().toDateString("yyyy/MM/dd");
+    var d = Date.today().toString("yyyy/MM/dd");
     deleteFromStick(order, d, update);
 
     order.deleteCount++;
-    d = Date.today().addDays(-1).toDateString("yyyy/MM/dd");
+    d = Date.today().addDays(-1).toString("yyyy/MM/dd");
     deleteFromStick(order, d, update);
 
     order.deleteCount++;
-    d = Date.today().addDays(1).toDateString("yyyy/MM/dd");
+    d = Date.today().addDays(1).toString("yyyy/MM/dd");
     deleteFromStick(order, d, update);
 }
 
