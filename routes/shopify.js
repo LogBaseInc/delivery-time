@@ -1075,7 +1075,10 @@ function getStickOrderDetails(order) {
         tags += ", ";
     }
 
+    var amount = 0;
+
     if (iscod) {
+        amount = parseInt(order.total_price)
         tags += "UNPAID";
     } else {
         tags += "PAID";
@@ -1089,7 +1092,7 @@ function getStickOrderDetails(order) {
         "mobile_number" : mobile,
         "delivery_start_time": dueDate.getHours(),
         "delivery_end_time": dueDate.getHours() + 1,
-        "cod_amount": parseInt(order.total_price),
+        "cod_amount": amount,
         "product_name": "",
         "product_desc": itemDesc,
         "notes": time_slt + "  \nOrdered by - " + billing_details + formatted_notes + "\n ** " + order.id,
