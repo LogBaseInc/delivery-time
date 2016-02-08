@@ -170,8 +170,10 @@ router.post("/events/listener", function(req, res){
         return;
     }
 
-    var orderId = parseInt(order.notes.split("**")[1]);
-    console.log("Order id " + orderId);
+    if (order != null && order.notes != null) {
+        var orderId = parseInt(order.notes.split("**")[1]);
+        console.log("Order id " + orderId);
+    }
 
     if (activity == "PICKEDUP") {
         fulfillOrders(orderId, res);
