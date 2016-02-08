@@ -711,6 +711,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         //console.log(stickOrderDetails);
     }
     moveCancelledOrders(existingOrdersIdsTrello);
+    removeDateChangedOrders(orders, existingOrdersIdsTrello);
 }
 
 function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
@@ -721,6 +722,26 @@ function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
         }
     }
     return true;
+}
+
+function removeDateChangedOrders(shopifyOrders, trelloOrders) {
+    var shopifyOrderDict = {};
+    var shopifyOrderList = [];
+    for (var idx in shopifyOrders) {
+        shopifyOrderDict[shopifyOrders[idx].name] = shopifyOrders[idx];
+        shopifyOrderList.push(shopifyOrders[idx].name);
+    }
+
+    for (var idx in trelloOrders) {
+        if(shopifyOrderList.toString().indexOf(trelloOrders[idx]['orderId'].trim()) >= 0) {
+            //console.log("Orders present - ", trelloOrders[idx]['orderId']);
+            //console.log(shopifyOrderDict[trelloOrders[idx]['orderId'].trim()].name);
+            //console.log(trelloOrders[idx]['id']);
+        } else {
+            closeOFDOrders(trelloOrders[idx]['id']);
+            updateStick(shopifyOrderDict[trelloOrders[idx]['orderId'].trim()], false);
+        }
+    }
 }
 
 function isShopifyOrderUpdated(order, desc, existingOrdersIdsTrello) {
@@ -759,32 +780,33 @@ function getIST(date) {
  */
 function archieveOFDOrders() {
     var idList = [];
+    var cards = ["5664061695c72afb26e8cab4", "56b589c5eab1c2a87c205712"];
 
     // Fetch existing order id's from trello
-    // 5664061695c72afb26e8cab4 - prepared list
-    // 567e9dc1f840b25378313953 - Out for delivery list
-    trello.get("/1/lists/5664061695c72afb26e8cab4",
-        {
-            fields: "name,id",
-            cards: "open",
-            card_fields: "name,id,due"
-        },
-        function(err, data) {
-            if (err) throw err;
-            var cards = data['cards'];
-            for (var idx in cards) {
-                var card = cards[idx];
-                var due = Date.parse(card['due']);
-                var today = getIST(new Date());
-                var yesterday = today.addDays(-1);
-                due.setHours(yesterday.getHours()-1);
-                console.log(due, yesterday);
-                if (due <= yesterday) {
-                    idList.push(card['id']);
+    for (var idx in cards) {
+        trello.get("/1/lists/" + cards[idx],
+            {
+                fields: "name,id",
+                cards: "open",
+                card_fields: "name,id,due"
+            },
+            function (err, data) {
+                if (err) throw err;
+                var cards = data['cards'];
+                for (var idx in cards) {
+                    var card = cards[idx];
+                    var due = Date.parse(card['due']);
+                    var today = getIST(new Date());
+                    var yesterday = today.addDays(-1);
+                    due.setHours(yesterday.getHours() - 1);
+                    console.log(due, yesterday);
+                    if (due <= yesterday) {
+                        idList.push(card['id']);
+                    }
                 }
-            }
-            closeOFDOrders(idList);
-        });
+                closeOFDOrders(idList);
+            });
+    }
 }
 
 function closeOFDOrders(idList) {
