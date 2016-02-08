@@ -679,7 +679,14 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 "\t" + order['shipping_address']['phone'] + "\n";
         }
 
-        var desc = itms + notes + address;
+        var tags = "";
+
+        if (order.tags != null) {
+            tags = "\nTAGS: \n";
+            tags += order.tags + "\n";
+        }
+
+        var desc = itms + notes + address + tags;
         var dueDate = (getDateFromNotes(notes, true));
         var newCard =
         {
@@ -711,7 +718,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         //console.log(stickOrderDetails);
     }
     moveCancelledOrders(existingOrdersIdsTrello);
-    removeDateChangedOrders(orders, existingOrdersIdsTrello);
+    //removeDateChangedOrders(orders, existingOrdersIdsTrello);
 }
 
 function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
@@ -739,7 +746,9 @@ function removeDateChangedOrders(shopifyOrders, trelloOrders) {
             //console.log(trelloOrders[idx]['id']);
         } else {
             closeOFDOrders(trelloOrders[idx]['id']);
-            updateStick(shopifyOrderDict[trelloOrders[idx]['orderId'].trim()], false);
+            console.log(trelloOrders[idx]);
+            console.log(trelloOrders[idx]['id'], shopifyOrderDict[trelloOrders[idx]['orderId'].trim()])
+            //updateStick(shopifyOrderDict[trelloOrders[idx]['orderId'].trim()], false);
         }
     }
 }
