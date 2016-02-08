@@ -8,6 +8,17 @@ var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
 var Keen = require("keen-js");
 require("datejs");
 
+var loggly = require('loggly');
+var loggly_token = process.env.LOGGLY_TOKEN;
+var loggly_sub_domain = process.env.LOGGLY_SUB_DOMAIN
+
+var client = loggly.createClient({
+    token: loggly_token,
+    subdomain: loggly_sub_domain,
+    tags: ["Shopify", "CakeBee"],
+    json:true
+});
+
 var stickToken = process.env.STICK_TOKEN;
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
@@ -64,6 +75,11 @@ router.get("/test", function (req, res) {
     //updateNonReviewedOrders();
     res.sendStatus(200);
 });
+
+router.post("/webhook", function(req, res) {
+    client.log(req.body, ["webhook"])
+    res.status(200).end();
+})
 
 router.get("/trellocleanup", function (req, res) {
     var testIds = ["567e9dc1f840b25378313953"];
