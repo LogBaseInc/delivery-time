@@ -921,7 +921,11 @@ function getStickOrderDetails(order) {
     var shipping_address = order.shipping_address;
     var address = "";
     var mobile;
+    var name = null;
     if (shipping_address != null && shipping_address != undefined) {
+        if (shipping_address.name != null) {
+            name = shipping_address.name;
+        }
         if (shipping_address.address1 != null) {
             address = shipping_address.address1;
         }
@@ -1032,7 +1036,7 @@ function getStickOrderDetails(order) {
 
     var stickOrderDetails = {
         "order_id" : order.name.replace("#",""),
-        "name" : order.customer.first_name,
+        "name" : name || order.customer.first_name,
         "address" : address,
         "delivery_date" : dueDate.toString("yyyy/MM/dd"),
         "mobile_number" : mobile,
