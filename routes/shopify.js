@@ -61,12 +61,14 @@ router.get("/dates", function(req, res) {
 });
 
 router.get("/synctrello", function (req, res) {
+    client.log({"event" : "synctrello"});
     updateNewOrders();
     archieveOFDOrders();
     res.sendStatus(200);
 });
 
 router.get("/reviewreminder", function(req, res) {
+    client.log({"event" : "reviewreminder"});
     updateNonReviewedOrders();
     res.sendStatus(200);
 });
@@ -100,6 +102,7 @@ router.post("/webhook", function(req, res) {
 })
 
 router.get("/trellocleanup", function (req, res) {
+    client.log({"event" : "trellocleanup"});
     var testIds = ["567e9dc1f840b25378313953"];
     var ids = ["568282740d26463b4f8b010f", "568282863e3ddec5e947e13a"];
     for (var id in testIds) {
@@ -182,6 +185,8 @@ router.post("/events/listener", function(req, res){
     var activity = req.body.activity;
     var time_ms = req.body.time_ms;
     var token = req.body.token;
+
+    client.log(order, [activity, "eventslistener"])
 
     if (token != stickToken) {
         res.status(400).send("Invalid Token");
@@ -271,6 +276,7 @@ router.get("/checkproducts", function(req, res) {
 });
 
 router.get("/cleanslot", function(req, res) {
+    client.log({"event" : "cleanslot"});
     var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250',
         headers: {
@@ -466,10 +472,12 @@ module.exports = router;
 // Functions
 
 var trelloSuccess = function(successMsg) {
+    client.log(successMsg, "trellosuccess");
     console.log("Trello op success " + successMsg);
 };
 
 var trelloError = function(errorMsg) {
+    client.log(errorMsg, "trellofailure");
     console.log("Error: " + errorMsg);
 };
 
