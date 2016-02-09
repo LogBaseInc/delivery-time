@@ -77,7 +77,25 @@ router.get("/test", function (req, res) {
 });
 
 router.post("/webhook", function(req, res) {
-    client.log(req.body, ["webhook"])
+    var today = getIST(Date.today());
+    var tomo = getIST(Date.today().addDays(1));
+    var order = req.body;
+    var notes = order['note'];
+    client.log({"orderId" : req.body.name, "notes": notes},  ["webhook"]);
+    if (notes == "" || notes == null || notes == undefined) {
+        // Send an alarm that notes are missing
+        sendNotesMissingEmail("abishek@cakebee.in", order);
+        sendNotesMissingEmail("kousik@logbase.io", order);
+    } else {
+        var dt = getDateFromNotes(notes, true);
+        if (dt != null &&
+            ((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
+                (dt.getDate() == tomo.getDate() && dt.getMonth() == tomo.getMonth())) &&
+            notes.indexOf("Coimbatore") >= 0) {
+            client.log({"orderId" : order.name}, ["shopify-update", "webhook"]);
+            updateStick(order, true);
+        }
+    }
     res.status(200).end();
 })
 
