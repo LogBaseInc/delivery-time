@@ -743,7 +743,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
         if (isOrderAbsentInTrello(order, existingOrdersIdsTrello)) {
             trello.post("/1/cards/", newCard, trelloSuccess, trelloError);
-            postToStick(getStickOrderDetails(order));
+            updateStick(order, true);
             //console.log("Posting an order to Trello");
         } else {
             //console.log("Testing updated orders");
