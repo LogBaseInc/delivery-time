@@ -29,11 +29,14 @@ window.addEventListener("DOMContentLoaded", function() {
                 var selectedoption = document.querySelector('input[name="driver"]:checked');
                 if(selectedoption != null) {
                     var date = moment(new Date()).format("YYYYMMDD");
-                    var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/orders/";
-                    var firebase_ref = new Firebase(firebase_url + selectedoption.value + "/" + date + "/" + selectedorderid);
+                    var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/";
+                    var firebase_ref = new Firebase(firebase_url + 'orders/'+ selectedoption.value + "/" + date + "/" + selectedorderid);
                     firebase_ref.set(selectedorderinfo , function() {
                         //alert("Order assigned to driver");
                     });
+
+                    firebase_ref = new Firebase(firebase_url +'unassignorders/'+ date + "/" + selectedorderid+ "/deviceid");
+                    firebase_ref.set(selectedoption.value);
                     selectedorderinfo = null;
                     selectedorderid = null;
                     selectedorderbutton.html('Undo');
@@ -425,11 +428,15 @@ function listOrders (orderlist) {
                 //Delete order from driver
                 var deviceId = firebaseorders[selectedorderid].deviceId;
                 delete firebaseorders[selectedorderid];
-                var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/orders/";
-                var firebase_ref = new Firebase(firebase_url + deviceId + "/" + date + "/" + selectedorderid);
+                var firebase_url = "https://logbasedev.firebaseio.com/accounts/account060cf688-e0bb-4fbe-86cd-482a52772940/";
+                var firebase_ref = new Firebase(firebase_url + "orders/" + deviceId + "/" + date + "/" + selectedorderid);
                 firebase_ref.remove(function() {
                     //alert("Order removed from driver");
                 });
+
+                firebase_ref = new Firebase(firebase_url +'unassignorders/'+ date + "/" + selectedorderid+ "/deviceid");
+                firebase_ref.remove();
+
                 $(this).html('Assign Driver');
             }
         });
