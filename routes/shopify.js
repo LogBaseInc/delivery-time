@@ -199,6 +199,7 @@ router.post("/events/listener", function(req, res){
     }
 
     if (activity == "PICKEDUP") {
+        client.log(order, [activity, "eventslistener", "fulfill"])
         fulfillOrders(orderId, res);
     } else {
         res.status(200).end();
