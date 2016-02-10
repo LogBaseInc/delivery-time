@@ -529,7 +529,7 @@ function updateNewOrders() {
     // Fetch existing order id's from trello
     trello.get("/1/boards/566405f9a6394f7126c09439/cards",
         {
-            fields: "name,id"
+            fields: "name,id,due"
         },
         function(err, data) {
             if (err) throw err;
@@ -541,7 +541,8 @@ function updateNewOrders() {
                         var content = {
                             orderId : name.split("|")[0],
                             id: fields['id'],
-                            checksum: name.split("|")[2]
+                            checksum: name.split("|")[2],
+                            due: fields['due']
                         }
                         idList.push(content);
                     }
@@ -762,7 +763,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         //console.log(stickOrderDetails);
     }
     moveCancelledOrders(existingOrdersIdsTrello);
-    //removeDateChangedOrders(orders, existingOrdersIdsTrello);
+    removeDateChangedOrders(orders, existingOrdersIdsTrello);
 }
 
 function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
@@ -784,15 +785,21 @@ function removeDateChangedOrders(shopifyOrders, trelloOrders) {
     }
 
     for (var idx in trelloOrders) {
+        var due = new Date(trelloOrders[idx]['due']);
+        var newDue = getIST(new Date());
         if(shopifyOrderList.toString().indexOf(trelloOrders[idx]['orderId'].trim()) >= 0) {
-            //console.log("Orders present - ", trelloOrders[idx]['orderId']);
-            //console.log(shopifyOrderDict[trelloOrders[idx]['orderId'].trim()].name);
-            //console.log(trelloOrders[idx]['id']);
+            //console.log( { "Date" : due, "newDate" : newDue, "match" : due == newDue } , ["Dates", "Present"]);
         } else {
-            closeOFDOrders(trelloOrders[idx]['id']);
-            console.log(trelloOrders[idx]);
-            console.log(trelloOrders[idx]['id'], shopifyOrderDict[trelloOrders[idx]['orderId'].trim()])
-            //updateStick(shopifyOrderDict[trelloOrders[idx]['orderId'].trim()], false);
+            if (due > newDue) {
+                client.log(
+                    {
+                        "Date" : due,
+                        "orderId" : trelloOrders[idx]['orderId']
+                    } , ["DateChange"]);
+                closeOFDOrders(trelloOrders[idx]['id']);
+            }
+            //console.log(trelloOrders[idx]);
+            //console.log(trelloOrders[idx]['id'], shopifyOrderDict[trelloOrders[idx]['orderId'].trim()])
         }
     }
 }
