@@ -69,6 +69,7 @@ router.get("/synctrello", function (req, res) {
 
 router.get("/reviewreminder", function(req, res) {
     client.log({"event" : "reviewreminder"});
+    sortCards();
     updateNonReviewedOrders();
     res.sendStatus(200);
 });
@@ -86,7 +87,7 @@ router.post("/webhook", function(req, res) {
     client.log({"orderId" : req.body.name, "notes": notes},  ["webhook"]);
     if (notes == "" || notes == null || notes == undefined) {
         // Send an alarm that notes are missing
-        sendNotesMissingEmail("abishek@cakebee.in", order);
+        sendNotesMissingEmail("coimbatore@cakebee.in", order);
         sendNotesMissingEmail("kousik@logbase.io", order);
     } else {
         var dt = getDateFromNotes(notes, true);
@@ -594,7 +595,7 @@ function selectOrdersForTrello(orders) {
         var notes = order['note'];
         if (notes == "" || notes == null || notes == undefined) {
             // Send an alarm that notes are missing
-            sendNotesMissingEmail("abishek@cakebee.in", order);
+            sendNotesMissingEmail("coimbatore@cakebee.in", order);
             sendNotesMissingEmail("kousik@logbase.io", order);
         } else {
             var dt = getDateFromNotes(notes, true);
@@ -778,29 +779,29 @@ function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
 }
 
 function removeDateChangedOrders(shopifyOrders, trelloOrders) {
-    var shopifyOrderDict = {};
     var shopifyOrderList = [];
     for (var idx in shopifyOrders) {
-        shopifyOrderDict[shopifyOrders[idx].name] = shopifyOrders[idx];
         shopifyOrderList.push(shopifyOrders[idx].name);
     }
 
     for (var idx in trelloOrders) {
         var due = new Date(trelloOrders[idx]['due']);
-        var newDue = getIST(new Date());
+        var tomo = getIST(Date.today().addDays(1));
         if(shopifyOrderList.toString().indexOf(trelloOrders[idx]['orderId'].trim()) >= 0) {
             //console.log( { "Date" : due, "newDate" : newDue, "match" : due == newDue } , ["Dates", "Present"]);
         } else {
-            if (due > newDue) {
+            if (due.getDate() >= tomo.getDate() ||
+                due.getMonth() > tomo.getMonth() ||
+                due.getFullYear() > tomo.getFullYear()) {
                 client.log(
                     {
-                        "Date" : due,
-                        "orderId" : trelloOrders[idx]['orderId']
+                        "dueDate" : due,
+                        "tomo" : tomo,
+                        "orderId" : trelloOrders[idx]['orderId'],
+                        "cardId" : trelloOrders[idx]['id']
                     } , ["DateChange"]);
-                closeOFDOrders(trelloOrders[idx]['id']);
+                closeOFDOrders([trelloOrders[idx]['id']]);
             }
-            //console.log(trelloOrders[idx]);
-            //console.log(trelloOrders[idx]['id'], shopifyOrderDict[trelloOrders[idx]['orderId'].trim()])
         }
     }
 }
@@ -903,7 +904,7 @@ function updateNonReviewedOrders() {
                     var order = {
                         name: card['name'].split("|")[0]
                     }
-                    sendReviewEscalationEmail("abishek@cakebee.in", order);
+                    sendReviewEscalationEmail("coimbatore@cakebee.in", order);
                     sendReviewEscalationEmail("kousik@logbase.io", order);
                 }
             }
@@ -1172,4 +1173,35 @@ function updateKeen(parsedOrder) {
             console.log(res);
         }
     });
+}
+
+function sortCards() {
+    // New orders, Prepared & Reviewed
+    var lists = ["56640605440193b69caaf4c2", "5664061695c72afb26e8cab4", "5664060eb9666dc526222224"]
+    for (var i in lists) {
+        trello.get("/1/lists/" +lists[i],
+            {
+                fields: "name,id",
+                cards: "open",
+                card_fields: "name,id,due,pos"
+            },
+            function (err, data) {
+                if (err) throw err;
+                var cards = data['cards'];
+                cards.sort(function (a, b) {
+                    var a1 = a.due;
+                    var b1 = b.due;
+                    return a1 < b1 ? -1 : a1 > b1 ? 1 : 0;
+                });
+                for (var idx in cards) {
+                    var baseUrl = "/1/cards/" + cards[idx]['id'];
+                    var cardPos = parseInt(cards[idx]['pos']);
+                    var idxPos = parseInt(idx);
+                    if (cardPos != idxPos) {
+                        trello.put(baseUrl + "/pos", { value: idx }, trelloSuccess, trelloError);
+                    }
+                    var due = Date.parse(cards[idx]['due']);
+                }
+            });
+    }
 }
