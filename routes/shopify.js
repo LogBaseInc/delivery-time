@@ -62,6 +62,7 @@ router.get("/dates", function(req, res) {
 
 router.get("/synctrello", function (req, res) {
     client.log({"event" : "synctrello"});
+    sortCards();
     updateNewOrders();
     archieveOFDOrders();
     res.sendStatus(200);
@@ -69,7 +70,6 @@ router.get("/synctrello", function (req, res) {
 
 router.get("/reviewreminder", function(req, res) {
     client.log({"event" : "reviewreminder"});
-    sortCards();
     updateNonReviewedOrders();
     res.sendStatus(200);
 });
