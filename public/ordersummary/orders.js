@@ -125,6 +125,7 @@ function setOrders(data) {
                 order.financial_status = data.orders[i].financial_status;
                 order.tag = data.orders[i].tags;
                 order.iscod = (data.orders[i].gateway != null && (data.orders[i].gateway.indexOf('COD') >=0 || data.orders[i].gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
+                order.notes = getNotes(data.orders[i]);
                 order.items = [];
                 for(var j=0; j < data.orders[i].line_items.length; j++) {
                     order.items.push({Name: data.orders[i].line_items[j].title, Description: data.orders[i].line_items[j].variant_title + " | Quantity: " + data.orders[i].line_items[j].quantity});
@@ -418,6 +419,7 @@ function listOrders (orderlist) {
                 selectedorderinfo.Name = order.customername;
                 selectedorderinfo.Time = order.deliverytime;
                 selectedorderinfo.Items = order.items;
+                selectedorderinfo.Notes = order.notes;
                 if(order.iscod == true && order.financial_status.indexOf('pending') >=0) {
                     selectedorderinfo.Amount = parseInt(order.price);
                 }
@@ -455,4 +457,42 @@ function SortByTime(a, b){
     var b1 = parseInt(b.timetosort);
 
     return ((b1 > a1) ? -1 : ((b1 < a1) ? 1 : 0));
+}
+
+
+function getNotes(order) {
+
+    var billing_details = "";
+    var billing_address = order.billing_address;
+    if (billing_address != null && billing_address != undefined) {
+        if (billing_address.name != null && billing_address.name != undefined) {
+            billing_details += billing_address.name;
+        }
+
+        if (billing_address.phone != null && billing_address.phone != undefined) {
+            billing_details += " | " + billing_address.phone + "  \n\n";
+        }
+
+    }
+
+    var notes = order['note'];
+    if (notes == null || notes == undefined) {
+        var finalNotes = "  \nOrdered by - " + billing_details + "\n ** " + order.id;
+        return finalNotes;
+    }
+
+    var tokns = notes.split("|");
+    var formatted_notes = "";
+    var time_slt = tokns[2];
+    for (var idx in tokns) {
+        if (idx > 3) {
+            formatted_notes += " | ";
+        }
+        if (idx > 2) {
+            formatted_notes += tokns[idx];
+        }
+    }
+
+    var finalNotes = time_slt + "  \nOrdered by - " + billing_details + formatted_notes + "\n ** " + order.id;
+    return finalNotes;
 }
