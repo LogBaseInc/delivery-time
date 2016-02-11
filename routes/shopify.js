@@ -1196,9 +1196,9 @@ function sortCards() {
                 for (var idx in cards) {
                     var baseUrl = "/1/cards/" + cards[idx]['id'];
                     var cardPos = parseInt(cards[idx]['pos']);
-                    var idxPos = parseInt(idx);
+                    var idxPos = parseInt(idx) + 1;
                     if (cardPos != idxPos) {
-                        trello.put(baseUrl + "/pos", { value: idx }, trelloSuccess, trelloError);
+                        trello.put(baseUrl + "/pos", { value: idxPos }, trelloSuccess, trelloError);
                     }
                     var due = Date.parse(cards[idx]['due']);
                 }
