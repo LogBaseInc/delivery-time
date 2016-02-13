@@ -683,8 +683,8 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 for (var i in prop) {
                     if (prop[i]['name'].toString().indexOf("Message") >= 0) {
                         message = prop[i]['value'];
-                        message = message.replace(/\n/g, "");
-                        message = message.replace(/\r/g, "");
+                        message = message.replace(/\n/g, " ");
+                        message = message.replace(/\r/g, " ");
                     }
 
                     if (prop[i]['name'].toString().indexOf("Egg/Eggless") >= 0) {
