@@ -128,7 +128,31 @@ function setOrders(data) {
                 order.notes = getNotes(data.orders[i]);
                 order.items = [];
                 for(var j=0; j < data.orders[i].line_items.length; j++) {
-                    order.items.push({Name: data.orders[i].line_items[j].title, Description: data.orders[i].line_items[j].variant_title + " | Quantity: " + data.orders[i].line_items[j].quantity});
+                    var item = data.orders[i].line_items[j];
+                    var message = null;
+                    var messageDesc = "";
+                    var prop = item['properties'];
+                    if (prop != null && prop != undefined) {
+                        for (var idx in prop) {
+                            if (prop[idx]['name'].toString().indexOf("Message") >= 0) {
+                                message = prop[idx]['value'];
+                                message = message.replace(/\n/g, " ");
+                                message = message.replace(/\r/g, " ");
+                            }
+                        }
+                    }
+
+                    if (message != null && message != undefined) {
+                        messageDesc = "\nMESSAGE ON THE CAKE: " + message + "\n";
+                    }
+
+                    order.items.push(
+                        {
+                            Name: data.orders[i].line_items[j].title,
+                            Description: data.orders[i].line_items[j].variant_title + " | Quantity: " +
+                                data.orders[i].line_items[j].quantity + messageDesc
+                        }
+                    );
                 }
                 orders.push(order);
             }
