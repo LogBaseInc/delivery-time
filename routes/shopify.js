@@ -20,6 +20,7 @@ var client = loggly.createClient({
 });
 
 var stickToken = process.env.STICK_TOKEN;
+var stickADToken = process.env.STICK_AD_TOKEN;
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
 var redirect_uri = process.env.REDIRECT_URI;
@@ -172,8 +173,7 @@ router.get("/updatekeenio/:count", function(req, res) {
             res.send(info);
             for (var i in info.orders) {
                 var order = info.orders[i];
-                var pasedOrder = parseorder(order);
-                updateKeen(pasedOrder);
+                updateKeen(order);
             }
         }
     }
@@ -938,9 +938,9 @@ function moveCancelledOrders(existingOrdersInTrello) {
     request(options, callback);
 }
 
-function postToStick(stickOrderDetails) {
+function postToStick(stickOrderDetails, token) {
     var options = {
-        url: 'http://stick-write-dev.logbase.io/api/orders/'+ stickToken,
+        url: 'http://stick-write-dev.logbase.io/api/orders/'+ token,
         method: "POST",
         headers: {
             'Content-Type' : 'application/json'
@@ -957,10 +957,10 @@ function postToStick(stickOrderDetails) {
     request(options, callback);
 }
 
-function deleteFromStick(order, date, update) {
+function deleteFromStick(order, date, update, token) {
     var orderId = order.name.replace("#","");
     var options = {
-        url: 'http://stick-write-dev.logbase.io/api/orders/'+ stickToken,
+        url: 'http://stick-write-dev.logbase.io/api/orders/'+ token,
         method: "DELETE",
         headers: {
             'Content-Type' : 'application/json'
@@ -976,7 +976,7 @@ function deleteFromStick(order, date, update) {
         if (update == true) {
             order.deleteCount--;
             if (order.deleteCount == 0 && update == true) {
-                postToStick(getStickOrderDetails(order))
+                postToStick(getStickOrderDetails(order, token))
             }
         }
     }
@@ -984,20 +984,25 @@ function deleteFromStick(order, date, update) {
     request(options, callback);
 }
 
-
 function updateStick(order, update) {
+    updateStickInt(order, update, stickToken);
+    if (order.tags.indexOf("AD") >= 0) {
+        updateStickInt(order, update, stickADToken);
+    }
+}
+function updateStickInt(order, update, token) {
     order['deleteCount'] = 0;
     order.deleteCount++;
     var d = Date.today().toString("yyyy/MM/dd");
-    deleteFromStick(order, d, update);
+    deleteFromStick(order, d, update, token);
 
     order.deleteCount++;
     d = Date.today().addDays(-1).toString("yyyy/MM/dd");
-    deleteFromStick(order, d, update);
+    deleteFromStick(order, d, update, token);
 
     order.deleteCount++;
     d = Date.today().addDays(1).toString("yyyy/MM/dd");
-    deleteFromStick(order, d, update);
+    deleteFromStick(order, d, update, token);
 }
 
 function getStickOrderDetails(order) {
@@ -1164,8 +1169,20 @@ function fulfillOrders(orderId, res) {
 
 }
 
-function updateKeen(parsedOrder) {
-    keenClient.addEvent("Order", parsedOrder, function(err, res){
+function updateKeen(order) {
+    var pasedOrder = parseorder(order);
+    postToKeen("Order", parsedOrder);
+
+    var line_items = order.line_items;
+    for (var idx in line_items) {
+        var item = line_items[idx];
+        item['order_id'] = parsedOrder.order.id;
+        postToKeen("Items", item);
+    }
+}
+
+function postToKeen(project, event) {
+    keenClient.addEvent(project, event, function(err, res){
         if (err) {
             console.log(err);
         }
@@ -1173,6 +1190,7 @@ function updateKeen(parsedOrder) {
             console.log(res);
         }
     });
+
 }
 
 function sortCards() {
