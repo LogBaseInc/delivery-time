@@ -761,7 +761,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         }
 
         //updateStick(order, true);
-        //postToStick(getStickOrderDetails(order));
+        //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(stickOrderDetails);
     }
     moveCancelledOrders(existingOrdersIdsTrello);
@@ -974,8 +974,8 @@ function deleteFromStick(order, date, update, token) {
 
     function callback(error, response, body) {
         if (update == true) {
-            order.deleteCount--;
-            if (order.deleteCount == 0 && update == true) {
+            order[token].deleteCount--;
+            if (order[token].deleteCount == 0 && update == true) {
                 postToStick(getStickOrderDetails(order, token))
             }
         }
@@ -991,16 +991,16 @@ function updateStick(order, update) {
     }
 }
 function updateStickInt(order, update, token) {
-    order['deleteCount'] = 0;
-    order.deleteCount++;
+    order[token] = { 'deleteCount' : 0 };
+    order[token].deleteCount++;
     var d = Date.today().toString("yyyy/MM/dd");
     deleteFromStick(order, d, update, token);
 
-    order.deleteCount++;
+    order[token].deleteCount++;
     d = Date.today().addDays(-1).toString("yyyy/MM/dd");
     deleteFromStick(order, d, update, token);
 
-    order.deleteCount++;
+    order[token].deleteCount++;
     d = Date.today().addDays(1).toString("yyyy/MM/dd");
     deleteFromStick(order, d, update, token);
 }
