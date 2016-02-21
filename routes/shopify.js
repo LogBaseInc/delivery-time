@@ -976,7 +976,7 @@ function deleteFromStick(order, date, update, token) {
         if (update == true) {
             order[token].deleteCount--;
             if (order[token].deleteCount == 0 && update == true) {
-                postToStick(getStickOrderDetails(order, token))
+                postToStick(getStickOrderDetails(order), token);
             }
         }
     }
