@@ -988,6 +988,8 @@ function updateStick(order, update) {
     updateStickInt(order, update, stickToken);
     if (order.tags.indexOf("AD") >= 0) {
         updateStickInt(order, update, stickADToken);
+    } else {
+        updateStickInt(order, false, stickADToken);
     }
 }
 function updateStickInt(order, update, token) {
