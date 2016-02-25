@@ -113,6 +113,7 @@ router.post("/neworderwebhook", function(req, res) {
         sendNotesMissingEmail("kousik@logbase.io", order);
     }
     sendNewOrderNotification(order);
+    res.status(200).end();
 });
 
 router.get("/trellocleanup", function (req, res) {
