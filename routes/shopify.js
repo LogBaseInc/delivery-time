@@ -101,7 +101,19 @@ router.post("/webhook", function(req, res) {
         }
     }
     res.status(200).end();
-})
+});
+
+router.post("/neworderwebhook", function(req, res) {
+    var order = req.body;
+    var notes = order['note'];
+    client.log({"orderId" : req.body.name, "notes": notes},  ["webhook", "New Order"]);
+    if (notes == "" || notes == null || notes == undefined) {
+        // Send an alarm that notes are missing
+        sendNotesMissingEmail("coimbatore@cakebee.in", order);
+        sendNotesMissingEmail("kousik@logbase.io", order);
+    }
+    sendNewOrderNotification(order);
+});
 
 router.get("/trellocleanup", function (req, res) {
     client.log({"event" : "trellocleanup"});
@@ -1223,5 +1235,36 @@ function sortCards() {
                     var due = Date.parse(cards[idx]['due']);
                 }
             });
+    }
+}
+
+function sendNewOrderNotification(order) {
+    var items = order['line_items'];
+
+    if (order.updated_at == order.created_at) {
+        var text = "Hello CakeBee | Your Online Cake Shop,\n\n" +
+            order.customer.first_name + " placed a new order with you\n\n\n\n" +
+            "Order Note:\n\n" + order.note + "\n\n" +
+            "Link to order:\n\n" + "https://cake-bee.myshopify.com/admin/orders/" + order.id +"\n\n";
+        var subject = 'New Order ' + order.name + " placed by " + order.customer.first_name;
+        sendEmail('coimbatore@cakebee.in', order, subject, text);
+    }
+
+    for (var idx in items) {
+        var item = items[idx];
+        if (item['title'].indexOf("Photo Cakes") >= 0) {
+            var payload   = {
+                to      : 'vijesh@lightstory.in',
+                from    : 'customerdelight@cakebee.in',
+                subject : 'Photo Cake Order - ' + order.name,
+                text    : 'Photo Cake Order - https://cake-bee.myshopify.com/admin/orders/' + order.id,
+                cc      : ['kousik@logbase.io', "coimbatore@cakebee.in"]
+            }
+
+            sendgrid.send(payload, function(err, json) {
+                if (err) { console.error(err); }
+                console.log(json);
+            });
+        }
     }
 }
