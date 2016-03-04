@@ -97,7 +97,11 @@ router.post("/webhook", function(req, res) {
                 (dt.getDate() == tomo.getDate() && dt.getMonth() == tomo.getMonth())) &&
             notes.indexOf("Coimbatore") >= 0) {
             client.log({"orderId" : order.name}, ["shopify-update", "webhook"]);
-            updateStick(order, true);
+            if  (order.cancelled_at == null) {
+                updateStick(order, true);
+            } else {
+                updateStick(order, false);
+            }
         }
     }
     res.status(200).end();
@@ -944,7 +948,7 @@ function moveCancelledOrders(existingOrdersInTrello) {
                 if(!isOrderAbsentInTrello(order, existingOrdersInTrello)) {
                     closeOFDOrders([getCardId(order, existingOrdersInTrello)]);
                 }
-                updateStick(info.orders[idx], false);
+                //updateStick(info.orders[idx], false);
             }
         }
     }
@@ -963,6 +967,7 @@ function postToStick(stickOrderDetails, token) {
     };
 
     function callback(error, response, body) {
+        client.log({ order: stickOrderDetails.order_id, response: response.statusCode, body: body}, ["postToStick"]);
         //console.log(response.statusCode);
         // Need to handle cases when post fails
     }
@@ -986,10 +991,19 @@ function deleteFromStick(order, date, update, token) {
     };
 
     function callback(error, response, body) {
+        client.log({ order: order.name, response: response.statusCode, body: body}, ["deleteFromStick"]);
         if (update == true) {
             order[token].deleteCount--;
             if (order[token].deleteCount == 0 && update == true) {
                 postToStick(getStickOrderDetails(order), token);
+            }
+        }
+        if (body != null && body.error != null) {
+            if (body.error.indexOf('User is assigned to the order') >=0) {
+                sendEmail("coimbatore@cakebee.in", order,
+                    "Error while deleting cancelled order " + order.name + " from stick", body.error);
+                sendEmail("coimbatore@cakebee.in", order,
+                        "Error while deleting cancelled order " + order.name + " from stick", body.error);
             }
         }
     }
