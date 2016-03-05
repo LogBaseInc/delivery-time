@@ -998,11 +998,11 @@ function deleteFromStick(order, date, update, token) {
                 postToStick(getStickOrderDetails(order), token);
             }
         }
-        if (body != null && body.error != null) {
+        if (body != null && body.error != null && update != true) {
             if (body.error.indexOf('User is assigned to the order') >=0) {
-                sendEmail("coimbatore@cakebee.in", order,
-                    "Error while deleting cancelled order " + order.name + " from stick", body.error);
-                sendEmail("coimbatore@cakebee.in", order,
+                //sendEmail("coimbatore@cakebee.in", order,
+                  //  "Error while deleting cancelled order " + order.name + " from stick", body.error);
+                sendEmail("kousik@logbase.io", order,
                         "Error while deleting cancelled order " + order.name + " from stick", body.error);
             }
         }
@@ -1199,7 +1199,7 @@ function fulfillOrders(orderId, res) {
 }
 
 function updateKeen(order) {
-    var pasedOrder = parseorder(order);
+    var parsedOrder = parseorder(order);
     postToKeen("Order", parsedOrder);
 
     var line_items = order.line_items;
