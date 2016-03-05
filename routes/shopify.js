@@ -100,6 +100,7 @@ router.post("/webhook", function(req, res) {
             if  (order.cancelled_at == null) {
                 updateStick(order, true);
             } else {
+                updateKeen(order);
                 updateStick(order, false);
             }
         }
@@ -119,6 +120,12 @@ router.post("/neworderwebhook", function(req, res) {
     sendNewOrderNotification(order);
     res.status(200).end();
 });
+
+router.post("/fulfillwebhook", function(req, res){
+    var order = req.body;
+    updateKeen(order);
+    res.status(200).end();
+})
 
 router.get("/trellocleanup", function (req, res) {
     client.log({"event" : "trellocleanup"});
@@ -1200,13 +1207,13 @@ function fulfillOrders(orderId, res) {
 
 function updateKeen(order) {
     var parsedOrder = parseorder(order);
-    postToKeen("Order", parsedOrder);
+    postToKeen("Order_v1", parsedOrder);
 
     var line_items = order.line_items;
     for (var idx in line_items) {
         var item = line_items[idx];
         item['order_id'] = parsedOrder.order.id;
-        postToKeen("Items", item);
+        //postToKeen("Items", item);
     }
 }
 
