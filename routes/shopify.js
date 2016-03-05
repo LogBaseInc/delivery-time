@@ -238,6 +238,10 @@ function parseorder(order) {
         var deiveryDate = getDateFromNotes(order.note, false);
         if (deiveryDate != null) {
             parsedOrder.Deliverydate = deiveryDate.toString("yyyy/MM/dd");
+            parsedOrder.ddate = deiveryDate.toString("dd");
+            parsedOrder.dmonth = deiveryDate.toString("MM");
+            parsedOrder.dyear = deiveryDate.toString("yyyy");
+            parsedOrder.dday = deiveryDate.toString("ddd")
             parsedOrder.Deliverytime = " ";
             parsedOrder.DeliveryStartTime = deiveryDate.getHours();
             if (order.note.split('|').length >= 3) {
