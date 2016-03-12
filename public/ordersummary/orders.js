@@ -83,6 +83,8 @@ function setOrders(data) {
                 var timesplit = "";
                 if(notesplit.length >= 2) {
                     timesplit = notesplit[2].split('-');
+                    if(timesplit.length < 2)
+                        timesplit = notesplit[2].split('–');
                     var ispm = false;
                     if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[1]) >= 1 && parseInt(timesplit[1]) < 12 && 
                         timesplit[0] != 12) {
