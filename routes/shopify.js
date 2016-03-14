@@ -354,6 +354,8 @@ function calculateSlotCount(notesplit, slotArray, dates) {
     var timeslot = "";
     if(notesplit.length >= 2) {
         var timesplit = notesplit[2].split('-');
+        if(timesplit.length < 2)
+            timesplit = notesplit[2].split('–');
         var ispm = false;
 
         if(parseInt(timesplit[0]) == 10 && parseInt(timesplit[1]) == 1) {
