@@ -589,7 +589,7 @@ function updateNewOrders() {
  */
 function processShopifyOrders(trelloExistingIdList) {
     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json',
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250',
         headers: {
             'X-Shopify-Access-Token': access_token
         }
@@ -801,7 +801,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             }
         }
 
-        console.log(order.name)
+        //console.log(order.name)
         //updateStick(order, true);
         //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(stickOrderDetails);
