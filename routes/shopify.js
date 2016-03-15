@@ -56,7 +56,7 @@ router.get("/dates", function(req, res) {
         var response = {
             data: data,
             dates: dates
-        }
+        };
         res.send(response);
     });
 });
@@ -125,7 +125,7 @@ router.post("/fulfillwebhook", function(req, res){
     var order = req.body;
     updateKeen(order);
     res.status(200).end();
-})
+});
 
 router.get("/trellocleanup", function (req, res) {
     client.log({"event" : "trellocleanup"});
@@ -689,6 +689,8 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var order = orders[index];
         var items = order['line_items'];
         var address = "";
+        var isSignature = false;
+        var freeSampler = "\t1 X Four Flavour Sampler\n";
 
         // construct the name
         var itemsName = "";
@@ -700,6 +702,11 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             if (sku == null) {
                 sku = "";
             }
+
+            if (sku.indexOf("SG") >= 0) {
+                isSignature = true;
+            }
+
             var itemName = item['quantity'] + " X " + item['name'];
             itemsName = itemsName + itemName + itemsSeparater;
             itemsSeparater = "  ----  ";
@@ -735,6 +742,10 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
             itemDesc += "\t" + itemName + eggOptions + flavours + " (SKU : " + sku +")" + "\n" + messageDesc + "\n";
 
+        }
+
+        if (isSignature) {
+            itemDesc += freeSampler;
         }
 
         if (items.length > 1) {
@@ -790,6 +801,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             }
         }
 
+        console.log(order.name)
         //updateStick(order, true);
         //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(stickOrderDetails);
@@ -1053,6 +1065,9 @@ function getStickOrderDetails(order) {
     var address = "";
     var mobile;
     var name = null;
+    var isSignature = false;
+    var freeSampler = "\n1 X Four Flavour Sampler\n";
+
     if (shipping_address != null && shipping_address != undefined) {
         if (shipping_address.name != null) {
             name = shipping_address.name;
@@ -1105,6 +1120,16 @@ function getStickOrderDetails(order) {
         var message = null;
         var messageDesc = "";
         var prop = item['properties'];
+
+        var sku = item['sku'];
+        if (sku == null) {
+            sku = "";
+        }
+
+        if (sku.indexOf("SG") >= 0) {
+            isSignature = true;
+        }
+
         if (prop != null && prop != undefined) {
             for (var i in prop) {
                 if (prop[i]['name'].toString().indexOf("Message") >= 0) {
@@ -1133,6 +1158,10 @@ function getStickOrderDetails(order) {
 
         itemDesc += itemName + eggOptions + flavours + "\n" + messageDesc;
 
+    }
+
+    if (isSignature) {
+        itemDesc += freeSampler;
     }
 
     // Specific notes while delivering
