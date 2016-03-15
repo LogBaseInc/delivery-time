@@ -129,6 +129,9 @@ function setOrders(data) {
                 order.iscod = (data.orders[i].gateway != null && (data.orders[i].gateway.indexOf('COD') >=0 || data.orders[i].gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
                 order.notes = getNotes(data.orders[i]);
                 order.items = [];
+                var isSignature = false;
+                var freeSampler = "\t1 X Four Flavour Sampler\n";
+
                 for(var j=0; j < data.orders[i].line_items.length; j++) {
                     var item = data.orders[i].line_items[j];
                     var message = null;
@@ -153,6 +156,23 @@ function setOrders(data) {
                             Name: data.orders[i].line_items[j].title,
                             Description: data.orders[i].line_items[j].variant_title + " | Quantity: " +
                                 data.orders[i].line_items[j].quantity + messageDesc
+                        }
+                    );
+
+                    var sku = item['sku'];
+                    if (sku == null) {
+                        sku = "";
+                    }
+
+                    if (sku.indexOf("SG") >= 0) {
+                        isSignature = true;
+                    }
+                }
+                if (isSignature) {
+                    order.items.push(
+                        {
+                            Name: "1 X Four Flavour Sampler",
+                            Description: " "
                         }
                     );
                 }
