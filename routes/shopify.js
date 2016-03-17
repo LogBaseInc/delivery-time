@@ -1067,6 +1067,7 @@ function getStickOrderDetails(order) {
     var name = null;
     var isSignature = false;
     var freeSampler = "\n1 X Four Flavour Sampler\n";
+    var zip = " ";
 
     if (shipping_address != null && shipping_address != undefined) {
         if (shipping_address.name != null) {
@@ -1085,7 +1086,7 @@ function getStickOrderDetails(order) {
         }
 
         if (shipping_address.zip != null) {
-            address += ", " + shipping_address.zip;
+            zip = shipping_address.zip;
         }
         mobile = order.shipping_address.phone || "";
     } else {
@@ -1210,7 +1211,9 @@ function getStickOrderDetails(order) {
         "product_desc": itemDesc,
         "notes": time_slt + "  \nOrdered by - " + billing_details + formatted_notes + "\n ** " + order.id,
         "tags" : tags,
-        "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id
+        "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id,
+        "zip" : zip,
+        "country" : "India"
     }
 
     //console.log(stickOrderDetails);
