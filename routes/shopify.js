@@ -123,6 +123,8 @@ router.post("/neworderwebhook", function(req, res) {
 
 router.post("/fulfillwebhook", function(req, res){
     var order = req.body;
+    var notes = order['note'];
+    client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "fulfilled"]);
     updateKeen(order);
     res.status(200).end();
 });
