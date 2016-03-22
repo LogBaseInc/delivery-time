@@ -1260,10 +1260,10 @@ function updateKeen(order) {
 function postToKeen(project, event) {
     keenClient.addEvent(project, event, function(err, res){
         if (err) {
-            console.log(err);
+            client.log(err, ['keenio', 'error']);
         }
         else {
-            console.log(res);
+            client.log(res, ['keenio']);
         }
     });
 
