@@ -197,7 +197,9 @@ router.get("/updatekeenio/:count", function(req, res) {
             res.send(info);
             for (var i in info.orders) {
                 var order = info.orders[i];
-                updateKeen(order);
+                if (order.fulfillment_status == "fulfilled" || order.cancelled_at != null) {
+                    updateKeen(order);
+                }
             }
         }
     }
@@ -1251,7 +1253,7 @@ function updateKeen(order) {
     for (var idx in line_items) {
         var item = line_items[idx];
         item['order_id'] = parsedOrder.order.id;
-        //postToKeen("Items", item);
+        postToKeen("Items", item);
     }
 }
 
