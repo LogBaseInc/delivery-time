@@ -708,7 +708,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             }
 
             if (sku.indexOf("SG") >= 0) {
-                isSignature = true;
+                //isSignature = true;
             }
 
             var itemName = item['quantity'] + " X " + item['name'];
@@ -1132,7 +1132,7 @@ function getStickOrderDetails(order) {
         }
 
         if (sku.indexOf("SG") >= 0) {
-            isSignature = true;
+            //isSignature = true;
         }
 
         if (prop != null && prop != undefined) {

@@ -165,7 +165,7 @@ function setOrders(data) {
                     }
 
                     if (sku.indexOf("SG") >= 0) {
-                        isSignature = true;
+                        //isSignature = true;
                     }
                 }
                 if (isSignature) {
