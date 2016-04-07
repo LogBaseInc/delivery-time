@@ -1316,7 +1316,8 @@ function sendNewOrderNotification(order) {
 
     for (var idx in items) {
         var item = items[idx];
-        if (item['title'].indexOf("Photo Cakes") >= 0) {
+        if (item['title'].indexOf("Photo Cakes") >= 0 ||
+            item['title'].indexOf("photo") >= 0) {
             var payload   = {
                 to      : 'vijesh@lightstory.in',
                 from    : 'customerdelight@cakebee.in',
