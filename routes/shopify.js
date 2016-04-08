@@ -76,7 +76,16 @@ router.get("/reviewreminder", function(req, res) {
 });
 
 router.get("/test", function (req, res) {
-    //updateNonReviewedOrders();
+    var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config/cakeTypes/signature/prepTime");
+    my_firebase_ref.once("value", function(snapshot) {
+        data = snapshot.exportVal();
+        if (data.egg > 6) {
+            data.egg -= 1;
+            data.eggless -= 1;
+            client.log({"event" : "signature update", "data" : data});
+            my_firebase_ref.update(data);
+        }
+    });
     res.sendStatus(200);
 });
 
