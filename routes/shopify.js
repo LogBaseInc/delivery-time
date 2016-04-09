@@ -817,7 +817,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         //console.log(order.name)
         //updateStick(order, true);
         //postToStick(getStickOrderDetails(order), stickToken);
-        //console.log(stickOrderDetails);
+        //console.log(getStickOrderDetails(order));
     }
     moveCancelledOrders(existingOrdersIdsTrello);
     removeDateChangedOrders(orders, existingOrdersIdsTrello);
@@ -1194,7 +1194,7 @@ function getStickOrderDetails(order) {
 
     // Amount to be collected from customer
     var iscod = (order.gateway != null && (order.gateway.indexOf('COD') >=0 ||
-        order.gateway.indexOf('Cash on Delivery') >=0)) ? true: false;
+        order.gateway.indexOf('Cash on Delivery') >=0) && !(order.financial_status == "paid")) ? true: false;
     var cod = (iscod == true) ? order.total_price : 0;
     var tags = order.tags;
 
@@ -1205,7 +1205,7 @@ function getStickOrderDetails(order) {
     var amount = 0;
 
     if (iscod) {
-        amount = parseInt(order.total_price)
+        amount = parseInt(order.total_price);
         tags += "UNPAID";
     } else {
         tags += "PAID";
@@ -1227,7 +1227,7 @@ function getStickOrderDetails(order) {
         "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id,
         "zip" : zip,
         "country" : "India"
-    }
+    };
 
     //console.log(stickOrderDetails);
     return stickOrderDetails;
