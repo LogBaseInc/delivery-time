@@ -1073,11 +1073,14 @@ function updateStick(order, update) {
     }
 }
 function updateStickInt(order, update, token) {
+
+    console.log("Got an update request for order " + order.name, update);
     var order_detail_ref = new Firebase("https://lb-date-picker.firebaseio.com/stick/" + order.id);
 
     order_detail_ref.once("value", function(snapshot) {
         var data = snapshot.exportVal();
 
+        console.log(data, update, this.order.name);
         if (data == null || data == undefined) {
             if (update == true) {
                 postToStick(getStickOrderDetails(this.order), this.token, this.order.id)
