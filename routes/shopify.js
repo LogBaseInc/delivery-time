@@ -101,16 +101,22 @@ router.post("/webhook", function(req, res) {
         sendNotesMissingEmail("kousik@logbase.io", order);
     } else {
         var dt = getDateFromNotes(notes, true);
+
+        if (dt == null) {
+            sendEmail("kousik@logbase.io", order,
+                    "Error while processing date in order " + order.name,
+                    'https://cake-bee.myshopify.com/admin/orders/' + order.id);
+        }
+
         if (dt != null &&
-            ((dt.getDate() == today.getDate() && dt.getMonth() == today.getMonth()) ||
-                (dt.getDate() == tomo.getDate() && dt.getMonth() == tomo.getMonth())) &&
-            notes.indexOf("Coimbatore") >= 0) {
+            (notes.indexOf("Coimbatore") >= 0)) {
             client.log({"orderId" : order.name}, ["shopify-update", "webhook"]);
             if  (order.cancelled_at == null) {
                 updateStick(order, true);
             } else {
                 updateKeen(order);
                 updateStick(order, false);
+                removeOrderIdFromFB(order.id);
             }
         }
     }
@@ -127,6 +133,14 @@ router.post("/neworderwebhook", function(req, res) {
         sendNotesMissingEmail("kousik@logbase.io", order);
     }
     sendNewOrderNotification(order);
+    var dt = getDateFromNotes(notes, true);
+
+    if (dt == null) {
+        sendEmail("kousik@logbase.io", order,
+                "Error while processing date in order " + order.name,
+                'https://cake-bee.myshopify.com/admin/orders/' + order.id);
+    }
+    updateStick(order, true);
     res.status(200).end();
 });
 
@@ -135,6 +149,7 @@ router.post("/fulfillwebhook", function(req, res){
     var notes = order['note'];
     client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "fulfilled"]);
     updateKeen(order);
+    removeOrderIdFromFB(order.id);
     res.status(200).end();
 });
 
@@ -815,7 +830,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         }
 
         //console.log(order.name)
-        //updateStick(order, true);
+        updateStick(order, true);
         //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(getStickOrderDetails(order));
     }
@@ -993,7 +1008,7 @@ function moveCancelledOrders(existingOrdersInTrello) {
     request(options, callback);
 }
 
-function postToStick(stickOrderDetails, token) {
+function postToStick(stickOrderDetails, token, orderId) {
     var options = {
         url: 'http://stick-write-dev.logbase.io/api/orders/'+ token,
         method: "POST",
@@ -1006,8 +1021,11 @@ function postToStick(stickOrderDetails, token) {
 
     function callback(error, response, body) {
         client.log({ order: stickOrderDetails.order_id, response: response.statusCode, body: body}, ["postToStick"]);
+        var order_detail_ref = new Firebase("https://lb-date-picker.firebaseio.com/stick");
+        var orderdetail = {};
+        orderdetail[orderId] = stickOrderDetails.delivery_date;
+        order_detail_ref.update(orderdetail);
         //console.log(response.statusCode);
-        // Need to handle cases when post fails
     }
 
     request(options, callback);
@@ -1031,10 +1049,7 @@ function deleteFromStick(order, date, update, token) {
     function callback(error, response, body) {
         client.log({ order: order.name, response: response.statusCode, body: body}, ["deleteFromStick"]);
         if (update == true) {
-            order[token].deleteCount--;
-            if (order[token].deleteCount == 0 && update == true) {
-                postToStick(getStickOrderDetails(order), token);
-            }
+            postToStick(getStickOrderDetails(order), token, order.id);
         }
         if (body != null && body.error != null && update != true) {
             if (body.error.indexOf('User is assigned to the order') >=0) {
@@ -1058,18 +1073,20 @@ function updateStick(order, update) {
     }
 }
 function updateStickInt(order, update, token) {
-    order[token] = { 'deleteCount' : 0 };
-    order[token].deleteCount++;
-    var d = Date.today().toString("yyyy/MM/dd");
-    deleteFromStick(order, d, update, token);
+    var order_detail_ref = new Firebase("https://lb-date-picker.firebaseio.com/stick/" + order.id);
 
-    order[token].deleteCount++;
-    d = Date.today().addDays(-1).toString("yyyy/MM/dd");
-    deleteFromStick(order, d, update, token);
+    order_detail_ref.once("value", function(snapshot) {
+        var data = snapshot.exportVal();
 
-    order[token].deleteCount++;
-    d = Date.today().addDays(1).toString("yyyy/MM/dd");
-    deleteFromStick(order, d, update, token);
+        if (data == null || data == undefined) {
+            if (update == true) {
+                postToStick(getStickOrderDetails(this.order), this.token, this.order.id)
+            }
+        } else {
+            var d = Date.today().toString(data);
+            deleteFromStick(this.order, d, this.update, this.token);
+        }
+    }, { order : order, token : token, update : update});
 }
 
 function getStickOrderDetails(order) {
@@ -1341,4 +1358,11 @@ function sendNewOrderNotification(order) {
             });
         }
     }
+}
+
+function removeOrderIdFromFB(orderId) {
+    var order_detail_ref = new Firebase("https://lb-date-picker.firebaseio.com/stick");
+    var orderdetail = {};
+    orderdetail[orderId] = null;
+    order_detail_ref.update(orderdetail);
 }
