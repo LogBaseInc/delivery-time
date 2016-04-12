@@ -830,7 +830,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         }
 
         //console.log(order.name)
-        updateStick(order, true);
+        //updateStick(order, true);
         //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(getStickOrderDetails(order));
     }
