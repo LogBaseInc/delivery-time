@@ -140,7 +140,9 @@ router.post("/neworderwebhook", function(req, res) {
                 "Error while processing date in order " + order.name,
                 'https://cake-bee.myshopify.com/admin/orders/' + order.id);
     }
-    updateStick(order, true);
+    if (dt != null && (notes.indexOf("Coimbatore") >= 0)) {
+       updateStick(order, true);
+    }
     res.status(200).end();
 });
 
