@@ -1411,7 +1411,7 @@ function sendOrderConfirmationSms(order) {
     var userName = order.customer.first_name;
     var orderId = order.name.replace("#","");
     var price = order.total_price;
-    var mob = order.billing_address.phone | " - ";
+    var mob = order.billing_address.phone || " - ";
     var text = "Hi " + userName + ", We have received your Order " + orderId + " on CakeBee. Please check email for more details.";
     sendSms(mob, text);
 }
@@ -1419,7 +1419,7 @@ function sendOrderConfirmationSms(order) {
 function sendOrderCancellationSms(order) {
     var userName = order.customer.first_name;
     var orderId = order.name.replace("#","");
-    var mob = order.billing_address.phone | " - ";
+    var mob = order.billing_address.phone || " - ";
     var text = "Hi " + userName + ", Your Order " + orderId + " has been cancelled. Please check email for more details. - CakeBee";
     sendSms(mob, text);
 }
@@ -1427,7 +1427,7 @@ function sendOrderCancellationSms(order) {
 function sendShipmentSms(order) {
     var userName = order.customer.first_name;
     var orderId = order.name.replace("#","");
-    var mob = order.billing_address.phone | " - ";
+    var mob = order.billing_address.phone || " - ";
     var text = "Hi " + userName + ", Your Order " + orderId + " is out for delivery. You will be receiving them soon. - CakeBee";
     sendSms(mob, text);
 }
