@@ -6,6 +6,13 @@ var request = require('request');
 var Trello = require("node-trello");
 var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
 var Keen = require("keen-js");
+
+
+var MSG91_API = process.env.MSG91_API;
+var MSG91_ROUTE_NO = 4; // transactional route
+var msg91 = require("msg91")(MSG91_API, "CKEBEE", MSG91_ROUTE_NO);
+
+
 require("datejs");
 
 var loggly = require('loggly');
@@ -86,7 +93,7 @@ router.get("/test", function (req, res) {
             my_firebase_ref.update(data);
         }
     });
-    res.sendStatus(200);
+    res.status(200).send();
 });
 
 router.post("/webhook", function(req, res) {
@@ -114,9 +121,9 @@ router.post("/webhook", function(req, res) {
             if  (order.cancelled_at == null) {
                 updateStick(order, true);
             } else {
+                client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "cancelled_update"]);
                 updateKeen(order);
                 updateStick(order, false);
-                removeOrderIdFromFB(order.id);
             }
         }
     }
@@ -143,6 +150,7 @@ router.post("/neworderwebhook", function(req, res) {
     if (dt != null && (notes.indexOf("Coimbatore") >= 0)) {
        updateStick(order, true);
     }
+    sendOrderConfirmationSms(order);
     res.status(200).end();
 });
 
@@ -152,9 +160,18 @@ router.post("/fulfillwebhook", function(req, res){
     client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "fulfilled"]);
     updateKeen(order);
     removeOrderIdFromFB(order.id);
+    sendShipmentSms(order);
     res.status(200).end();
 });
 
+router.post("/cancelledwebhook", function(req, res) {
+    var order = req.body;
+    var notes = order['note'];
+    client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "cancelled"]);
+    updateKeen(order);
+    updateStick(order, false);
+    sendOrderCancellationSms(order);
+});
 router.get("/trellocleanup", function (req, res) {
     client.log({"event" : "trellocleanup"});
     var testIds = ["567e9dc1f840b25378313953"];
@@ -1052,6 +1069,8 @@ function deleteFromStick(order, date, update, token) {
         client.log({ order: order.name, response: response.statusCode, body: body}, ["deleteFromStick"]);
         if (update == true) {
             postToStick(getStickOrderDetails(order), token, order.id);
+        } else {
+            removeOrderIdFromFB(order.id);
         }
         if (body != null && body.error != null && update != true) {
             if (body.error.indexOf('User is assigned to the order') >=0) {
@@ -1370,4 +1389,71 @@ function removeOrderIdFromFB(orderId) {
     var orderdetail = {};
     orderdetail[orderId] = null;
     order_detail_ref.update(orderdetail);
+}
+
+
+function sendSms(mob, text) {
+    client.log({mob : mob}, ['MSG91', 'debug_info']);
+    var mobNo = parseMobNumber(mob);
+    if (mobNo == null) {
+        client.log({mobile : mob, message : text}, ['MSG91']);
+        sendEmail("kousik@logbase.io", null, "CakeBee - sms failed", text + " " + mob);
+        return;
+    }
+    mobNo = "9901651997";
+    msg91.send(mobNo, text, function(err, response){
+        console.log(err);
+        console.log(response);
+    });
+}
+
+function sendOrderConfirmationSms(order) {
+    var userName = order.customer.first_name;
+    var orderId = order.name.replace("#","");
+    var price = order.total_price;
+    var mob = order.billing_address.phone | " - ";
+    var text = "Hi " + userName + ", We have received your Order " + orderId + " on CakeBee. Please check email for more details.";
+    sendSms(mob, text);
+}
+
+function sendOrderCancellationSms(order) {
+    var userName = order.customer.first_name;
+    var orderId = order.name.replace("#","");
+    var mob = order.billing_address.phone | " - ";
+    var text = "Hi " + userName + ", Your Order " + orderId + " has been cancelled. Please check email for more details. - CakeBee";
+    sendSms(mob, text);
+}
+
+function sendShipmentSms(order) {
+    var userName = order.customer.first_name;
+    var orderId = order.name.replace("#","");
+    var mob = order.billing_address.phone | " - ";
+    var text = "Hi " + userName + ", Your Order " + orderId + " is out for delivery. You will be receiving them soon. - CakeBee";
+    sendSms(mob, text);
+}
+
+function parseMobNumber(mob) {
+
+    // Pick only the numbers
+    console.log(mob);
+    var numb = mob.match(/\d/g);
+    numb = numb.join("");
+
+    switch (numb.length) {
+        case 10:
+            return numb;
+        case 11:
+            if (numb.indexOf('0') == 0) {
+                return numb.substr(1, 10);
+            }
+            return null;
+        case 12:
+            if (numb.indexOf('91') == 0) {
+                return numb.substr(2, 10);
+            }
+            return null;
+        default:
+            return null;
+    }
+    return null;
 }
