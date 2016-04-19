@@ -1393,14 +1393,13 @@ function removeOrderIdFromFB(orderId) {
 
 
 function sendSms(mob, text) {
-    client.log({mob : mob}, ['MSG91', 'debug_info']);
+    client.log({mob : mob, text : text}, ['MSG91', 'debug_info']);
     var mobNo = parseMobNumber(mob);
     if (mobNo == null) {
         client.log({mobile : mob, message : text}, ['MSG91']);
         sendEmail("kousik@logbase.io", null, "CakeBee - sms failed", text + " " + mob);
         return;
     }
-    mobNo = "9901651997";
     msg91.send(mobNo, text, function(err, response){
         console.log(err);
         console.log(response);
