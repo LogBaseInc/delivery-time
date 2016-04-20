@@ -1419,7 +1419,7 @@ function sendOrderCancellationSms(order) {
     var userName = order.customer.first_name;
     var orderId = order.name.replace("#","");
     var mob = order.billing_address.phone || " - ";
-    var text = "Hi " + userName + ", Your Order " + orderId + " has been cancelled. Please check email for more details. - CakeBee";
+    var text = "Hi " + userName + ", Your Order " + orderId + " has been cancelled. Please check email for more details. \n- CakeBee";
     sendSms(mob, text);
 }
 
@@ -1427,7 +1427,7 @@ function sendShipmentSms(order) {
     var userName = order.customer.first_name;
     var orderId = order.name.replace("#","");
     var mob = order.billing_address.phone || " - ";
-    var text = "Hi " + userName + ", Your Order " + orderId + " is out for delivery. You will be receiving them soon. - CakeBee";
+    var text = "Hi " + userName + ", Your Order " + orderId + " is out for delivery. You will be receiving them soon. \n- CakeBee";
     sendSms(mob, text);
 }
 
