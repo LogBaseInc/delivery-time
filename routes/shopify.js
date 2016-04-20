@@ -1433,8 +1433,17 @@ function sendShipmentSms(order) {
 
 function parseMobNumber(mob) {
 
-    // Pick only the numbers
     console.log(mob);
+
+    // Cases where two numbers are provided. Pick the first 10 - 12 digit mob number
+    if (mob.length > 20) {
+        var tmp = mob.match(/\d{10,12}/);
+        if (tmp != null) {
+            mob = tmp[0];
+        }
+    }
+
+    // Pick only the numbers
     var numb = mob.match(/\d/g);
     numb = numb.join("");
 
