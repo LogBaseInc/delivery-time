@@ -1364,6 +1364,14 @@ function sendNewOrderNotification(order) {
         sendEmail('coimbatore@cakebee.in', order, subject, text);
     }
 
+    var cc = ['kousik@logbase.io'];
+
+    if (order.note != null && order.note.indexOf("Trichy") >= 0) {
+        cc.push('trichy@cakebee.in');
+    } else {
+        cc.push('coimbatore@cakebee.in');
+    }
+
     for (var idx in items) {
         var item = items[idx];
         if (item['title'].indexOf("Photo Cakes") >= 0 ||
@@ -1373,8 +1381,8 @@ function sendNewOrderNotification(order) {
                 from    : 'customerdelight@cakebee.in',
                 subject : 'Photo Cake Order - ' + order.name,
                 text    : 'Photo Cake Order - https://cake-bee.myshopify.com/admin/orders/' + order.id,
-                cc      : ['kousik@logbase.io', "coimbatore@cakebee.in"]
-            }
+                cc      : cc
+            };
 
             sendgrid.send(payload, function(err, json) {
                 if (err) { console.error(err); }
