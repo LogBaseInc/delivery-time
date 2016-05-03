@@ -1239,6 +1239,12 @@ function getStickOrderDetails(order) {
     var cod = (iscod == true) ? order.total_price : 0;
     var tags = order.tags;
 
+    var cod_internal = null;
+
+    if (order.gateway.indexOf("Cash on Delivery") >= 0) {
+        cod_internal = parseInt(order.total_price);
+    }
+
     if (tags != "") {
         tags += ", ";
     }
@@ -1267,7 +1273,8 @@ function getStickOrderDetails(order) {
         "tags" : tags,
         "url" : "https://cake-bee.myshopify.com/admin/orders/" + order.id,
         "zip" : zip,
-        "country" : "India"
+        "country" : "India",
+        "cod_internal" : cod_internal
     };
 
     //console.log(stickOrderDetails);
