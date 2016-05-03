@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='UTF-8'>
+		<title>Cakeebee Orders</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"></script>
+		<script src="https://cdn.firebase.com/js/client/2.3.2/firebase.js"></script>
+		<script type="text/javascript" src="../availability/availability.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="../availability/style.css">
+	</head>
+	<body style="margin:0px;">
+		<div class="navbar">
+			<img src="../images/logo.png" class="navimg">
+			<center>
+				<span class="navtext">Slots Details</span>
+			</center>
+		</div>
+		<div style="margin-left:20px;">
+			<p>Date: <input type="text" id="datepicker" style="font-size:15px;"></p>
+			<div>
+				<div class="cbediv">
+					<h3>Coimbatore Slots</h3> 
+					<br/>
+			    	<table id="cbetable" name="cbetable" cellpadding="10">
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+				<div style="width:5%;display:inline-flex;">
+				</div>
+				<div class="trichydiv">
+					<h3>Trichy Slots</h3>
+					<br/>
+					<table id="trichytable" name="trichytable" cellpadding="10">
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

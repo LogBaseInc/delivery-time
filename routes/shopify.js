@@ -327,6 +327,10 @@ router.get("/oldopenorders", function(req, res) {
     request(options, callback);
 });
 
+router.get("/availability", function(req, res) {
+    res.sendFile(__dirname+'/availability/availability.html');
+});
+
 router.get("/summary", function(req, res) {
     res.sendFile(__dirname+'/ordersummary/orders.html');
 });
