@@ -1458,9 +1458,12 @@ function parseMobNumber(mob) {
         }
     }
 
-    // Pick only the numbers
+    // Pick only the numbers. Remove special characters
     var numb = mob.match(/\d/g);
     numb = numb.join("");
+
+    // Remove leading zeroes
+    numb = numb.replace(/^0+/, '');
 
     switch (numb.length) {
         case 10:
