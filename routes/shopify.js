@@ -28,6 +28,7 @@ var client = loggly.createClient({
 
 var stickToken = process.env.STICK_TOKEN;
 var stickADToken = process.env.STICK_AD_TOKEN;
+var stickTrichyToken = process.env.STICK_TRICHY_TOKEN;
 var shopify_api_key = process.env.SHOPIFY_API_KEY;
 var shopify_shared_secret = process.env.SHOPIFY_SHARED_SECRET;
 var redirect_uri = process.env.REDIRECT_URI;
@@ -115,8 +116,7 @@ router.post("/webhook", function(req, res) {
                     'https://cake-bee.myshopify.com/admin/orders/' + order.id);
         }
 
-        if (dt != null &&
-            (notes.indexOf("Coimbatore") >= 0)) {
+        if (dt != null) {
             client.log({"orderId" : order.name}, ["shopify-update", "webhook"]);
             if  (order.cancelled_at == null) {
                 updateStick(order, true);
@@ -147,7 +147,7 @@ router.post("/neworderwebhook", function(req, res) {
                 "Error while processing date in order " + order.name,
                 'https://cake-bee.myshopify.com/admin/orders/' + order.id);
     }
-    if (dt != null && (notes.indexOf("Coimbatore") >= 0)) {
+    if (dt != null) {
        updateStick(order, true);
     }
     sendOrderConfirmationSms(order);
@@ -1090,7 +1090,13 @@ function deleteFromStick(order, date, update, token) {
 }
 
 function updateStick(order, update) {
-    updateStickInt(order, update, stickToken);
+    var  notes = order['note'];
+
+    if (notes.indexOf("Coimbatore") >= 0) {
+        updateStickInt(order, update, stickToken);
+    } else if (notes.indexOf("Trichy") >= 0) {
+        updateStickInt(order, update, stickTrichyToken);
+    }
     if (order.tags.indexOf("AD") >= 0) {
         updateStickInt(order, update, stickADToken);
     } else {
