@@ -324,6 +324,7 @@ function listOrders (orderlist) {
     if(orderlist.length == 0) {
         $("#ordertable").hide();
         $("#noorderdiv").show();
+        $("#countspan").text("0");
     }
     else {
         $("#ordertable").show();
