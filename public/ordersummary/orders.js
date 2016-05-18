@@ -332,7 +332,7 @@ function listOrders (orderlist) {
         var table = document.getElementById('ordertable').getElementsByTagName('tbody')[0];
         var filterdates = [];
         $("#ordertable > tbody").html("");
-
+        $("#countspan").text(orderlist.length.toString());
         for(var i=0; i< orderlist.length; i++) {
             var id  = orderlist[i].name.replace("#", "");
             var rowCount = table.rows.length;
