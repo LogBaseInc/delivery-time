@@ -76,7 +76,11 @@ function tick() {
 
 function setOrders(data) {
     for(var i=0; i< data.orders.length; i++) {
-            if(data.orders[i].cancelled_at == null) {
+            var orderexist = $.grep(orders, function (order) {
+                return order.id == data.orders[i].id;
+            });
+
+            if(data.orders[i].cancelled_at == null && orderexist.length == 0) {
                 var order = {};
                 var notesplit = data.orders[i].note != null ? data.orders[i].note.split('|'): [];
                 var timetosort = "";
