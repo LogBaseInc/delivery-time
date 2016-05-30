@@ -146,7 +146,11 @@ router.post("/neworderwebhook", function(req, res) {
         sendEmail("kousik@logbase.io", order,
                 "Error while processing date in order " + order.name,
                 'https://cake-bee.myshopify.com/admin/orders/' + order.id);
+        sendEmail("abishek@logbase.io", order,
+                "Error while processing date in order " + order.name,
+                'https://cake-bee.myshopify.com/admin/orders/' + order.id);
     }
+
     if (dt != null) {
        updateStick(order, true);
     }
@@ -852,8 +856,12 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             }
         }
 
-        //console.log(order.name)
-        //updateStick(order, true);
+        var dtt = new Date();
+        //console.log(order.name, dtt, dtt.getMinutes());
+        if (dtt.getMinutes() < 3) {
+            client.log({"event" : "stickupdate"});
+            updateStick(order, true);
+        }
         //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(getStickOrderDetails(order));
     }
@@ -1103,6 +1111,7 @@ function updateStick(order, update) {
         updateStickInt(order, false, stickADToken);
     }
 }
+
 function updateStickInt(order, update, token) {
 
     console.log("Got an update request for order " + order.name, update);
