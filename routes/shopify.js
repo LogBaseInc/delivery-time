@@ -1260,7 +1260,7 @@ function getStickOrderDetails(order) {
 
     var cod_internal = null;
 
-    if (order.gateway.indexOf("Cash on Delivery") >= 0) {
+    if (order.gateway != null && order.gateway.indexOf("Cash on Delivery") >= 0) {
         cod_internal = parseInt(order.total_price);
     }
 
