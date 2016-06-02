@@ -860,7 +860,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         //console.log(order.name, dtt, dtt.getMinutes());
         if (dtt.getMinutes() < 3) {
             client.log({"event" : "stickupdate"});
-            updateStick(order, true);
+            //updateStick(order, true);
         }
         //postToStick(getStickOrderDetails(order), stickToken);
         //console.log(getStickOrderDetails(order));
