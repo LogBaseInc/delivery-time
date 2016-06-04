@@ -1423,6 +1423,7 @@ function removeOrderIdFromFB(orderId) {
     var orderdetail = {};
     orderdetail[orderId] = null;
     order_detail_ref.update(orderdetail);
+    client.log({"OrderId" : orderId }, ['removeOrderIdFromFB']);
 }
 
 
