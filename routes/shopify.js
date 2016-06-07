@@ -213,7 +213,7 @@ router.get("/order/makepayment/:orderid", function (req, res) {
 });
 
 router.get("/orders", function(req, res) {
-    var d = Date.today().addDays(-10); //All orders for last 10 days
+    var d = Date.today().addDays(-5); //All orders for last 5 days
     d = d.toString("yyyy-MM-dd HH:mm:ss");
     var options = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&created_at_min='+d+' IST',
