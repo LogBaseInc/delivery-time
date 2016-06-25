@@ -403,11 +403,11 @@ function noteToCustomer() {
      */
     var content = "";
     if (shopifyDs['cakeType'] == 'xpress' && shopifyDs['cakeVariant'] == 'egg') {
-        content = content + "<br>Now you can add a " +
+/*        content = content + "<br>Now you can add a " +
             "<a href=\"http://www.cakebee.in/collections/addons\"><b>Bouquet</b></a>" +
             " to your order. Our Bouquets are available only in Coimbatore.";
 
-        $('#lbdt-note').html(content);
+        $('#lbdt-note').html(content); */
         return;
     }
 
@@ -441,9 +441,9 @@ function noteToCustomer() {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
     }
-    content = content + "<br>Now you can add a " +
+/*    content = content + "<br>Now you can add a " +
         "<a href=\"http://www.cakebee.in/collections/addons\"><b>Bouquet</b></a>" +
-        " to your order. Our Bouquets are available only in Coimbatore.";
+        " to your order. Our Bouquets are available only in Coimbatore."; */
 
     $('#lbdt-note').html(content);
 
