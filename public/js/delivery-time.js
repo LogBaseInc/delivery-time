@@ -12,14 +12,16 @@ var shopifyDs = {
     cakeType: null,
     city: null,
     submitType: "update",
-    productTitles: []
+    productTitles: [],
+    addons: false
 }
 
 // 20 seconds timeout
 $.ajaxSetup({ timeout: 10000 });
 
 function loadCityValues() {
-    if (shopifyDs['cakeType'] == 'sampler') {
+    if (shopifyDs['cakeType'] == 'sampler' ||
+        shopifyDs['addons'] == true) {
         var city = {
             select: "Select city",
             coimbatore: "Coimbatore"
@@ -45,6 +47,7 @@ function getIST() {
     var currentOffset = currentTime.getTimezoneOffset();
     var ISTOffset = 330;   // IST offset UTC +5:30
     var ISTTime = new Date(currentTime.getTime() + (ISTOffset + currentOffset)*60000);
+    return ISTTime;
     return ISTTime;
 }
 
@@ -329,12 +332,18 @@ function updateCakeDs() {
             shopifyDs['cakeType'] = 'handcrafted';
         } else if(types.toString().indexOf("signature") >= 0) {
             shopifyDs['cakeType'] = 'signature';
+        } else if(types.toString().indexOf("add ons") >= 0) {
+            shopifyDs['cakeType'] = 'addons';
         } else {
             if (title.toString().indexOf("2 kg") >=0 || title.toString().indexOf("2kg") >= 0) {
                 shopifyDs['cakeType'] = 'xpress2kg';
             } else {
                 shopifyDs['cakeType'] = 'xpress';
             }
+        }
+
+        if (types.toString().indexOf("add ons") >= 0) {
+            shopifyDs['addons'] = true;
         }
 
         loadCityValues();
@@ -392,7 +401,13 @@ function noteToCustomer() {
     /*
      * Note not required for xpress egg cakes
      */
+    var content = "";
     if (shopifyDs['cakeType'] == 'xpress' && shopifyDs['cakeVariant'] == 'egg') {
+        content = content + "<br>Now you can add a " +
+            "<a href=\"http://www.cakebee.in/collections/addons\"><b>Bouquet</b></a>" +
+            " to your order. Our Bouquets are available only in Coimbatore.";
+
+        $('#lbdt-note').html(content);
         return;
     }
 
@@ -415,10 +430,10 @@ function noteToCustomer() {
     }
 
     if (shopifyDs['cakeType'] == 'xpress2kg') {
-        var content = "<br>Our <b>" + cakeName +
+        content = "<br>Our <b>" + cakeName +
             " Cakes</b> takes " + prepTime + " to prepare. ";
     } else {
-        var content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
+        content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
             "</font> Cakes</b> takes " + prepTime + " to prepare. ";
     }
 
@@ -426,6 +441,9 @@ function noteToCustomer() {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
     }
+    content = content + "<br>Now you can add a " +
+        "<a href=\"http://www.cakebee.in/collections/addons\"><b>Bouquet</b></a>" +
+        " to your order. Our Bouquets are available only in Coimbatore.";
 
     $('#lbdt-note').html(content);
 
@@ -480,7 +498,7 @@ function updateDefaultDeliveryDates() {
         delivery['date'] = date.getDate();
         delivery['hour'] = date.getHours() + hourReq;
         delivery['month'] = date.getMonth() + 1;
-    } else if (shopifyDs['cakeType'] == 'signature') {
+    } else if (shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'addons') {
         delivery['date'] = date.getDate();
         delivery['hour'] = date.getHours() + 7;
         delivery['month'] = date.getMonth() + 1;
