@@ -24,6 +24,14 @@ function loadCityValues() {
 
     if (shopifyDs['addonsOnly'] == true) {
 
+        myCitySelect.find("option").remove();
+        
+        var addContent = "<br>We are sorry, <font style=\"color:#FF0000\">you cannot order Add-ons(bouquet)" +
+            " separately.</font>" +
+            " Please order it along with a " +
+            "<a href=\"http://www.cakebee.in/collections\"> <b>cake.</b></a>";
+
+        $('#lbdt-note').html(addContent);
     } else if (shopifyDs['cakeType'] == 'sampler' ||
         shopifyDs['addons'] == true) {
         var city = {
@@ -337,7 +345,7 @@ function updateCakeDs() {
         } else if(types.toString().indexOf("signature") >= 0) {
             shopifyDs['cakeType'] = 'signature';
         } else if(types.toString().indexOf("add ons") >= 0) {
-            shopifyDs['cakeType'] = 'addons';
+            shopifyDs['cakeType'] = 'signature';
         } else {
             if (title.toString().indexOf("2 kg") >=0 || title.toString().indexOf("2kg") >= 0) {
                 shopifyDs['cakeType'] = 'xpress2kg';
