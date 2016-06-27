@@ -421,7 +421,8 @@ function noteToCustomer() {
      * Note not required for xpress egg cakes
      */
     var content = "";
-    if (shopifyDs['cakeType'] == 'xpress' && shopifyDs['cakeVariant'] == 'egg') {
+    if ((shopifyDs['cakeType'] == 'xpress' && shopifyDs['cakeVariant'] == 'egg') ||
+        shopifyDs['addonsOnly'] == true) {
         return;
     }
 
