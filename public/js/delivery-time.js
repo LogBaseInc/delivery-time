@@ -461,11 +461,11 @@ function noteToCustomer() {
             " Cakes</b> takes " + prepTime + " to prepare. ";
     } else {
         content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
-            "</font> Cakes</b> takes " + prepTime + " to deliver. ";
+            "</font></b> takes " + prepTime + " to deliver. ";
     }
 
     if (shopifyDs['cakeType'] != 'xpress' &&
-        (shopifyDs['addons'] == false || shopifyDs['cakeType'] != 'handcrafted')) {
+        (shopifyDs['addons'] == false || shopifyDs['cakeType'] == 'handcrafted')) {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
     }
