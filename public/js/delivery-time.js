@@ -445,7 +445,7 @@ function noteToCustomer() {
     } else if(shopifyDs['cakeType'] == 'xpress2kg') {
         cakeName = "2 kg cakes";
     } else if(shopifyDs['cakeType'] == 'signature') {
-        if (shopifyDs['addons'] == true && shopify['signature'] == true) {
+        if (shopifyDs['addons'] == true && shopifyDs['signature'] == true) {
             cakeName = "bouquet & signature cakes";
         } else if (shopifyDs['addons'] == false) {
             cakeName = 'signature'
