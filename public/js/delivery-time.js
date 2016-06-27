@@ -14,7 +14,8 @@ var shopifyDs = {
     submitType: "update",
     productTitles: [],
     addons: false,
-    addonsOnly: false
+    addonsOnly: false,
+    signature: false
 }
 
 // 20 seconds timeout
@@ -345,6 +346,7 @@ function updateCakeDs() {
         } else if (types.toString().indexOf("handcrafted") >= 0) {
             shopifyDs['cakeType'] = 'handcrafted';
         } else if(types.toString().indexOf("signature") >= 0) {
+            shopifyDs['signature'] = true;
             shopifyDs['cakeType'] = 'signature';
         } else if(types.toString().indexOf("add ons") >= 0) {
             shopifyDs['cakeType'] = 'signature';
@@ -439,13 +441,19 @@ function noteToCustomer() {
 
     var cakeName;
     if (shopifyDs['cakeType'] == 'xpress') {
-        cakeName = "Eggless Xpress"
+        cakeName = "Eggless Xpress cakes"
     } else if(shopifyDs['cakeType'] == 'xpress2kg') {
-        cakeName = "2 kg";
-    } else if(shopifyDs['cakeType'] == 'signature' && shopifyDs['addons'] == true) {
-        cakeName = "bouquet & signature";
+        cakeName = "2 kg cakes";
+    } else if(shopifyDs['cakeType'] == 'signature') {
+        if (shopifyDs['addons'] == true && shopify['signature'] == true) {
+            cakeName = "bouquet & signature cakes";
+        } else if (shopifyDs['addons'] == false) {
+            cakeName = 'signature'
+        } else {
+            cakeName = 'bouquet'
+        }
     } else {
-        cakeName = shopifyDs['cakeType'];
+        cakeName = shopifyDs['cakeType'] + " cakes";
     }
 
     if (shopifyDs['cakeType'] == 'xpress2kg') {
@@ -453,10 +461,11 @@ function noteToCustomer() {
             " Cakes</b> takes " + prepTime + " to prepare. ";
     } else {
         content = "<br>Our <b><font style=\"text-transform: capitalize;\">" + cakeName +
-            "</font> Cakes</b> takes " + prepTime + " to prepare. ";
+            "</font> Cakes</b> takes " + prepTime + " to deliver. ";
     }
 
-    if (shopifyDs['cakeType'] != 'xpress') {
+    if (shopifyDs['cakeType'] != 'xpress' &&
+        (shopify['addons'] == false || shopifyDs['cakeType'] != 'handcrafted')) {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
     }
