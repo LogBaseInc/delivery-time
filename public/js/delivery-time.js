@@ -692,7 +692,7 @@ function submitAction(event) {
 
                 if (shopifyDs['city'] == 'coimbatore' && shopifyDs['addons'] == false) {
                     var content = "<br>Click " +
-                        "<a href=\"http://www.cakebee.in/collections/addons\"><b>here</b></a>" +
+                        "<a href=\"http://www.cakebee.in/collections/add-ons\"><b>here</b></a>" +
                         " to order a bouquet along with your cake, only available in Coimbatore.";
 
                      $('#lbdt-addons').html(content);
