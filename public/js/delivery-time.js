@@ -690,8 +690,8 @@ function submitAction(event) {
 
                 shopifyDs['city'] = myCitySelect.val();
 
-                if (shopifyDs['city'] == 'Coimbatore') {
-                    content = content + "<br>Click " +
+                if (shopifyDs['city'] == 'coimbatore' && shopifyDs['addons'] == false) {
+                    var content = "<br>Click " +
                         "<a href=\"http://www.cakebee.in/collections/addons\"><b>here</b></a>" +
                         " to order a bouquet along with your cake, only available in Coimbatore.";
 
