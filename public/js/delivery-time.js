@@ -465,7 +465,7 @@ function noteToCustomer() {
     }
 
     if (shopifyDs['cakeType'] != 'xpress' &&
-        (shopify['addons'] == false || shopifyDs['cakeType'] != 'handcrafted')) {
+        (shopifyDs['addons'] == false || shopifyDs['cakeType'] != 'handcrafted')) {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
     }
