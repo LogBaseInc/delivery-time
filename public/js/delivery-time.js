@@ -13,14 +13,18 @@ var shopifyDs = {
     city: null,
     submitType: "update",
     productTitles: [],
-    addons: false
+    addons: false,
+    addonsOnly: false
 }
 
 // 20 seconds timeout
 $.ajaxSetup({ timeout: 10000 });
 
 function loadCityValues() {
-    if (shopifyDs['cakeType'] == 'sampler' ||
+
+    if (shopifyDs['addonsOnly'] == true) {
+
+    } else if (shopifyDs['cakeType'] == 'sampler' ||
         shopifyDs['addons'] == true) {
         var city = {
             select: "Select city",
@@ -344,6 +348,9 @@ function updateCakeDs() {
 
         if (types.toString().indexOf("add ons") >= 0) {
             shopifyDs['addons'] = true;
+            if (shopifyDs['cartJson']['items'].length == 1) {
+                shopifyDs['addonsOnly'] = true;
+            }
         }
 
         loadCityValues();
