@@ -22,11 +22,13 @@ $.ajaxSetup({ timeout: 10000 });
 
 function loadCityValues() {
 
+    var city = {};
+
     if (shopifyDs['addonsOnly'] == true) {
 
         myCitySelect.find("option").remove();
-        
-        var addContent = "<br>We are sorry, <font style=\"color:#FF0000\">you cannot order Add-ons(bouquet)" +
+
+        var addContent = "<br>We are sorry, <font style=\"color:#FF0000\">you cannot order a bouquet" +
             " separately.</font>" +
             " Please order it along with a " +
             "<a href=\"http://www.cakebee.in/collections\"> <b>cake.</b></a>";
@@ -34,12 +36,12 @@ function loadCityValues() {
         $('#lbdt-note').html(addContent);
     } else if (shopifyDs['cakeType'] == 'sampler' ||
         shopifyDs['addons'] == true) {
-        var city = {
+        city = {
             select: "Select city",
             coimbatore: "Coimbatore"
         }
     } else {
-        var city = {
+        city = {
             select: "Select city",
             coimbatore: "Coimbatore",
             trichy: "Trichy"
@@ -440,6 +442,8 @@ function noteToCustomer() {
         cakeName = "Eggless Xpress"
     } else if(shopifyDs['cakeType'] == 'xpress2kg') {
         cakeName = "2 kg";
+    } else if(shopifyDs['cakeType'] == 'signature' && shopifyDs['addons'] == true) {
+        cakeName = "bouquet & signature";
     } else {
         cakeName = shopifyDs['cakeType'];
     }
