@@ -464,6 +464,8 @@ function noteToCustomer() {
         (shopifyDs['addons'] == false || shopifyDs['cakeType'] == 'handcrafted')) {
         content = content + "If you need the cakes to be delivered sooner, please choose our " +
         "<a href=\"http://www.cakebee.in/collections/bees-xpress\"><b>0.5/1 kg Xpress Cakes</b></a>.";
+    } else if (shopifyDs['addons'] == true) {
+        content += "Bouquet is only available in Coimbatore.";
     }
 
     $('#lbdt-note').html(content);
@@ -696,8 +698,8 @@ function submitAction(event) {
 
                 if (shopifyDs['city'] == 'coimbatore' && shopifyDs['addons'] == false) {
                     var content = "<br>Click " +
-                        "<a href=\"http://www.cakebee.in/collections/add-ons\"><b>here</b></a>" +
-                        " to order a bouquet along with your cake, only available in Coimbatore.";
+                        "<font style=\"color:#00B5AD\" <a href=\"http://www.cakebee.in/collections/add-ons\"><b>here</b></a>" +
+                        " to order a bouquet along with your cake, only available in Coimbatore.</font>";
 
                      $('#lbdt-addons').html(content);
 
