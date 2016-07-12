@@ -71,7 +71,7 @@ router.get("/dates", function(req, res) {
 
 router.get("/synctrello", function (req, res) {
     client.log({"event" : "synctrello"});
-    sortCards();
+    //sortCards();
     //updateNewOrders();
     //archieveOFDOrders();
     res.sendStatus(200);
