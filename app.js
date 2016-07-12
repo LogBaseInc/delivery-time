@@ -31,6 +31,12 @@ app.use(express.static('public'));
 var shopify = require('./routes/shopify');
 app.use('/shopify/', shopify);
 
+
+app.use(function(err, req, res, next) {
+    console.log(err.stack);
+    next();
+});
+
 app.listen(port);
 //server = https.createServer(https_options, app).listen(port);
 console.log('Delivery Time API is listening on port: ' + port);
