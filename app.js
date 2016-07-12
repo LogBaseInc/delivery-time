@@ -37,6 +37,11 @@ app.use(function(err, req, res, next) {
     next();
 });
 
+process.on('uncaughtException', function(err)  {
+    console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+    console.log(err)
+});
+
 app.listen(port);
 //server = https.createServer(https_options, app).listen(port);
 console.log('Delivery Time API is listening on port: ' + port);
