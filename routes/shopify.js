@@ -70,6 +70,7 @@ router.get("/dates", function(req, res) {
 });
 
 router.get("/synctrello", function (req, res) {
+    console.log("Sync trello called");
     client.log({"event" : "synctrello"});
     sortCards();
     updateNewOrders();
