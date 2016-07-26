@@ -535,7 +535,7 @@ function updateDefaultDeliveryDates() {
 function getDefaultSlots() {
     var slots = {};
     slots["10:00"] = "10 - 11 am";
-    slots["11:00"] = "11 - 12 pm";
+    slots["11:00"] = "11 - 12 pm (noon)";
     slots["12:00"] = "12 - 1 pm";
     slots["13:00"] = "1 - 2 pm";
     slots["14:00"] = "2 - 3 pm";
@@ -585,6 +585,7 @@ function submitAction(event) {
     } else {
         var notes = $('#lbdt-city option:selected').text() + " | " + $('#lbdt-date option:selected').text()
             + " | " + $('#lbdt-slots option:selected').text();
+        notes = notes.replace("(noon)", "");
         shopifyDs['cartJson']['note'] = notes;
         //$.post('cart.js', shopifyDs['cartJson']);
         $.ajax({
