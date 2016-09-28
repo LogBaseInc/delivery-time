@@ -12,6 +12,7 @@
   "author": "Abishek Baskaran",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.6.5",
     "body-parser": "^1.13.3",
     "datejs": "^1.0.0-rc3",
     "express": "^4.13.3",

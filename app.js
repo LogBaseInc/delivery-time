@@ -38,11 +38,8 @@ app.use(function(err, req, res, next) {
 });
 
 process.on('uncaughtException', function(err)  {
-    console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
     console.log(err);
-    console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
     console.log(err.stack)
-    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 });
 
 app.listen(port);

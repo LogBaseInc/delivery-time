@@ -7,11 +7,13 @@ var Trello = require("node-trello");
 var sendgrid  = require('sendgrid')(process.env.SENDGRID_KEY);
 var Keen = require("keen-js");
 
+var AWS = require('aws-sdk');
+AWS.config.update({region: 'us-east-1'});
+var dynamodb = new AWS.DynamoDB({apiVersion: 'latest'});
 
 var MSG91_API = process.env.MSG91_API;
 var MSG91_ROUTE_NO = 4; // transactional route
 var msg91 = require("msg91")(MSG91_API, "CKEBEE", MSG91_ROUTE_NO);
-
 
 require("datejs");
 
@@ -123,6 +125,7 @@ router.post("/webhook", function(req, res) {
             } else {
                 client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "cancelled_update"]);
                 updateKeen(order);
+                updateDynamoDB(order);
                 updateStick(order, false);
             }
         }
@@ -153,6 +156,7 @@ router.post("/neworderwebhook", function(req, res) {
 
     if (dt != null) {
        updateStick(order, true);
+       updateDynamoDB(order);
     }
     sendOrderConfirmationSms(order);
     res.status(200).end();
@@ -163,6 +167,7 @@ router.post("/fulfillwebhook", function(req, res){
     var notes = order['note'];
     client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "fulfilled"]);
     updateKeen(order);
+    updateDynamoDB(order);
     removeOrderIdFromFB(order.id);
     sendShipmentSms(order);
     res.status(200).end();
@@ -173,6 +178,7 @@ router.post("/cancelledwebhook", function(req, res) {
     var notes = order['note'];
     client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "cancelled"]);
     updateKeen(order);
+    updateDynamoDB(order);
     updateStick(order, false);
     sendOrderCancellationSms(order);
 });
@@ -234,7 +240,7 @@ router.get("/orders", function(req, res) {
 router.get("/updatekeenio/:count", function(req, res) {
     var count = req.params.count;
     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any&page='+count,
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=2&status=any&page='+count,
         headers: {
             'X-Shopify-Access-Token': access_token
         }
@@ -247,8 +253,9 @@ router.get("/updatekeenio/:count", function(req, res) {
             for (var i in info.orders) {
                 var order = info.orders[i];
                 if (order.fulfillment_status == "fulfilled" || order.cancelled_at != null) {
-                    updateKeen(order);
+                    //updateKeen(order);
                 }
+                updateDynamoDB(order);
             }
         }
     }
@@ -1503,4 +1510,73 @@ function parseMobNumber(mob) {
             return null;
     }
     return null;
+}
+
+function updateDynamoDB(order) {
+    var list = [];
+    var metrics = {};
+    if (order.note != null && order.note != undefined) {
+        var deiveryDate = getDateFromNotes(order.note, false);
+        if (deiveryDate != null) {
+            metrics.sDeliveryDate = { S: deiveryDate.toString("yyyy/MM/dd") };
+            metrics.sDeliveryDay = { S: deiveryDate.toString("dd") };
+            metrics.sDeliveryMonth = { S: deiveryDate.toString("MM") };
+            metrics.sDeliveryYear = { S: deiveryDate.toString("yyyy") };
+            metrics.sDeliveryDayOfWeek = { S: deiveryDate.toString("ddd") };
+            metrics.sDeliverytime = { S: " " };
+            metrics.sDeliveryStartTime = { S: deiveryDate.getHours().toString() };
+            if (order.note.split('|').length >= 3) {
+                metrics.sDeliverytime = { S: order.note.split('|')[2] };
+            }
+            metrics.sCity = { S: order.note.split('|')[0] };
+        } else {
+            return;
+        }
+    } else {
+        return;
+    }
+    metrics.bCancelled = { BOOL : order.cancelled_at == null ? false : true };
+    metrics.iPrice = { N : parseInt(order.total_price).toString() };
+    metrics.iOrderId = { N : order.id.toString() };
+    metrics.sCreatedAt = { S: order.created_at };
+    metrics.sUpdatedAt = { S: order.updated_at };
+    metrics.sNotes = { S: order.note || " " };
+    metrics.sGateway = { S: order.gateway || " "};
+    metrics.sSourceName = { S: order.source_name || " "};
+    metrics.iSerialNumber = { N : parseInt(order.number).toString() };
+    metrics.sFinancialStatus = { S: order.financial_status || " "};
+    metrics.sTotalDiscount = { S: order.total_discounts || " "};
+    metrics.sRefSite = { S: order.referring_site || " "};
+    metrics.sRefSource = { S: order.source_name || " "};
+    metrics.sFulfillmentStatus = { S: order.fulfillment_status || " "};
+    metrics.sTags = { S: order.tags || " "};
+    metrics.sBillingMobile = { S: order.billing_address ? order.billing_address.phone : " " };
+    metrics.sShippingMobile = { S: order.shipping_address ? order.shipping_address.phone : " " };
+    metrics.sCutomerName = { S: order.customer.first_name || " " };
+    metrics.sCustomerEmail = { S: order.customer.email || " " };
+    metrics.iOrderNumer = { N : parseInt(order.order_number).toString() };
+    metrics.sOrderName = { S: order.name };
+    metrics.sPartitionKey = { S: metrics.sDeliveryDate.S.toString() };
+    metrics.iRangeKey = { N : metrics.iOrderId.N.toString() };
+
+
+    var put_request = {
+        Item: metrics
+    };
+
+    var list_items = {
+        PutRequest: put_request
+    };
+
+    list.push(list_items);
+    var params = {};
+    params['RequestItems'] = {};
+    params.RequestItems['CAKEBEE-ORDERS'] = list;
+
+    dynamodb.batchWriteItem(params, function(err, data) {
+        if (err) {
+            console.log(err);
+            client.log(err, ['dynamodb', 'Error']);
+        }
+    });
 }
