@@ -85,18 +85,20 @@ router.get("/reviewreminder", function(req, res) {
     res.sendStatus(200);
 });
 
-router.get("/test", function (req, res) {
-    var my_firebase_ref = new Firebase("https://lb-date-picker.firebaseio.com/config/cakeTypes/signature/prepTime");
-    my_firebase_ref.once("value", function(snapshot) {
-        data = snapshot.exportVal();
-        if (data.egg > 6) {
-            data.egg -= 1;
-            data.eggless -= 1;
-            client.log({"event" : "signature update", "data" : data});
-            my_firebase_ref.update(data);
-        }
-    });
-    res.status(200).send();
+router.get("/daysummary/:date", function (req, res) {
+    fetchProducts(req.params.date.replace(/-/g, '/'), null,
+        {
+            coimbatore : {
+                payu : 0,
+                payu_final : 0,
+                ad : 0,
+                cod : 0
+            } ,
+            trichy : {
+                payu : 0,
+                payu_final : 0,
+                cod: 0
+            }}, res);
 });
 
 router.post("/webhook", function(req, res) {
@@ -125,8 +127,8 @@ router.post("/webhook", function(req, res) {
             } else {
                 client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "cancelled_update"]);
                 updateKeen(order);
-                updateDynamoDB(order);
                 updateStick(order, false);
+                updateDynamoDB([order]);
             }
         }
     }
@@ -154,11 +156,12 @@ router.post("/neworderwebhook", function(req, res) {
                 'https://cake-bee.myshopify.com/admin/orders/' + order.id);
     }
 
+    sendOrderConfirmationSms(order);
+
     if (dt != null) {
        updateStick(order, true);
-       updateDynamoDB(order);
+       updateDynamoDB([order]);
     }
-    sendOrderConfirmationSms(order);
     res.status(200).end();
 });
 
@@ -167,9 +170,9 @@ router.post("/fulfillwebhook", function(req, res){
     var notes = order['note'];
     client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "fulfilled"]);
     updateKeen(order);
-    updateDynamoDB(order);
     removeOrderIdFromFB(order.id);
     sendShipmentSms(order);
+    updateDynamoDB([order]);
     res.status(200).end();
 });
 
@@ -178,9 +181,9 @@ router.post("/cancelledwebhook", function(req, res) {
     var notes = order['note'];
     client.log({"orderId" : req.body.name, "notes": notes}, ["webhook", "cancelled"]);
     updateKeen(order);
-    updateDynamoDB(order);
     updateStick(order, false);
     sendOrderCancellationSms(order);
+    updateDynamoDB([order]);
 });
 router.get("/trellocleanup", function (req, res) {
     client.log({"event" : "trellocleanup"});
@@ -240,7 +243,7 @@ router.get("/orders", function(req, res) {
 router.get("/updatekeenio/:count", function(req, res) {
     var count = req.params.count;
     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=2&status=any&page='+count,
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=25&status=any&page='+count,
         headers: {
             'X-Shopify-Access-Token': access_token
         }
@@ -249,14 +252,14 @@ router.get("/updatekeenio/:count", function(req, res) {
     function callback(error, response, body) {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body);
-            res.send(info);
+            res.status(200).send({ count : info.orders.length });
             for (var i in info.orders) {
                 var order = info.orders[i];
                 if (order.fulfillment_status == "fulfilled" || order.cancelled_at != null) {
                     //updateKeen(order);
                 }
-                updateDynamoDB(order);
             }
+            updateDynamoDB(info.orders);
         }
     }
 
@@ -1512,66 +1515,84 @@ function parseMobNumber(mob) {
     return null;
 }
 
-function updateDynamoDB(order) {
-    var list = [];
-    var metrics = {};
-    if (order.note != null && order.note != undefined) {
-        var deiveryDate = getDateFromNotes(order.note, false);
-        if (deiveryDate != null) {
-            metrics.sDeliveryDate = { S: deiveryDate.toString("yyyy/MM/dd") };
-            metrics.sDeliveryDay = { S: deiveryDate.toString("dd") };
-            metrics.sDeliveryMonth = { S: deiveryDate.toString("MM") };
-            metrics.sDeliveryYear = { S: deiveryDate.toString("yyyy") };
-            metrics.sDeliveryDayOfWeek = { S: deiveryDate.toString("ddd") };
-            metrics.sDeliverytime = { S: " " };
-            metrics.sDeliveryStartTime = { S: deiveryDate.getHours().toString() };
-            if (order.note.split('|').length >= 3) {
-                metrics.sDeliverytime = { S: order.note.split('|')[2] };
+function updateDynamoDB(list_order) {
+
+    var metrics_list = [];
+    for (var idx in list_order) {
+        var order = list_order[idx];
+        var metrics = {};
+        if (order.note != null && order.note != undefined) {
+            var deiveryDate = getDateFromNotes(order.note, false);
+            if (deiveryDate != null) {
+                metrics.sDeliveryDate = { S: deiveryDate.toString("yyyy/MM/dd") };
+                metrics.sDeliveryDay = { S: deiveryDate.toString("dd") };
+                metrics.sDeliveryMonth = { S: deiveryDate.toString("MM") };
+                metrics.sDeliveryYear = { S: deiveryDate.toString("yyyy") };
+                metrics.sDeliveryDayOfWeek = { S: deiveryDate.toString("ddd") };
+                metrics.sDeliverytime = { S: " " };
+                metrics.sDeliveryStartTime = { S: deiveryDate.getHours().toString() };
+                if (order.note.split('|').length >= 3) {
+                    metrics.sDeliverytime = { S: order.note.split('|')[2] };
+                }
+                metrics.sCity = { S: order.note.split('|')[0] };
+            } else {
+                return;
             }
-            metrics.sCity = { S: order.note.split('|')[0] };
         } else {
             return;
         }
-    } else {
-        return;
+        metrics.bCancelled = { BOOL: order.cancelled_at == null ? false : true };
+        metrics.iPrice = { N: parseInt(order.total_price).toString() };
+        metrics.iOrderId = { N: order.id.toString() };
+        metrics.sCreatedAt = { S: order.created_at };
+        metrics.sUpdatedAt = { S: order.updated_at };
+        metrics.sNotes = { S: order.note || " " };
+        metrics.sGateway = { S: order.gateway || " "};
+        metrics.sSourceName = { S: order.source_name || " "};
+        metrics.iSerialNumber = { N: parseInt(order.number).toString() };
+        metrics.sFinancialStatus = { S: order.financial_status || " "};
+        metrics.sTotalDiscount = { S: order.total_discounts || " "};
+        metrics.sRefSite = { S: order.referring_site || " "};
+        metrics.sRefSource = { S: order.source_name || " "};
+        metrics.sFulfillmentStatus = { S: order.fulfillment_status || " "};
+        metrics.sTags = { S: order.tags || " "};
+        metrics.sBillingMobile = { S: order.billing_address ? order.billing_address.phone || " " : " "};
+        metrics.sShippingMobile = { S: order.shipping_address ? order.shipping_address.phone || " " : " "};
+        metrics.sCutomerName = { S: order.customer.first_name || " " };
+        metrics.sCustomerEmail = { S: order.customer.email || " " };
+        metrics.iOrderNumer = { N: parseInt(order.order_number).toString() };
+        metrics.sOrderName = { S: order.name };
+        metrics.sPartitionKey = { S: metrics.sDeliveryDate.S.toString() };
+        metrics.iRangeKey = { N: metrics.iOrderId.N.toString() };
+
+        var put_request = {
+            Item: metrics
+        };
+
+        var list_items = {
+            PutRequest: put_request
+        };
+
+        metrics_list.push(list_items);
+        //console.log(metrics_list.length, idx);
+
+        if (idx == list_order.length - 1) {
+            batchWrite(metrics_list);
+            metrics_list = [];
+            return;
+        }
+
+        if (metrics_list.length == 25) {
+            batchWrite(metrics_list);
+            metrics_list = [];
+        }
     }
-    metrics.bCancelled = { BOOL : order.cancelled_at == null ? false : true };
-    metrics.iPrice = { N : parseInt(order.total_price).toString() };
-    metrics.iOrderId = { N : order.id.toString() };
-    metrics.sCreatedAt = { S: order.created_at };
-    metrics.sUpdatedAt = { S: order.updated_at };
-    metrics.sNotes = { S: order.note || " " };
-    metrics.sGateway = { S: order.gateway || " "};
-    metrics.sSourceName = { S: order.source_name || " "};
-    metrics.iSerialNumber = { N : parseInt(order.number).toString() };
-    metrics.sFinancialStatus = { S: order.financial_status || " "};
-    metrics.sTotalDiscount = { S: order.total_discounts || " "};
-    metrics.sRefSite = { S: order.referring_site || " "};
-    metrics.sRefSource = { S: order.source_name || " "};
-    metrics.sFulfillmentStatus = { S: order.fulfillment_status || " "};
-    metrics.sTags = { S: order.tags || " "};
-    metrics.sBillingMobile = { S: order.billing_address ? order.billing_address.phone : " " };
-    metrics.sShippingMobile = { S: order.shipping_address ? order.shipping_address.phone : " " };
-    metrics.sCutomerName = { S: order.customer.first_name || " " };
-    metrics.sCustomerEmail = { S: order.customer.email || " " };
-    metrics.iOrderNumer = { N : parseInt(order.order_number).toString() };
-    metrics.sOrderName = { S: order.name };
-    metrics.sPartitionKey = { S: metrics.sDeliveryDate.S.toString() };
-    metrics.iRangeKey = { N : metrics.iOrderId.N.toString() };
+}
 
-
-    var put_request = {
-        Item: metrics
-    };
-
-    var list_items = {
-        PutRequest: put_request
-    };
-
-    list.push(list_items);
+function batchWrite(metrics_list) {
     var params = {};
     params['RequestItems'] = {};
-    params.RequestItems['CAKEBEE-ORDERS'] = list;
+    params.RequestItems['CAKEBEE-ORDERS'] = metrics_list;
 
     dynamodb.batchWriteItem(params, function(err, data) {
         if (err) {
@@ -1579,4 +1600,112 @@ function updateDynamoDB(order) {
             client.log(err, ['dynamodb', 'Error']);
         }
     });
+}
+
+
+function fetchProducts(date, prevResult, resp_data, res) {
+    console.log(date);
+
+    var attributes = ['bCancelled', 'iPrice', 'sCity', 'sDeliveryDate',
+        'sFinancialStatus', 'sFulfillmentStatus', 'sGateway', 'sOrderName', 'sTags'];
+
+
+    var params = {
+        TableName: 'CAKEBEE-ORDERS',
+        AttributesToGet: attributes,
+        KeyConditions: {
+            'sPartitionKey': {
+                ComparisonOperator: 'EQ',
+                AttributeValueList: [
+                    {
+                        S: date
+                    }
+                ]
+            }
+        },
+        ScanIndexForward: true,
+        Select: 'SPECIFIC_ATTRIBUTES'
+    };
+
+    if (prevResult != null && prevResult['LastEvaluatedKey'] != null) {
+        params['ExclusiveStartKey'] = prevResult['LastEvaluatedKey'];
+    }
+
+    dynamodb.query(params, function(err, data) {
+        if (err) {
+            console.log(err);
+            res.status(400).send(err);
+            return;
+        }
+        else {
+            if (data != null && data.Items != null) {
+                for (var idx in data.Items) {
+                    var jsonData = parseDDBJson(data.Items[idx]);
+
+                    if (jsonData.sCity === "Coimbatore ") {
+                        if (jsonData.sGateway === "payu_in") {
+                            resp_data.coimbatore.payu += jsonData.iPrice;
+                            resp_data.coimbatore.payu_final += parseFloat(0.975 * jsonData.iPrice);
+                        } else if (jsonData.sGateway.indexOf('COD') >= 0) {
+                            resp_data.coimbatore.cod += jsonData.iPrice;
+                        }
+
+                        if (jsonData.sTags.indexOf('AD') >= 0) {
+                            resp_data.coimbatore.ad += jsonData.iPrice;
+                        }
+                    } else if (jsonData.sCity == "Trichy ") {
+                        if (jsonData.sGateway === "payu_in") {
+                            resp_data.trichy.payu += jsonData.iPrice;
+                            resp_data.trichy.payu_final += parseFloat(0.975 * jsonData.iPrice);
+                        } else if (jsonData.sGateway.indexOf('COD') >= 0) {
+                            resp_data.trichy.cod += jsonData.iPrice;
+                        }
+                    }
+                }
+            }
+
+            if (data.LastEvaluatedKey == null) {
+                res.status(200).send(resp_data);
+                return;
+            } else {
+                fetchProducts(date, data, resp_data, res)
+            }
+        }
+    });
+}
+
+
+function formatResponse(json) {
+    var respJson = {};
+    for (var keys in json) {
+        if (keys == "inventory" || keys == "price") {
+            respJson[keys] = parseFloat(json[keys]);
+        } else {
+            respJson[keys] = json[keys];
+        }
+    }
+    return respJson;
+}
+
+function parseDDBJson(DDBJson) {
+    var parsedJson = {};
+    for (var keys in DDBJson) {
+        var DDBValue = DDBJson[keys];
+        var value = null;
+        var name = Object.keys(DDBValue)[0]
+        switch(name) {
+            case 'S':
+                value = DDBValue[name];
+                break;
+            case 'N':
+                value = parseInt(DDBValue[name]);
+                break;
+            case 'BOOL':
+                value = DDBValue[name];
+            default:
+                value = DDBValue[name];
+        }
+        parsedJson[keys] = value;
+    }
+    return parsedJson;
 }
