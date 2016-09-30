@@ -94,7 +94,12 @@ router.get("/daysummary/:date", function (req, res) {
                 payu_final : 0,
                 ad : 0,
                 cod : 0,
-                cancelled : 0
+                cancelled : 0,
+                ad_breakup : {
+                    cod : 0,
+                    payu : 0,
+                    payu_final : 0
+                }
             } ,
             trichy : {
                 count :  0,
@@ -1662,8 +1667,13 @@ function fetchProducts(date, prevResult, resp_data, res) {
                         }
 
                         if (jsonData.sTags.indexOf('AD') >= 0) {
-                            console.log(jsonData.iPrice, jsonData.sOrderName, jsonData.sTags);
                             resp_data.coimbatore.ad += jsonData.iPrice;
+                            if (jsonData.sGateway === "payu_in") {
+                                resp_data.coimbatore.ad_breakup.payu += jsonData.iPrice;
+                                resp_data.coimbatore.ad_breakup.payu_final += parseFloat(0.975 * jsonData.iPrice);
+                            } else if (jsonData.sGateway.indexOf('COD') >= 0) {
+                                resp_data.coimbatore.ad_breakup.cod += jsonData.iPrice;
+                            }
                         }
 
 
