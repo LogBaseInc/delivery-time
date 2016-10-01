@@ -1531,10 +1531,10 @@ function parseMobNumber(mob) {
 }
 
 function updateDynamoDB(list_order) {
-
     var metrics_list = [];
     for (var idx in list_order) {
         var order = list_order[idx];
+        client.log({id : order.name}, ['dynamodb', 'update']);
         var metrics = {};
         if (order.note != null && order.note != undefined) {
             var deiveryDate = getDateFromNotes(order.note, false);
