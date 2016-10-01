@@ -1747,6 +1747,18 @@ function parseDDBJson(DDBJson) {
 }
 
 function deleteItem(date, order) {
+    if (order.note != null && order.note != undefined) {
+        var deliveryDate = getDateFromNotes(order.note, false);
+        var curdate = null;
+        if (deliveryDate != null) {
+            curdate = deliveryDate.toString("yyyy/MM/dd");
+        }
+        if (curdate === date) {
+            client.log({id : order.name, date : date}, ['dynamodb', '!delete']);
+            return;
+        }
+    }
+
     client.log({id : order.name, date : date}, ['dynamodb', 'delete']);
     var params = {
         Key: {
