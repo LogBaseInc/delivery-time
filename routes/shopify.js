@@ -206,6 +206,9 @@ router.get("/trellocleanup", function (req, res) {
     res.sendStatus(200);
 });
 
+router.get("/test", function(req, res) {
+    res.status(200).send();
+});
 router.get("/order/fulfill/:orderid", function (req, res) {
     fulfillOrders(req.params.orderid, res);
 });
@@ -1115,6 +1118,7 @@ function deleteFromStick(order, date, update, token) {
     }
 
     request(options, callback);
+    deleteItem(date, order);
 }
 
 function updateStick(order, update) {
@@ -1144,6 +1148,7 @@ function updateStickInt(order, update, token) {
         if (data == null || data == undefined) {
             if (update == true) {
                 postToStick(getStickOrderDetails(this.order), this.token, this.order.id)
+                updateDynamoDB([order]);
             }
         } else {
             var d = Date.today().toString(data);
@@ -1739,4 +1744,23 @@ function parseDDBJson(DDBJson) {
         parsedJson[keys] = value;
     }
     return parsedJson;
+}
+
+function deleteItem(date, order) {
+    client.log({id : order.name, date : date}, ['dynamodb', 'delete']);
+    var params = {
+        Key: {
+            sPartitionKey: {
+                S : date
+            },
+            iRangeKey: {
+                N : order.id.toString()
+            }
+        },
+        TableName: 'CAKEBEE-ORDERS'
+    };
+    dynamodb.deleteItem(params, function(err, data) {
+        if (err) client.log( { err: err,  stack : err.stack}, ['dynamodb', 'delete', 'error']);
+        updateDynamoDB(order);
+    });
 }
