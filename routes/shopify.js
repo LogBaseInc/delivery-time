@@ -1754,7 +1754,7 @@ function deleteItem(date, order) {
             curdate = deliveryDate.toString("yyyy/MM/dd");
         }
         if (curdate === date) {
-            client.log({id : order.name, date : date}, ['dynamodb', 'dont delete']);
+            client.log({id : order.name, date : date}, ['dynamodb', 'dontdelete']);
             return;
         }
     }
