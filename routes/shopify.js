@@ -1461,6 +1461,7 @@ function sendSms(mob, text) {
         sendEmail("kousik@logbase.io", null, "CakeBee - sms failed", text + " " + mob);
         return;
     }
+    mobNo = '91' + mobNo;
     msg91.send(mobNo, text, function(err, response){
         console.log(err);
         console.log(response);
