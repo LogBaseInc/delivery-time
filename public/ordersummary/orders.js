@@ -91,7 +91,7 @@ function setOrders(data) {
                         timesplit = notesplit[2].split('–');
                     var ispm = false;
                     if((timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[1]) >= 1 && parseInt(timesplit[1]) < 12 &&
-                        timesplit[0] != 12) && !(timesplit[0].indexOf(10) >=0 && timesplit[1].indexOf(1) >= 0)) {
+                        timesplit[0] != 12) && !(parseInt(timesplit[0]) == 10 && parseInt(timesplit[1]) == 1)) {
                         ispm = true;
                     }
 
