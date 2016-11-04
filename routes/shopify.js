@@ -64,7 +64,11 @@ router.get("/dates", function(req, res) {
         }
 
         var response = {
-            data: data,
+            data: {
+                coimbatore : data.coimbatore,
+                config : data.config,
+                trichy : data.trichy
+            },
             dates: dates
         };
         res.send(response);
