@@ -437,10 +437,13 @@ function calculateSlotCount(notesplit, slotArray, dates) {
         var ispm = false;
 
         if(parseInt(timesplit[0]) == 10 && parseInt(timesplit[1]) == 1) {
-            timeslot = '11:00';
+            timeslot = '12:30';
         }
-        else if(parseInt(timesplit[0]) == 4 && parseInt(timesplit[1]) == 7) {
-            timeslot = '15:00';
+        else if(parseInt(timesplit[0]) == 2 && parseInt(timesplit[1]) == 5) {
+            timeslot = '04:30';
+        }
+        else if(parseInt(timesplit[0]) == 5 && parseInt(timesplit[1]) == 8) {
+            timeslot = '07:30';
         }
         else {
             if(timesplit[1].toLowerCase().indexOf('pm') >=0 && parseInt(timesplit[0]) >= 1 && parseInt(timesplit[0]) <= 8) {
@@ -608,7 +611,9 @@ function getDateFromNotes(notes, ist) {
         mins = 45;
     } else if (timeSlot.indexOf("11") >= 0 && timeSlot.indexOf("12") >= 0 && timeSlot.indexOf("pm") >= 0) {
         hour = 11;
-    }else if (timeSlot.indexOf("pm") >= 0) {
+    } else if (timeSlot.indexOf("10") >= 0 && timeSlot.indexOf("1") >= 0 && timeSlot.indexOf("pm") >= 0) {
+        hour = 10;
+    } else if (timeSlot.indexOf("pm") >= 0) {
         hour = parseInt(timeSlot);
         if (hour != 12) {
             hour+=12;
@@ -1302,6 +1307,31 @@ function getStickOrderDetails(order) {
         tags += "PAID";
     }
 
+
+    /*
+     * Additional check to account for the 3 hour slot
+     */
+    var notesplit = order.note != null ? order.note.split('|'): [];
+    var slot_time = 1;
+    if(notesplit.length >= 2) {
+        var timesplit = notesplit[2].split('-');
+        if (timesplit.length < 2)
+            timesplit = notesplit[2].split('–');
+
+        if (timesplit.length >= 2) {
+
+            if (parseInt(timesplit[0]) == 10 && parseInt(timesplit[1]) == 1) {
+                slot_time = 3;
+            }
+            else if (parseInt(timesplit[0]) == 2 && parseInt(timesplit[1]) == 5) {
+                slot_time = 3;
+            }
+            else if (parseInt(timesplit[0]) == 5 && parseInt(timesplit[1]) == 8) {
+                slot_time = 3;
+            }
+        }
+    }
+
     var stickOrderDetails = {
         "order_id" : order.name.replace("#",""),
         "name" : name || order.customer.first_name,
@@ -1309,7 +1339,7 @@ function getStickOrderDetails(order) {
         "delivery_date" : dueDate.toString("yyyy/MM/dd"),
         "mobile_number" : mobile,
         "delivery_start_time": dueDate.getHours(),
-        "delivery_end_time": dueDate.getHours() + 1,
+        "delivery_end_time": dueDate.getHours() + slot_time,
         "cod_amount": amount,
         "product_name": "",
         "product_desc": itemDesc,
