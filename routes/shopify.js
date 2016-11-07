@@ -1449,6 +1449,11 @@ function sendNewOrderNotification(order) {
         sendEmail('coimbatore@cakebee.in', order, subject, text);
     }
 
+
+    /*
+     * Disabling photo cake notifications.
+     */
+    /*
     var cc = ['kousik@logbase.io'];
 
     if (order.note != null && order.note.indexOf("Trichy") >= 0) {
@@ -1476,6 +1481,7 @@ function sendNewOrderNotification(order) {
             });
         }
     }
+    */
 }
 
 function removeOrderIdFromFB(orderId) {
