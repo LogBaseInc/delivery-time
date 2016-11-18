@@ -1408,7 +1408,7 @@ function postToKeen(project, event) {
 
 function sortCards() {
     // New orders, Prepared & Reviewed
-    var lists = ["56640605440193b69caaf4c2", "5664061695c72afb26e8cab4", "5664060eb9666dc526222224"]
+    var lists = ["56640605440193b69caaf4c2", "5664061695c72afb26e8cab4", "582d530a39583159da71b58b", "56b589c5eab1c2a87c205712"]
     for (var i in lists) {
         trello.get("/1/lists/" +lists[i],
             {
