@@ -301,7 +301,7 @@ router.post("/events/listener", function(req, res){
         console.log("Order id " + orderId);
     }
 
-    if (activity == "PICKEDUP") {
+    if (activity == "PICKEDUP" || "DELIVERED") {
         client.log(order, [activity, "eventslistener", "fulfill"])
         fulfillOrders(orderId, res);
     } else {
@@ -1362,7 +1362,7 @@ function getStickOrderDetails(order) {
 function fulfillOrders(orderId, res) {
     console.log("Fulfillfing order " + orderId);
     var options = {
-        url: 'https://cake-bee.myshopify.com//admin/orders/'+orderId+'/fulfillments.json',
+        url: 'https://cake-bee.myshopify.com/admin/orders/'+orderId+'/fulfillments.json',
         method: "POST",
         headers: {
             'X-Shopify-Access-Token': access_token,
