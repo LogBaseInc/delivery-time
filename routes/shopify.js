@@ -296,6 +296,10 @@ router.post("/events/listener", function(req, res){
         return;
     }
 
+    if (order != null && order.ordernumber != null && order.ordernumber.indexOf("CB") < 0) {
+        res.status(200).send();
+        return;
+    }
     if (order != null && order.notes != null) {
         var orderId = parseInt(order.notes.split("**")[1]);
         console.log("Order id " + orderId);
@@ -305,7 +309,7 @@ router.post("/events/listener", function(req, res){
         client.log(order, [activity, "eventslistener", "fulfill"])
         fulfillOrders(orderId, res);
     } else {
-        res.status(200).end();
+        res.status(200).send();
     }
 });
 
@@ -1367,7 +1371,7 @@ function fulfillOrders(orderId, res) {
         headers: {
             'X-Shopify-Access-Token': access_token,
             'Content-Type' : 'application/json'
-        },
+        },PIC
         json: true,
         body : {"fulfillment": {"tracking_number": null,"notify_customer": true }}
     };
