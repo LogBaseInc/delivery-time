@@ -1371,7 +1371,7 @@ function fulfillOrders(orderId, res) {
         headers: {
             'X-Shopify-Access-Token': access_token,
             'Content-Type' : 'application/json'
-        },PIC
+        },
         json: true,
         body : {"fulfillment": {"tracking_number": null,"notify_customer": true }}
     };
