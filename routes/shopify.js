@@ -698,6 +698,7 @@ function processShopifyOrders(trelloExistingIdList) {
     request(options, callback);
 
     /** Hack to fetch old orders **/
+        /*
 
     var options1 = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?fulfillment_status=unshipped&limit=250&page=1',
@@ -721,6 +722,7 @@ function processShopifyOrders(trelloExistingIdList) {
             'X-Shopify-Access-Token': access_token
         }
     };
+    */
     request(options3, callback);
 
 }
