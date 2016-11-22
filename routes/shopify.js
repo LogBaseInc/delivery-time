@@ -690,6 +690,7 @@ function processShopifyOrders(trelloExistingIdList) {
         if (!error && response.statusCode == 200) {
             var info = JSON.parse(body);
             var orders = info['orders'];
+            console.log(orders.length);
             var selectedOrders = selectOrdersForTrello(orders);
             updateTrello(selectedOrders, trelloExistingIdList)
         }
@@ -697,7 +698,7 @@ function processShopifyOrders(trelloExistingIdList) {
     request(options, callback);
 
     /** Hack to fetch old orders **/
-    /*
+
     var options1 = {
         url: 'https://cake-bee.myshopify.com/admin/orders.json?fulfillment_status=unshipped&limit=250&page=1',
         headers: {
@@ -721,7 +722,7 @@ function processShopifyOrders(trelloExistingIdList) {
         }
     };
     request(options3, callback);
-    */
+
 }
 
 /*
@@ -1561,7 +1562,7 @@ function sendShipmentSms(order) {
     var orderId = order.name.replace("#","");
     var mob = order.billing_address.phone || " - ";
     var text = "Hi " + userName + ", Your Order " + orderId + " is out for delivery. You will be receiving them soon. \n- CakeBee";
-    //sendSms(mob, text);
+    sendSms(mob, text);
 }
 
 function parseMobNumber(mob) {
