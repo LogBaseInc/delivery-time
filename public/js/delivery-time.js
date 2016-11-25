@@ -589,7 +589,7 @@ function submitAction(event) {
         shopifyDs['cartJson']['note'] = notes;
         //$.post('cart.js', shopifyDs['cartJson']);
         $.ajax({
-            url: 'cart.js',
+            url: 'cart/update.js',
             type: 'POST',
             data: shopifyDs['cartJson'],
             async: false
