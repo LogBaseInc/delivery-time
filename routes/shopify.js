@@ -499,6 +499,8 @@ router.get("/order", function(req, res) {
     var date = req.query.date;
     var city = req.query.city;
     var slot = req.query.slot;
+    var title = req.query.title || "";
+    client.log({date : date, city : city, slot : slot, title : title}, ['timeslot']);
     console.log(date, city, slot);
     var firebase_url = "https://lb-date-picker.firebaseio.com/";
     var my_firebase_ref = new Firebase(firebase_url + city + "/" + date);
@@ -525,12 +527,10 @@ router.get("/order", function(req, res) {
             console.log("Count updated");
         });
         removeOldOrders(firebase_url, city);
-        res.status(200).end();
     }, function (err) {
         console.log(err);
-        res.status(200).end;
     })
-
+    res.status(200).end();
 });
 
 // define the home page route
