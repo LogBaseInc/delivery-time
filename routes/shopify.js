@@ -499,8 +499,9 @@ router.get("/order", function(req, res) {
     var date = req.query.date;
     var city = req.query.city;
     var slot = req.query.slot;
-    var title = req.query.title || "";
-    client.log({date : date, city : city, slot : slot, title : title}, ['timeslot']);
+    var notes = req.query.notes || "";
+    var price = req.query.price || "";
+    client.log({notes : notes, date : date, city : city, slot : slot, price : price}, ['timeslot']);
     console.log(date, city, slot);
     var firebase_url = "https://lb-date-picker.firebaseio.com/";
     var my_firebase_ref = new Firebase(firebase_url + city + "/" + date);
