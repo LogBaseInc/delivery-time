@@ -597,7 +597,7 @@ function submitAction(event) {
 
         var query = "?city=" + shopifyDs['city'] +
             "&date=" + myDateSelect.val().split(" ").join("") +
-            "&slot=" + myTimeSelect.val();
+            "&slot=" + myTimeSelect.val() + "&notes=" + notes + "&price=" + shopifyDs['cartJson']['total_price'];
         var url = "/apps/order" + query;
         //$.get(url, function(data){});
         $.ajax({
