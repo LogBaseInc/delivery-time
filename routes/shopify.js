@@ -1566,7 +1566,7 @@ function sendShipmentSms(order) {
     var orderId = order.name.replace("#","");
     var mob = order.billing_address.phone || " - ";
     var text = "Hi " + userName + ", Your Order " + orderId + " is out for delivery. You will be receiving them soon. \n- CakeBee";
-    //sendSms(mob, text);
+    sendSms(mob, text);
 }
 
 function parseMobNumber(mob) {
