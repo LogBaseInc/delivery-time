@@ -620,7 +620,7 @@ function getDateFromNotes(notes, ist) {
         mins = 45;
     } else if (timeSlot.indexOf("11") >= 0 && timeSlot.indexOf("12") >= 0 && timeSlot.indexOf("pm") >= 0) {
         hour = 11;
-    } else if (timeSlot.indexOf("10") >= 0 && timeSlot.indexOf("1") >= 0 && timeSlot.indexOf("pm") >= 0 && timeSlot.indexOf("11") < 0) {
+    } else if (timeSlot.indexOf("10") >= 0 && timeSlot.indexOf("1") >= 0 && timeSlot.indexOf("pm") >= 0 && timeSlot.indexOf("9") < 0) {
         hour = 10;
     } else if (timeSlot.indexOf("pm") >= 0) {
         hour = parseInt(timeSlot);
