@@ -496,6 +496,7 @@ function getDefaultDates() {
     var days = 0;
     var dates = {};
     var curDate = new Date();
+    curDate.setDate(curDate.getDate() + 1);
     while(days < 7) {
         var idx = curDate.getFullYear().toString() + " " +
             (curDate.getMonth() + 1).toString() + " " +
