@@ -66,6 +66,14 @@ function getIST() {
     return ISTTime;
 }
 
+// Special handling for plum
+function isPlumOrder() {
+    if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'plum') {
+        return true;
+    }
+    return false;
+}
+
 function updateFirstPossibleDeliveryDate() {
 
     if (lbDatePicker.data.config.defaultDateTimeChecks == false) {
@@ -265,7 +273,9 @@ function getFreeSlotsForTheDay(date, month, year) {
             slots[val] = text
         } else {
             var existingOrders = slotsForTheDay[val];
-            if (existingOrders == null || existingOrders < maxOrderPerSlot) {
+            if (existingOrders == null ||
+                existingOrders < maxOrderPerSlot ||
+                (isPlumOrder() && existingOrders < lbDatePicker.data.config.maxPlumOrdersPerSlot)) {
                 slots[val] = text
             }
         }
@@ -350,6 +360,8 @@ function updateCakeDs() {
             shopifyDs['cakeType'] = 'signature';
         } else if(types.toString().indexOf("add ons") >= 0) {
             shopifyDs['cakeType'] = 'signature';
+        } else if(types.toString().indexOf("plum") >= 0) {
+            shopifyDs['cakeType'] = 'plum';
         } else {
             if (title.toString().indexOf("2 kg") >=0 || title.toString().indexOf("2kg") >= 0) {
                 shopifyDs['cakeType'] = 'xpress2kg';
@@ -422,7 +434,7 @@ function noteToCustomer() {
      */
     var content = "";
     if ((shopifyDs['cakeType'] == 'xpress' && shopifyDs['cakeVariant'] == 'egg') ||
-        shopifyDs['addonsOnly'] == true) {
+        shopifyDs['addonsOnly'] == true || isPlumOrder()) {
         return;
     }
 
@@ -514,7 +526,7 @@ function getDefaultDates() {
 
 function updateDefaultDeliveryDates() {
     var date = getIST();
-    if (shopifyDs['cakeType'] == 'xpress') {
+    if (shopifyDs['cakeType'] == 'xpress' || shopifyDs['cakeType'] === 'plum') {
         var hourReq = 3;
         if (shopifyDs['cakeVariant'] == 'eggless') {
             var hourReq = 7;
@@ -739,15 +751,15 @@ function submitAction(event) {
                 timeOptions['select'] = "Select time slot";
 
                 /*
-                 * Hack for sampler
+                 * Hack for plum
                  */
-                if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'sampler') {
+                if (shopifyDs['cartJson']['items'].length == 1 && shopifyDs['cakeType'] == 'plum') {
                     var options = getSlots(myDateSelect.val());
-                    if (options["11:00"] != null) {
-                        timeOptions["11:00"] = "10 am - 1 pm";
+                    if (options["12:00"] != null) {
+                        timeOptions["12:00"] = "10 am - 2 pm";
                     }
-                    if (options["15:00"] != null) {
-                        timeOptions["15:00"] = "4 pm - 7 pm";
+                    if (options["17:00"] != null) {
+                        timeOptions["17:00"] = "4 pm - 8 pm";
                     }
                 } else {
                     $.each(getSlots(myDateSelect.val()), function(val, text){
