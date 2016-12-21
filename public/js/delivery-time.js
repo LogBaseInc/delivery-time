@@ -132,6 +132,12 @@ function updateFirstPossibleDeliveryDate() {
 
 function checkForHoliday(dt) {
     var holiday = false;
+
+
+    if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted') &&
+        (dt.indexOf("23") >=0 || dt.indexOf("24")>=0 || dt.indexOf("25") >= 0)) {
+        return true;
+    }
     if (lbDatePicker['data']['config']['enableSlotChecks'] == false) {
         return false;
     }
@@ -517,7 +523,12 @@ function getDefaultDates() {
         var day = dateString.split(" ")[0];
         dateString = dateString.replace(day, dayFormat[day]);
         dateString = dateString.replace(" " + curDate.getFullYear(), ", " + curDate.getFullYear());
-        dates[idx] = dateString;
+        if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted') &&
+            (dateString.indexOf("23") >=0 || dateString.indexOf("24")>=0 || dateString.indexOf("25") >= 0)) {
+            // Do nothing
+        } else {
+            dates[idx] = dateString;
+        }
         days++;
         curDate.setDate(curDate.getDate() + 1);
     }
