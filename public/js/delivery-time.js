@@ -134,10 +134,12 @@ function checkForHoliday(dt) {
     var holiday = false;
 
 
+    /*
     if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted') &&
         (dt.indexOf("23") >=0 || dt.indexOf("24")>=0 || dt.indexOf("25") >= 0)) {
         return true;
     }
+    */
     if (lbDatePicker['data']['config']['enableSlotChecks'] == false) {
         return false;
     }
