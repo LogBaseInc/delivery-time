@@ -134,7 +134,7 @@ function checkForHoliday(dt) {
     var holiday = false;
 
     if ((shopifyDs['cakeType'] == 'handcrafted' || shopifyDs['cakeType'] == 'handcrafted') &&
-        (dt.indexOf("23") >=0 || dt.indexOf("24")>=0 || dt.indexOf("22") >= 0)) {
+        (dt.indexOf("23") >=0 || dt.indexOf("24")>=0 || dt.indexOf("31") >= 0)) {
         return true;
     }
 
@@ -524,7 +524,7 @@ function getDefaultDates() {
         dateString = dateString.replace(day, dayFormat[day]);
         dateString = dateString.replace(" " + curDate.getFullYear(), ", " + curDate.getFullYear());
         if ((shopifyDs['cakeType'] == 'handcrafted' || shopifyDs['cakeType'] == 'handcrafted') &&
-            (dateString.indexOf("23") >=0 || dateString.indexOf("24")>=0 || dateString.indexOf("22") >= 0)) {
+            (dateString.indexOf("23") >=0 || dateString.indexOf("24")>=0 || dateString.indexOf("31") >= 0)) {
             // Do nothing
         } else {
             dates[idx] = dateString;
