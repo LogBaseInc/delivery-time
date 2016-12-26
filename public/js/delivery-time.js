@@ -135,7 +135,8 @@ function checkForHoliday(dt) {
 
 
     if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted') &&
-        (dt.indexOf("23") >=0 || dt.indexOf("01")>=0 || dt.indexOf("31") >= 0)) {
+        (dt.indexOf("23") >=0 || dt.indexOf("2017 01 01")>=0 || dt.indexOf("31") >= 0)) {
+        console.log(dt);
         return true;
     }
 
@@ -526,7 +527,7 @@ function getDefaultDates() {
         dateString = dateString.replace(day, dayFormat[day]);
         dateString = dateString.replace(" " + curDate.getFullYear(), ", " + curDate.getFullYear());
         if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted') &&
-            (dateString.indexOf("01") >=0 || dateString.indexOf("24")>=0 || dateString.indexOf("31") >= 0)) {
+            (dateString.indexOf("2017 01 01") >=0 || dateString.indexOf("24")>=0 || dateString.indexOf("31") >= 0)) {
             // Do nothing
         } else {
             dates[idx] = dateString;
