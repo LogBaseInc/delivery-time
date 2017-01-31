@@ -681,7 +681,7 @@ function updateNewOrders() {
  */
 function processShopifyOrders(trelloExistingIdList) {
     var options = {
-        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250',
+        url: 'https://cake-bee.myshopify.com/admin/orders.json?limit=250&status=any',
         headers: {
             'X-Shopify-Access-Token': access_token
         }
