@@ -902,7 +902,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
             tags += order.tags + "\n";
         }
 
-        var desc = itms + notes + address + tags;
+        var desc = itms + notes + address + tags + '\n' + goldwin;
         var dueDate = (getDateFromNotes(notes, true));
         var newCard =
         {
