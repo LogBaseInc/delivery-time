@@ -893,13 +893,13 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
         var tags = "";
 
-        if (tags.toString().indexOf('Goldwins') >= 0) {
-            goldwin = 'GOLDWINS -  ';
-        }
-
         if (order.tags != null) {
             tags = "\nTAGS: \n";
             tags += order.tags + "\n";
+        }
+
+        if (tags.toString().indexOf('Goldwins') >= 0) {
+            goldwin = 'GOLDWINS -  ';
         }
 
         var desc = itms + notes + address + tags + '\n' + goldwin;
