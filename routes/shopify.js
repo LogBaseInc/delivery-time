@@ -814,6 +814,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var address = "";
         var isSignature = false;
         var freeSampler = "\t1 X Four Flavour Sampler\n";
+        var goldwin = '';
 
         // construct the name
         var itemsName = "";
@@ -892,6 +893,10 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
         var tags = "";
 
+        if (tags.toString().indexOf('Goldwins') >= 0) {
+            goldwin = 'GOLDWINS -  ';
+        }
+
         if (order.tags != null) {
             tags = "\nTAGS: \n";
             tags += order.tags + "\n";
@@ -901,7 +906,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var dueDate = (getDateFromNotes(notes, true));
         var newCard =
         {
-            name: name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
+            name: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
             desc: desc,
             pos: "top",
             due: dueDate,
