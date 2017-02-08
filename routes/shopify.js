@@ -923,7 +923,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
                 var baseUrl = "/1/cards/" + getCardId(order, existingOrdersIdsTrello);
                 trello.put(baseUrl + "/desc", { value: desc }, trelloSuccess, trelloError);
                 trello.put(baseUrl + "/due", { value: dueDate } , trelloSuccess, trelloError);
-                trello.put(baseUrl + "/name", { value: name + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
+                trello.put(baseUrl + "/name", { value: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
                 updateStick(order, true);
                 //console.log("Shopify order updated");
             }
