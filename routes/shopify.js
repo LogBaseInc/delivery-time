@@ -306,8 +306,8 @@ router.post("/events/listener", function(req, res){
         console.log("Order id " + orderId);
     }
 
-    if (activity == "PICKEDUP" || "DELIVERED") {
-        client.log(order, [activity, "eventslistener", "fulfill"])
+    if (activity === "PICKEDUP" || activity === "DELIVERED") {
+        client.log(order, [activity, "eventslistener", "fulfill"]);
         fulfillOrders(orderId, res);
     } else {
         res.status(200).send();
