@@ -905,13 +905,15 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
         var desc = itms + notes + address + tags + '\n' + goldwin;
         var dueDate = (getDateFromNotes(notes, true));
+        var newCard = "56640605440193b69caaf4c2";
+        var goldwinNewCard = "58b50bba48a10844e2dc689b"
         var newCard =
         {
             name: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
             desc: desc,
             pos: "top",
             due: dueDate,
-            idList: "56640605440193b69caaf4c2"
+            idList: goldwin.length > 1 ? goldwinNewCard : newCard
         };
 
         if (isOrderAbsentInTrello(order, existingOrdersIdsTrello)) {
@@ -1450,7 +1452,13 @@ function postToKeen(project, event) {
 
 function sortCards() {
     // New orders, Prepared & Reviewed
-    var lists = ["56640605440193b69caaf4c2", "5664061695c72afb26e8cab4", "582d530a39583159da71b58b", "56b589c5eab1c2a87c205712"]
+    var lists = ["56640605440193b69caaf4c2",
+        "5664061695c72afb26e8cab4",
+        "582d530a39583159da71b58b",
+        "56b589c5eab1c2a87c205712",
+        "58b50bba48a10844e2dc689b",
+        "58b50bc355ab308c8d03c0c8"
+    ]
     for (var i in lists) {
         trello.get("/1/lists/" +lists[i],
             {
