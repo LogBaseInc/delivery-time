@@ -906,7 +906,8 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var desc = itms + notes + address + tags + '\n' + goldwin;
         var dueDate = (getDateFromNotes(notes, true));
         var newCard = "56640605440193b69caaf4c2";
-        var goldwinNewCard = "58b50bba48a10844e2dc689b"
+        var goldwinNewCard = "58b50bba48a10844e2dc689b";
+        console.log(order.name, '-', goldwin)
         var newCard =
         {
             name: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
