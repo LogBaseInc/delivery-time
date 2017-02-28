@@ -1027,7 +1027,7 @@ function getIST(date) {
  */
 function archieveOFDOrders() {
     var idList = [];
-    var cards = ["5664061695c72afb26e8cab4", "56b589c5eab1c2a87c205712"];
+    var cards = ["5664061695c72afb26e8cab4", "56b589c5eab1c2a87c205712", "58b50bba48a10844e2dc689b", "58b50bc355ab308c8d03c0c8"];
 
     // Fetch existing order id's from trello
     for (var idx in cards) {
