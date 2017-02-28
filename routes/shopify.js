@@ -658,13 +658,19 @@ function updateNewOrders() {
         },
         function(err, data) {
             if (err) throw err;
+            console.log("Exisiting orders in trello");
             for (var idx in data) {
                 var fields = data[idx];
                 if (fields != undefined && fields != null) {
                     var name = fields['name'];
                     if (name != null && name != undefined && name.indexOf('CB') >= 0) {
+                        var orderId = name.split("|")[0];
+                        console.log(orderId);
+                        if (orderId.indexOf('GOLDWINS') >= 0) {
+                            orderId = orderId.split(" - ")[1];
+                        }
                         var content = {
-                            orderId : name.split("|")[0],
+                            orderId : orderId,
                             id: fields['id'],
                             checksum: name.split("|")[2],
                             due: fields['due']
@@ -907,7 +913,6 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var dueDate = (getDateFromNotes(notes, true));
         var newCard = "56640605440193b69caaf4c2";
         var goldwinNewCard = "58b50bba48a10844e2dc689b";
-        console.log(order.name, '-', goldwin)
         var newCard =
         {
             name: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
@@ -918,10 +923,12 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         };
 
         if (isOrderAbsentInTrello(order, existingOrdersIdsTrello)) {
+            console.log('New trello update - ', order.name, '-', goldwin)
             trello.post("/1/cards/", newCard, trelloSuccess, trelloError);
             updateStick(order, true);
             //console.log("Posting an order to Trello");
         } else {
+            console.log('Existing card trello update - ', order.name, '-', goldwin);
             //console.log("Testing updated orders");
             if (isShopifyOrderUpdated(order, desc, existingOrdersIdsTrello)) {
                 var baseUrl = "/1/cards/" + getCardId(order, existingOrdersIdsTrello);
