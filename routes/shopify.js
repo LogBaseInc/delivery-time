@@ -666,7 +666,7 @@ function updateNewOrders() {
                     if (name != null && name != undefined && name.indexOf('CB') >= 0) {
                         var orderId = name.split("|")[0];
                         console.log(orderId);
-                        if (orderId.indexOf('GOLDWINS') >= 0) {
+                        if (orderId.indexOf('GOLDWINS') >= 0 || orderId.indexOf('SAIBABA') >= 0) {
                             orderId = orderId.split(" - ")[1];
                         }
                         var content = {
@@ -822,6 +822,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var isSignature = false;
         var freeSampler = "\t1 X Four Flavour Sampler\n";
         var goldwin = '';
+        var saibaba = '';
 
         // construct the name
         var itemsName = "";
@@ -908,33 +909,47 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         if (tags.toString().indexOf('Goldwins') >= 0) {
             goldwin = 'GOLDWINS -  ';
         }
+        if (tags.toString().indexOf('Saibaba') >= 0) {
+            saibaba = 'SAIBABA -  ';
+        }
 
         var desc = itms + notes + address + tags + '\n' + goldwin;
         var dueDate = (getDateFromNotes(notes, true));
         var newCard = "56640605440193b69caaf4c2";
         var goldwinNewCard = "58b50bba48a10844e2dc689b";
+        var saibabaNewCard = "58cc07055e170dcbc4f3a248";
+        var selectedCard = newCard;
+        var selectedShop = '';
+        if (goldwin.length > 1) {
+            selectedCard = goldwinNewCard;
+            selectedShop = goldwin;
+        }
+        if (saibaba.length > 1) {
+            selectedCard = saibabaNewCard;
+            selectedShop = saibaba;
+        }
         var newCard =
         {
-            name: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
+            name: selectedShop + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc),
             desc: desc,
             pos: "top",
             due: dueDate,
-            idList: goldwin.length > 1 ? goldwinNewCard : newCard
+            idList: selectedCard
         };
 
         if (isOrderAbsentInTrello(order, existingOrdersIdsTrello)) {
-            console.log('New trello update - ', order.name, '-', goldwin)
+            console.log('New trello update - ', order.name, '-', selectedShop)
             trello.post("/1/cards/", newCard, trelloSuccess, trelloError);
             updateStick(order, true);
             //console.log("Posting an order to Trello");
         } else {
-            console.log('Existing card trello update - ', order.name, '-', goldwin);
+            console.log('Existing card trello update - ', order.name, '-', selectedShop);
             //console.log("Testing updated orders");
             if (isShopifyOrderUpdated(order, desc, existingOrdersIdsTrello)) {
                 var baseUrl = "/1/cards/" + getCardId(order, existingOrdersIdsTrello);
                 trello.put(baseUrl + "/desc", { value: desc }, trelloSuccess, trelloError);
                 trello.put(baseUrl + "/due", { value: dueDate } , trelloSuccess, trelloError);
-                trello.put(baseUrl + "/name", { value: goldwin + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
+                trello.put(baseUrl + "/name", { value: selectedShop + name + dueDate.toString(" ----- MMM dd -----") + " | " + trelloHashCode(desc) }, trelloSuccess, trelloError);
                 updateStick(order, true);
                 //console.log("Shopify order updated");
             }
@@ -1027,7 +1042,14 @@ function getIST(date) {
  */
 function archieveOFDOrders() {
     var idList = [];
-    var cards = ["5664061695c72afb26e8cab4", "56b589c5eab1c2a87c205712", "58b50bba48a10844e2dc689b", "58b50bc355ab308c8d03c0c8"];
+    var cards = [
+        "5664061695c72afb26e8cab4",
+        "56b589c5eab1c2a87c205712",
+        "58b50bba48a10844e2dc689b",
+        "58b50bc355ab308c8d03c0c8",
+        "58cc07055e170dcbc4f3a248",
+        "58cc070cff98baf531465771"
+    ];
 
     // Fetch existing order id's from trello
     for (var idx in cards) {
@@ -1465,7 +1487,9 @@ function sortCards() {
         "582d530a39583159da71b58b",
         "56b589c5eab1c2a87c205712",
         "58b50bba48a10844e2dc689b",
-        "58b50bc355ab308c8d03c0c8"
+        "58b50bc355ab308c8d03c0c8",
+        "58cc07055e170dcbc4f3a248",
+        "58cc070cff98baf531465771"
     ]
     for (var i in lists) {
         trello.get("/1/lists/" +lists[i],
