@@ -119,6 +119,7 @@ router.post("/webhook", function(req, res) {
     var tomo = getIST(Date.today().addDays(1));
     var order = req.body;
     var notes = order['note'];
+    console.log({"orderId" : req.body.name, "notes": notes},  ["webhook"]);
     client.log({"orderId" : req.body.name, "notes": notes},  ["webhook"]);
     if (notes == "" || notes == null || notes == undefined) {
         // Send an alarm that notes are missing
@@ -127,6 +128,7 @@ router.post("/webhook", function(req, res) {
     } else {
         var dt = getDateFromNotes(notes, true);
 
+        console.log(dt);
         if (dt == null) {
             sendEmail("kousik@logbase.io", order,
                     "Error while processing date in order " + order.name,
