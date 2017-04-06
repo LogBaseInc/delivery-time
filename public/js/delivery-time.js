@@ -525,7 +525,7 @@ function getDefaultDates() {
         var day = dateString.split(" ")[0];
         dateString = dateString.replace(day, dayFormat[day]);
         dateString = dateString.replace(" " + curDate.getFullYear(), ", " + curDate.getFullYear());
-        if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted' || shopify['cakeType'] == 'xpress') &&
+        if ((shopifyDs['cakeType'] == 'signature' || shopifyDs['cakeType'] == 'handcrafted' || shopifyDs['cakeType'] == 'xpress') &&
             (dateString.indexOf("2017 01 14") >=0)) {
             // Do nothing
         } else {
