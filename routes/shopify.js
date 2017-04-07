@@ -1176,7 +1176,7 @@ function postToStick(stickOrderDetails, token, orderId) {
 function deleteFromStick(order, date, update, token) {
     var orderId = order.name.replace("#","");
     var options = {
-        url: 'http://stick-write-dev.logbase.io/api/orders/'+ token,
+        url: 'http://stick-write.herokuapp.com/api/orders/'+ token,
         method: "DELETE",
         headers: {
             'Content-Type' : 'application/json'
@@ -1236,7 +1236,7 @@ function updateStickInt(order, update, token) {
 
         client.log(data + ' ' + update + ' ' + this.order.name, ["updateRequest"]);
         console.log(data + ' ' + update + ' ' + this.order.name, ["updateRequest"]);
-        if (data == null || data == undefined) {
+        if (data == null || data == undefined || data == getStickOrderDetails(order).delivery_date) {
             if (update == true) {
                 postToStick(getStickOrderDetails(this.order), this.token, this.order.id)
                 updateDynamoDB([order]);
