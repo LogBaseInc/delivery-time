@@ -77,8 +77,18 @@ router.get("/dates", function(req, res) {
 
 router.get("/synctrello", function (req, res) {
     client.log({"event" : "synctrello"});
-    sortCards();
     updateNewOrders();
+    res.sendStatus(200);
+});
+
+router.get("/sorttrello", function(req, res){
+    console.log({"event" : "sort-trello"});
+    sortCards();
+    res.sendStatus(200);
+});
+
+router.get("/archievetrello", function(req, res){
+    console.log({"event" : "archieve-trello"});
     archieveOFDOrders();
     res.sendStatus(200);
 });
@@ -917,7 +927,8 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 
         var desc = itms + notes + address + tags + '\n' + goldwin;
         var dueDate = (getDateFromNotes(notes, true));
-        var newCard = "56640605440193b69caaf4c2";
+        var newCard = "59ab86df3ff2d1276f7a7a77";
+        //var newCard = "56640605440193b69caaf4c2";
         var goldwinNewCard = "58b50bba48a10844e2dc689b";
         var saibabaNewCard = "58cc07055e170dcbc4f3a248";
         var selectedCard = newCard;
@@ -1045,12 +1056,13 @@ function getIST(date) {
 function archieveOFDOrders() {
     var idList = [];
     var cards = [
-        "5664061695c72afb26e8cab4",
+        "59ab86df3ff2d1276f7a7a77",
         "56b589c5eab1c2a87c205712",
         "58b50bba48a10844e2dc689b",
         "58b50bc355ab308c8d03c0c8",
         "58cc07055e170dcbc4f3a248",
-        "58cc070cff98baf531465771"
+        "58cc070cff98baf531465771",
+        "59ae84e6c415a5765d14e254"
     ];
 
     // Fetch existing order id's from trello
@@ -1490,14 +1502,14 @@ function postToKeen(project, event) {
 
 function sortCards() {
     // New orders, Prepared & Reviewed
-    var lists = ["56640605440193b69caaf4c2",
-        "5664061695c72afb26e8cab4",
-        "582d530a39583159da71b58b",
+    var lists = [
+        "59ab86df3ff2d1276f7a7a77",
         "56b589c5eab1c2a87c205712",
         "58b50bba48a10844e2dc689b",
         "58b50bc355ab308c8d03c0c8",
         "58cc07055e170dcbc4f3a248",
-        "58cc070cff98baf531465771"
+        "58cc070cff98baf531465771",
+        "59ae84e6c415a5765d14e254"
     ]
     for (var i in lists) {
         trello.get("/1/lists/" +lists[i],
