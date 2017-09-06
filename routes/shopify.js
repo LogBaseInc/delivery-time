@@ -1062,7 +1062,8 @@ function archieveOFDOrders() {
         "58b50bc355ab308c8d03c0c8",
         "58cc07055e170dcbc4f3a248",
         "58cc070cff98baf531465771",
-        "59ae84e6c415a5765d14e254"
+        "59ae84e6c415a5765d14e254",
+        "59b035626031b2b78d7f1c8a"
     ];
 
     // Fetch existing order id's from trello
@@ -1509,7 +1510,8 @@ function sortCards() {
         "58b50bc355ab308c8d03c0c8",
         "58cc07055e170dcbc4f3a248",
         "58cc070cff98baf531465771",
-        "59ae84e6c415a5765d14e254"
+        "59ae84e6c415a5765d14e254",
+        "59b035626031b2b78d7f1c8a"
     ]
     for (var i in lists) {
         trello.get("/1/lists/" +lists[i],
