@@ -835,6 +835,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         var freeSampler = "\t1 X Four Flavour Sampler\n";
         var goldwin = '';
         var saibaba = '';
+        var ramanathapuram = '';
 
         // construct the name
         var itemsName = "";
@@ -924,6 +925,9 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         if (tags.toString().indexOf('Saibaba') >= 0) {
             saibaba = 'SAIBABA -  ';
         }
+        if (tags.toString().indexOf(('Ramanathapuram')) >= 0) {
+            ramanathapuram = 'RAMANATHAPURAM - ';
+        }
 
         var desc = itms + notes + address + tags + '\n' + goldwin;
         var dueDate = (getDateFromNotes(notes, true));
@@ -931,6 +935,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         //var newCard = "56640605440193b69caaf4c2";
         var goldwinNewCard = "58b50bba48a10844e2dc689b";
         var saibabaNewCard = "58cc07055e170dcbc4f3a248";
+        var ramanathapuramNewCard = "5a081c8c596c03253c8a0144";
         var selectedCard = newCard;
         var selectedShop = '';
         if (goldwin.length > 1) {
@@ -940,6 +945,10 @@ function updateTrello(orders, existingOrdersIdsTrello) {
         if (saibaba.length > 1) {
             selectedCard = saibabaNewCard;
             selectedShop = saibaba;
+        }
+        if (ramanathapuram.length > 1) {
+            selectedCard = ramanathapuramNewCard;
+            selectedShop = ramanathapuram;
         }
         var newCard =
         {
@@ -984,6 +993,7 @@ function updateTrello(orders, existingOrdersIdsTrello) {
 function isOrderAbsentInTrello(order, existingOrdersIdsTrello) {
     for (var idx in existingOrdersIdsTrello) {
         var trelloOrders = existingOrdersIdsTrello[idx];
+        console.log(trelloOrders);
         if (trelloOrders['orderId'].indexOf(order['name']) >= 0) {
             return false;
         }
@@ -1063,7 +1073,9 @@ function archieveOFDOrders() {
         "58cc07055e170dcbc4f3a248",
         "58cc070cff98baf531465771",
         "59ae84e6c415a5765d14e254",
-        "59b035626031b2b78d7f1c8a"
+        "59b035626031b2b78d7f1c8a",
+        "5a081c8c596c03253c8a0144",
+        "5a081c95552304c8487c4c52"
     ];
 
     // Fetch existing order id's from trello
@@ -1511,7 +1523,9 @@ function sortCards() {
         "58cc07055e170dcbc4f3a248",
         "58cc070cff98baf531465771",
         "59ae84e6c415a5765d14e254",
-        "59b035626031b2b78d7f1c8a"
+        "59b035626031b2b78d7f1c8a",
+        "5a081c8c596c03253c8a0144",
+        "5a081c95552304c8487c4c52"
     ]
     for (var i in lists) {
         trello.get("/1/lists/" +lists[i],
