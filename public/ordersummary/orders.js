@@ -54,6 +54,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
     getDrivers();
 
+    /*
     $.get("/shopify/orders", function( data ) {
         orders = [];
         setOrders(data);
@@ -63,6 +64,7 @@ window.addEventListener("DOMContentLoaded", function() {
             setOrders(opendata);
         });
     });
+    */
 }, false);
 
 function tick() {
